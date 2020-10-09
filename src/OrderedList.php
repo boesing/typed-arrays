@@ -9,10 +9,8 @@ use function array_keys;
 use function array_map;
 use function array_merge;
 use function array_values;
-use function mhash;
 use function serialize;
 use function sort;
-use const MHASH_SHA256;
 use const SORT_NATURAL;
 
 /**
@@ -162,7 +160,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         /** @psalm-suppress MissingClosureParamType */
         $unificationIdentifierGenerator = $unificationIdentifierGenerator
             ?? static function ($value): string {
-                return mhash(MHASH_SHA256, serialize($value));
+                return hash('sha256', serialize($value));
             };
 
         $instance = clone $this;
