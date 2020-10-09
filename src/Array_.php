@@ -1,0 +1,107 @@
+<?php
+declare(strict_types=1);
+
+namespace Boesing\TypedArrays;
+
+use ArrayIterator;
+use DateTimeInterface;
+use Traversable;
+use Webmozart\Assert\Assert;
+use function end;
+use function in_array;
+use function is_object;
+use function spl_object_id;
+
+/**
+ * @template            TKey of array-key
+ * @template            TValue
+ * @template-implements ArrayInterface<TKey,TValue>
+ * @internal
+ */
+abstract class Array_ implements ArrayInterface
+{
+    /**
+     * @psalm-var array<TKey,TValue>
+     */
+    protected $data;
+
+    /**
+     * @psalm-param array<TKey,TValue> $data
+     */
+    protected function __construct(array $data)
+    {
+        Assert::allValidArrayKey(array_keys($data));
+        $this->data = $data;
+    }
+
+    /**
+     * @psalm-return Traversable<TKey,TValue>
+     */
+    public function getIterator(): Traversable
+    {
+        return new ArrayIterator($this->data);
+    }
+
+    public function contains($element): bool
+    {
+        return in_array($element, $this->data, true);
+    }
+
+    public function first()
+    {
+        if ($this->data === []) {
+            return null;
+        }
+
+        return reset($this->data);
+    }
+
+    public function last()
+    {
+        if ($this->data === []) {
+            return null;
+        }
+
+        return end($this->data);
+    }
+
+    public function isEmpty(): bool
+    {
+        return $this->count() === 0;
+    }
+
+    public function count(): int
+    {
+        return count($this->data);
+    }
+
+    public function toNativeArray(): array
+    {
+        return $this->data;
+    }
+
+    /**
+     * @psalm-return callable(TValue $a,TValue $b):int
+     */
+    protected function valueComparator(): callable
+    {
+        return static function ($a, $b): int {
+            if (!is_object($a) || !is_object($b)) {
+                return $a <=> $b;
+            }
+
+            if ($a instanceof DateTimeInterface && $b instanceof DateTimeInterface) {
+                return $a <=> $b;
+            }
+
+            if ($a instanceof ComparatorInterface && $b instanceof ComparatorInterface) {
+                return $a->compareWith($b);
+            }
+
+            $a = spl_object_id($a);
+            $b = spl_object_id($b);
+
+            return $a <=> $b;
+        };
+    }
+}

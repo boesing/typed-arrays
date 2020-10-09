@@ -1,0 +1,33 @@
+{
+    "name": "boesing/typed-arrays",
+    "description": "Hashmap and Collection",
+    "type": "library",
+    "license": "BSD-3-Clause",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "require": {
+        "php": "^7.3 || ~8.0.0",
+        "thecodingmachine/safe": "^1.3",
+        "webmozart/assert": "^1.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "Boesing\\TypedArrays\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Boesing\\TypedArrays\\": "test/"
+        }
+    },
+    "require-dev": {
+        "lcobucci/clock": "^1.2",
+        "phpunit/phpunit": "^9.2",
+        "psalm/plugin-phpunit": "^0.12.2",
+        "vimeo/psalm": "^3.16"
+    }
+}
