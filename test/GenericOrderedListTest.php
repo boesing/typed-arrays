@@ -469,7 +469,7 @@ final class GenericOrderedListTest extends TestCase
             $object2,
         ]);
 
-        $mapped = $list->toHashmap(static function (GenericObject $object): string {
+        $mapped = $list->toMap(static function (GenericObject $object): string {
             $hash = spl_object_hash($object);
             Assert::stringNotEmpty($hash);
 
@@ -693,11 +693,11 @@ final class GenericOrderedListTest extends TestCase
         new GenericOrderedList([1 => 1]);
     }
 
-    public function testToHashmapConversionErrorsOnIntegerishKeys(): void
+    public function testToMapConversionErrorsOnIntegerishKeys(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $list = new GenericOrderedList([1, 2, 3]);
-        $list->toHashmap(static function (int $value): string {
+        $list->toMap(static function (int $value): string {
             return (string) $value;
         });
     }

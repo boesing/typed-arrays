@@ -4,23 +4,22 @@ declare(strict_types=1);
 namespace Boesing\TypedArrays;
 
 /**
- * @template         TKey of array-key
  * @template         TValue
- * @template-extends ArrayInterface<TKey,TValue>
+ * @template-extends ArrayInterface<string,TValue>
  */
 interface MapInterface extends ArrayInterface
 {
 
     /**
-     * @psalm-param  Closure(TValue $value,TKey $key):bool $callback
-     * @psalm-return MapInterface<TKey,TValue>
+     * @psalm-param  Closure(TValue $value,string $key):bool $callback
+     * @psalm-return MapInterface<TValue>
      * @psalm-immutable
      */
     public function filter(callable $callback): MapInterface;
 
     /**
      * @psalm-param  (Closure(TValue $a,TValue $b):int)|null $callback
-     * @psalm-return MapInterface<TKey,TValue>
+     * @psalm-return MapInterface<TValue>
      * @psalm-immutable
      */
     public function sort(?callable $callback = null): MapInterface;
@@ -28,17 +27,17 @@ interface MapInterface extends ArrayInterface
     /**
      * @param MapInterface[]                         $stack
      *
-     * @psalm-param  list<MapInterface<TKey,TValue>> $stack
+     * @psalm-param  list<MapInterface<TValue>> $stack
      *
-     * @psalm-return MapInterface<TKey,TValue>
+     * @psalm-return MapInterface<TValue>
      * @psalm-immutable
      */
     public function merge(...$stack): MapInterface;
 
     /**
-     * @psalm-param  MapInterface<TKey,TValue> $other
-     * @psalm-param  (Closure(TKey $a,TKey $b):int)|null $keyComparator
-     * @psalm-return MapInterface<TKey,TValue>
+     * @psalm-param  MapInterface<TValue> $other
+     * @psalm-param  (Closure(string $a,string $b):int)|null $keyComparator
+     * @psalm-return MapInterface<TValue>
      * @psalm-immutable
      */
     public function diffKeys(MapInterface $other, ?callable $keyComparator = null): MapInterface;
@@ -47,23 +46,23 @@ interface MapInterface extends ArrayInterface
      * @template     TNewValue
      * @psalm-param  Closure(TValue $a):TNewValue $callback
      *
-     * @psalm-return MapInterface<TKey,TNewValue>
+     * @psalm-return MapInterface<TNewValue>
      * @psalm-immutable
      */
     public function map(callable $callback): MapInterface;
 
     /**
-     * @psalm-param  MapInterface<TKey,TValue> $other
+     * @psalm-param  MapInterface<TValue> $other
      * @psalm-param  (Closure(TValue $a,TValue $b):int)|null $valueComparator
-     * @psalm-return MapInterface<TKey,TValue>
+     * @psalm-return MapInterface<TValue>
      * @psalm-immutable
      */
     public function intersect(MapInterface $other, ?callable $valueComparator = null): MapInterface;
 
     /**
-     * @psalm-param  MapInterface<TKey,TValue> $other
+     * @psalm-param  MapInterface<TValue> $other
      * @psalm-param  (Closure(TValue $a,TValue $b):int)|null $valueComparator
-     * @psalm-return MapInterface<TKey,TValue>
+     * @psalm-return MapInterface<TValue>
      * @psalm-immutable
      */
     public function diff(MapInterface $other, ?callable $valueComparator = null): MapInterface;
@@ -77,60 +76,60 @@ interface MapInterface extends ArrayInterface
 
     /**
      * @psalm-param  TValue $element
-     * @psalm-return MapInterface<TKey,TValue>
+     * @psalm-return MapInterface<TValue>
      * @psalm-immutable
      */
     public function remove($element): MapInterface;
 
     /**
-     * @psalm-param  TKey $key
-     * @psalm-return MapInterface<TKey,TValue>
+     * @psalm-param  string $key
+     * @psalm-return MapInterface<TValue>
      * @psalm-immutable
      */
     public function removeByKey($key): MapInterface;
 
     /**
-     * @psalm-return OrderedListInterface<TKey>
+     * @psalm-return OrderedListInterface<string>
      * @psalm-immutable
      */
     public function keys(): OrderedListInterface;
 
     /**
-     * @psalm-param TKey   $key
+     * @psalm-param string   $key
      * @psalm-param TValue $value
-     * @psalm-return MapInterface<TKey, TValue>
+     * @psalm-return MapInterface<TValue>
      * @psalm-immutable
      */
     public function put($key, $value): MapInterface;
 
     /**
-     * @psalm-param TKey $key
+     * @psalm-param string $key
      * @psalm-return TValue|null
      * @psalm-immutable
      */
     public function get($key);
 
     /**
-     * @psalm-param MapInterface<TKey,TValue> $other
-     * @psalm-return MapInterface<TKey,TValue>
+     * @psalm-param MapInterface<TValue> $other
+     * @psalm-return MapInterface<TValue>
      * @psalm-param  (Closure(TValue $a,TValue $b):int)|null $valueComparator
      * @psalm-immutable
      */
     public function intersectAssoc(MapInterface $other, ?callable $valueComparator = null): MapInterface;
 
     /**
-     * @psalm-param MapInterface<TKey,TValue> $other
-     * @psalm-return MapInterface<TKey,TValue>
-     * @psalm-param  (Closure(TKey $a,TKey $b):int)|null $keyComparator
+     * @psalm-param MapInterface<TValue> $other
+     * @psalm-return MapInterface<TValue>
+     * @psalm-param  (Closure(string $a,string $b):int)|null $keyComparator
      * @psalm-immutable
      */
     public function intersectUsingKeys(MapInterface $other, ?callable $keyComparator = null): MapInterface;
 
     /**
-     * @psalm-param MapInterface<TKey,TValue> $other
+     * @psalm-param MapInterface<TValue> $other
      * @psalm-param  (Closure(TValue $a,TValue $b):int)|null $valueComparator
-     * @psalm-param  (Closure(TKey $a,TKey $b):int)|null $keyComparator
-     * @psalm-return MapInterface<TKey,TValue>
+     * @psalm-param  (Closure(string $a,string $b):int)|null $keyComparator
+     * @psalm-return MapInterface<TValue>
      * @psalm-immutable
      */
     public function intersectUserAssoc(

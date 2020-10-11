@@ -74,9 +74,9 @@ interface OrderedListInterface extends ArrayInterface
 
     /**
      * @psalm-param  Closure(TValue $value):non-empty-string $keyGenerator
-     * @psalm-return HashmapInterface<TValue>
+     * @psalm-return MapInterface<TValue>
      */
-    public function toHashmap(callable $keyGenerator): HashmapInterface;
+    public function toMap(callable $keyGenerator): MapInterface;
 
     /**
      * @psalm-param  TValue $element

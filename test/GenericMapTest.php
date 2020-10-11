@@ -11,7 +11,7 @@ use Lcobucci\Clock\FrozenClock;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-final class GenericHashmapTest extends TestCase
+final class GenericMapTest extends TestCase
 {
     /**
      * @psalm-param  array<string,mixed>       $initial
@@ -24,11 +24,11 @@ final class GenericHashmapTest extends TestCase
         array $expected,
         array $stack
     ): void {
-        $map = new GenericHashmap($initial);
+        $map = new GenericMap($initial);
         $merged = $map->merge(...
             array_map(
                 static function (array $map): MapInterface {
-                    return new GenericHashmap($map);
+                    return new GenericMap($map);
                 },
                 $stack
             )
@@ -79,7 +79,7 @@ final class GenericHashmapTest extends TestCase
      */
     public function testSortUsesCallback(array $values, ?callable $callback, array $sorted): void
     {
-        $list = new GenericHashmap($values);
+        $list = new GenericMap($values);
         self::assertEquals(
             $list->sort($callback)
                 ->toNativeArray(),
@@ -128,7 +128,7 @@ final class GenericHashmapTest extends TestCase
 
     public function testKeysReturnExpectedValues(): void
     {
-        $map = new GenericHashmap(['foo' => 'bar', 'bar' => 'baz']);
+        $map = new GenericMap(['foo' => 'bar', 'bar' => 'baz']);
         $keys = $map->keys();
         self::assertEquals(['foo', 'bar'], $keys->toNativeArray());
     }
@@ -138,7 +138,7 @@ final class GenericHashmapTest extends TestCase
         $element = new GenericObject(1);
         $element2 = new GenericObject(2);
 
-        $map = new GenericHashmap(['first' => $element, 'second' => $element2]);
+        $map = new GenericMap(['first' => $element, 'second' => $element2]);
 
         $map = $map->remove($element);
 
@@ -152,7 +152,7 @@ final class GenericHashmapTest extends TestCase
         $element = new GenericObject(1);
         $element2 = new GenericObject(2);
 
-        $map = new GenericHashmap(['first' => $element, 'second' => $element2]);
+        $map = new GenericMap(['first' => $element, 'second' => $element2]);
 
         $map = $map->removeByKey('first');
 
@@ -163,10 +163,10 @@ final class GenericHashmapTest extends TestCase
 
     public function testDiffKeys(): void
     {
-        /** @psalm-var HashmapInterface<string> $map1 */
-        $map1 = new GenericHashmap(['foo' => 'bar']);
-        /** @psalm-var HashmapInterface<string> $map2 */
-        $map2 = new GenericHashmap(['foo' => 'bar', 'bar' => 'baz']);
+        /** @psalm-var MapInterface<string> $map1 */
+        $map1 = new GenericMap(['foo' => 'bar']);
+        /** @psalm-var MapInterface<string> $map2 */
+        $map2 = new GenericMap(['foo' => 'bar', 'bar' => 'baz']);
 
         self::assertEquals(['bar' => 'baz'], $map1->diffKeys($map2)->toNativeArray());
     }
@@ -175,8 +175,8 @@ final class GenericHashmapTest extends TestCase
     {
         $object1 = new GenericObject(1);
         $object2 = new GenericObject(2);
-        /** @psalm-var HashmapInterface<GenericObject> $map */
-        $map = new GenericHashmap([
+        /** @psalm-var MapInterface<GenericObject> $map */
+        $map = new GenericMap([
             'first' => $object1,
             'second' => $object2,
         ]);
@@ -196,7 +196,7 @@ final class GenericHashmapTest extends TestCase
      */
     public function testWillConvertToOrderedList(array $initial, array $expected, ?callable $sorter): void
     {
-        $map = new GenericHashmap($initial);
+        $map = new GenericMap($initial);
         $list = $map->toOrderedList($sorter);
 
         self::assertEquals($expected, $list->toNativeArray());
@@ -238,15 +238,15 @@ final class GenericHashmapTest extends TestCase
 
     public function testIntersectionReturnExpectedValues(): void
     {
-        /** @var HashmapInterface<string> $map1 */
-        $map1 = new GenericHashmap([
+        /** @var MapInterface<string> $map1 */
+        $map1 = new GenericMap([
             'foo' => 'bar',
             'bar' => 'baz',
             'qoo' => 'ooq',
         ]);
 
-        /** @var HashmapInterface<string> $map1 */
-        $map2 = new GenericHashmap([
+        /** @var MapInterface<string> $map1 */
+        $map2 = new GenericMap([
             'foo' => 'bar',
             'ooq' => 'qoo',
         ]);
@@ -258,15 +258,15 @@ final class GenericHashmapTest extends TestCase
 
     public function testAssocIntersectionReturnExpectedValues(): void
     {
-        /** @var HashmapInterface<string> $map1 */
-        $map1 = new GenericHashmap([
+        /** @var MapInterface<string> $map1 */
+        $map1 = new GenericMap([
             'foo' => 'bar',
             'bar' => 'baz',
             'qoo' => 'ooq',
         ]);
 
-        /** @var HashmapInterface<string> $map2 */
-        $map2 = new GenericHashmap([
+        /** @var MapInterface<string> $map2 */
+        $map2 = new GenericMap([
             'foo' => 'bar',
             'ooq' => 'qoo',
         ]);
@@ -278,15 +278,15 @@ final class GenericHashmapTest extends TestCase
 
     public function testAssocIntersectionReturnExpectedValuesWhenCustomComparatorWasProvided(): void
     {
-        /** @var HashmapInterface<string> $map1 */
-        $map1 = new GenericHashmap([
+        /** @var MapInterface<string> $map1 */
+        $map1 = new GenericMap([
             'foo' => 'bar',
             'bar' => 'baz',
             'qoo' => 'ooq',
         ]);
 
-        /** @var HashmapInterface<string> $map2 */
-        $map2 = new GenericHashmap([
+        /** @var MapInterface<string> $map2 */
+        $map2 = new GenericMap([
             'foo' => 'bar ',
             'ooq' => 'qoo',
         ]);
@@ -300,15 +300,15 @@ final class GenericHashmapTest extends TestCase
 
     public function testIntersectionWithKeysReturnExpectedValues(): void
     {
-        /** @var HashmapInterface<string> $map1 */
-        $map1 = new GenericHashmap([
+        /** @var MapInterface<string> $map1 */
+        $map1 = new GenericMap([
             'foo' => 'bar',
             'bar' => 'baz',
             'qoo' => 'ooq',
         ]);
 
-        /** @var HashmapInterface<string> $map2 */
-        $map2 = new GenericHashmap([
+        /** @var MapInterface<string> $map2 */
+        $map2 = new GenericMap([
             'foo' => 'bar',
             'ooq' => 'qoo',
         ]);
@@ -320,15 +320,15 @@ final class GenericHashmapTest extends TestCase
 
     public function testIntersectionWithKeysReturnExpectedValuesWhenCustomComparatorProvided(): void
     {
-        /** @var HashmapInterface<string> $map1 */
-        $map1 = new GenericHashmap([
+        /** @var MapInterface<string> $map1 */
+        $map1 = new GenericMap([
             'foo' => 'bar',
             'bar' => 'baz',
             'qoo' => 'ooq',
         ]);
 
-        /** @var HashmapInterface<string> $map2 */
-        $map2 = new GenericHashmap([
+        /** @var MapInterface<string> $map2 */
+        $map2 = new GenericMap([
             'foo' => 'bar',
             'ooq' => 'qoo',
         ]);
@@ -351,8 +351,8 @@ final class GenericHashmapTest extends TestCase
     public function testCanDiff(array $initial, array $other, array $expected, ?callable $comparator): void
     {
         /** @psalm-suppress PossiblyInvalidArgument */
-        $map = new GenericHashmap($initial);
-        $diff = $map->diff(new GenericHashmap($other), $comparator);
+        $map = new GenericMap($initial);
+        $diff = $map->diff(new GenericMap($other), $comparator);
         self::assertEquals($expected, $diff->toNativeArray());
     }
 
@@ -468,13 +468,13 @@ final class GenericHashmapTest extends TestCase
             return $a <=> $b;
         };
 
-        /** @var HashmapInterface<string> $map1 */
-        $map1 = new GenericHashmap([
+        /** @var MapInterface<string> $map1 */
+        $map1 = new GenericMap([
             'foo' => 'bar',
             'qoo' => 'ooq',
         ]);
 
-        $map2 = new GenericHashmap([
+        $map2 = new GenericMap([
             'qoo' => 'ooq',
         ]);
 

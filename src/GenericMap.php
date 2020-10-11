@@ -5,8 +5,8 @@ namespace Boesing\TypedArrays;
 
 /**
  * @template         TValue
- * @template-extends Hashmap<TValue>
+ * @template-extends Map<TValue>
  */
-final class GenericHashmap extends Hashmap
+final class GenericMap extends Map
 {
 }

@@ -113,7 +113,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         return $instance;
     }
 
-    public function toHashmap(callable $keyGenerator): HashmapInterface
+    public function toMap(callable $keyGenerator): MapInterface
     {
         $keys = array_map($keyGenerator, $this->data);
         Assert::allStringNotEmpty($keys);
@@ -130,7 +130,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
          */
         Assert::allStringNotEmpty(array_keys($combined));
 
-        return new GenericHashmap($combined);
+        return new GenericMap($combined);
     }
 
     public function remove($element): OrderedListInterface
@@ -165,8 +165,8 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
         $instance = clone $this;
 
-        /** @psalm-var HashmapInterface<TValue> $unified */
-        $unified = new GenericHashmap([]);
+        /** @psalm-var MapInterface<TValue> $unified */
+        $unified = new GenericMap([]);
 
         foreach ($instance->data as $value) {
             $identifier = $unificationIdentifierGenerator($value);
