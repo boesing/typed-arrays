@@ -25,8 +25,6 @@ interface MapInterface extends ArrayInterface
     public function sort(?callable $callback = null): MapInterface;
 
     /**
-     * @param MapInterface[]                         $stack
-     *
      * @psalm-param  list<MapInterface<TValue>> $stack
      *
      * @psalm-return MapInterface<TValue>

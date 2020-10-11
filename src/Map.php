@@ -75,7 +75,7 @@ abstract class Map extends Array_ implements MapInterface
     }
 
     /**
-     * @return callable(string $a,string $b):int
+     * @psalm-return callable(string $a,string $b):int
      */
     private function keyComparator(): callable
     {

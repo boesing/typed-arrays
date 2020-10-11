@@ -15,20 +15,16 @@ use IteratorAggregate;
 interface ArrayInterface extends IteratorAggregate, Countable
 {
     /**
-     * @param mixed $element
-     *
      * @psalm-param TValue $element
      */
     public function contains($element): bool;
 
     /**
-     * @return mixed|null
      * @psalm-return TValue|null
      */
     public function first();
 
     /**
-     * @return mixed|null
      * @psalm-return TValue|null
      */
     public function last();
@@ -36,7 +32,6 @@ interface ArrayInterface extends IteratorAggregate, Countable
     public function isEmpty(): bool;
 
     /**
-     * @return array<int|string,mixed>
      * @psalm-return array<TKey,TValue>
      */
     public function toNativeArray(): array;

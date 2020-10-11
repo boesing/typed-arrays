@@ -10,8 +10,6 @@ namespace Boesing\TypedArrays;
 interface OrderedListInterface extends ArrayInterface
 {
     /**
-     * @param mixed        $element
-     *
      * @psalm-param TValue $element
      * @psalm-return OrderedListInterface<TValue>
      * @psalm-immutable
@@ -19,7 +17,6 @@ interface OrderedListInterface extends ArrayInterface
     public function add($element): OrderedListInterface;
 
     /**
-     * @return mixed
      * @psalm-return TValue|null
      */
     public function at(int $position);
@@ -39,8 +36,6 @@ interface OrderedListInterface extends ArrayInterface
     public function sort(?callable $callback = null): OrderedListInterface;
 
     /**
-     * @param OrderedListInterface[]                    $stack
-     *
      * @psalm-param  list<OrderedListInterface<TValue>> $stack
      * @psalm-return OrderedListInterface<TValue>
      * @psalm-immutable
