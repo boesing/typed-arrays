@@ -2,7 +2,7 @@
     "name": "boesing/typed-arrays",
     "description": "Hashmap and Collection",
     "type": "library",
-    "license": "BSD-3-Clause",
+    "license": "MIT",
     "minimum-stability": "dev",
     "prefer-stable": true,
     "config": {
