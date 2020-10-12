@@ -133,7 +133,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         return new GenericMap($combined);
     }
 
-    public function remove($element): OrderedListInterface
+    public function removeElement($element): OrderedListInterface
     {
         /** @psalm-suppress MissingClosureParamType */
         return $this->filter(

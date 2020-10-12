@@ -78,7 +78,7 @@ interface OrderedListInterface extends ArrayInterface
      * @psalm-return OrderedListInterface<TValue>
      * @psalm-immutable
      */
-    public function remove($element): OrderedListInterface;
+    public function removeElement($element): OrderedListInterface;
 
     /**
      * @psalm-param (Closure(TValue $value):non-empty-string)|null $unificationIdentifierGenerator

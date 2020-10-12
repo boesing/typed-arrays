@@ -73,18 +73,20 @@ interface MapInterface extends ArrayInterface
     public function toOrderedList(?callable $sorter = null): OrderedListInterface;
 
     /**
+     * Should remove all exact matches of the provided element.
+     *
      * @psalm-param  TValue $element
      * @psalm-return MapInterface<TValue>
      * @psalm-immutable
      */
-    public function remove($element): MapInterface;
+    public function removeElement($element): MapInterface;
 
     /**
      * @psalm-param  string $key
      * @psalm-return MapInterface<TValue>
      * @psalm-immutable
      */
-    public function removeByKey($key): MapInterface;
+    public function removeElementByKey($key): MapInterface;
 
     /**
      * @psalm-return OrderedListInterface<string>

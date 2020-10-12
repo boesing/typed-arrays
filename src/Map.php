@@ -219,7 +219,7 @@ abstract class Map extends Array_ implements MapInterface
         return $instance;
     }
 
-    public function removeByKey($key): MapInterface
+    public function removeElementByKey($key): MapInterface
     {
         $instance = clone $this;
         unset($instance->data[$key]);
@@ -227,7 +227,7 @@ abstract class Map extends Array_ implements MapInterface
         return $instance;
     }
 
-    public function remove($element): MapInterface
+    public function removeElement($element): MapInterface
     {
         /** @psalm-suppress MissingClosureParamType */
         return $this->filter(static function ($value) use ($element): bool {

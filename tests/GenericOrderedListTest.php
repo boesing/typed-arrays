@@ -511,7 +511,7 @@ final class GenericOrderedListTest extends TestCase
             $object2,
         ]);
 
-        $list = $list->remove($object2);
+        $list = $list->removeElement($object2);
 
         self::assertEquals([
             $object1,

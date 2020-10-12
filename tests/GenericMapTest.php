@@ -140,7 +140,7 @@ final class GenericMapTest extends TestCase
 
         $map = new GenericMap(['first' => $element, 'second' => $element2]);
 
-        $map = $map->remove($element);
+        $map = $map->removeElement($element);
 
         self::assertEquals([
             'second' => $element2,
@@ -154,7 +154,7 @@ final class GenericMapTest extends TestCase
 
         $map = new GenericMap(['first' => $element, 'second' => $element2]);
 
-        $map = $map->removeByKey('first');
+        $map = $map->removeElementByKey('first');
 
         self::assertEquals([
             'second' => $element2,
