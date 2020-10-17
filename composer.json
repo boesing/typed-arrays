@@ -21,7 +21,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Boesing\\TypedArrays\\": "test/"
+            "Boesing\\TypedArrays\\": "tests/"
         }
     },
     "require-dev": {
