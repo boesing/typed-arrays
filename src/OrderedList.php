@@ -5,10 +5,13 @@ namespace Boesing\TypedArrays;
 
 use Webmozart\Assert\Assert;
 use function array_combine;
+use function array_fill;
 use function array_keys;
 use function array_map;
 use function array_merge;
+use function array_replace;
 use function array_values;
+use function is_callable;
 use function serialize;
 use function sort;
 use const SORT_NATURAL;
@@ -182,5 +185,49 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         $instance->data = $unified->toOrderedList()->toNativeArray();
 
         return $instance;
+    }
+
+    public function fill(int $startIndex, int $amount, $value): OrderedListInterface
+    {
+        Assert::greaterThanEq($startIndex, 0, 'Given $startIndex must be greater than or equal to %2$s. Got: %s');
+        Assert::greaterThanEq($amount, 1, 'Given $amount must be greater than or equal to %2$s. Got: %s');
+        Assert::lessThanEq(
+            $startIndex,
+            $this->count(),
+            'Give $startIndex must be less than or equal to %2$s to keep the list a continious list. Got: %s.'
+        );
+
+        $instance = clone $this;
+
+        /** @psalm-var list<TValue> $combined */
+        $combined = array_replace(
+            $this->data,
+            $this->createListFilledWithValues($startIndex, $amount, $value)
+        );
+
+        $instance->data = $combined;
+
+        return $instance;
+    }
+
+    /**
+     * @psalm-param TValue|Closure(int $index):TValue $value
+     *
+     * @psalm-return array<int,TValue>
+     */
+    private function createListFilledWithValues(int $start, int $amount, $value): array
+    {
+        if (!is_callable($value)) {
+            /** @psalm-var array<int,TValue> $list */
+            $list = array_fill($start, $amount, $value);
+            return $list;
+        }
+
+        $list = [];
+        for ($index = $start; $index <= $amount; $index++) {
+            $list[$index] = $value($index);
+        }
+
+        return $list;
     }
 }

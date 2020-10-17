@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Boesing\TypedArrays;
 
+use InvalidArgumentException;
+
 /**
  * @template         TValue
  * @template-extends ArrayInterface<int,TValue>
@@ -91,4 +93,12 @@ interface OrderedListInterface extends ArrayInterface
         ?callable $unificationIdentifierGenerator = null,
         ?callable $callback = null
     ): OrderedListInterface;
+
+    /**
+     * @psalm-param TValue|Closure(int $index):TValue $value
+     * @psalm-return OrderedListInterface<TValue>
+     * @psalm-immutable
+     * @throws InvalidArgumentException if start index does is not fitting in the current list state.
+     */
+    public function fill(int $startIndex, int $amount, $value): OrderedListInterface;
 }

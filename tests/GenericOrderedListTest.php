@@ -12,8 +12,10 @@ use Lcobucci\Clock\FrozenClock;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Webmozart\Assert\Assert;
+use function array_fill;
 use function chr;
 use function md5;
+use function mt_rand;
 use function spl_object_hash;
 use function strnatcmp;
 
@@ -700,5 +702,136 @@ final class GenericOrderedListTest extends TestCase
         $list->toMap(static function (int $value): string {
             return (string) $value;
         });
+    }
+
+    /**
+     * @template     TValue
+     * @psalm-param list<TValue> $initial
+     * @psalm-param TValue       $fillUp
+     * @dataProvider invalidStartIndices
+     */
+    public function testFillWillThrowExceptionWhenStartIndexIsInvalid(
+        int $startIndex,
+        array $initial,
+        $fillUp,
+        string $expectedExceptionMessage
+    ): void {
+        $list = new GenericOrderedList($initial);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage($expectedExceptionMessage);
+        $list->fill($startIndex, mt_rand(1, 10), $fillUp);
+    }
+
+    /**
+     * @template     TValue
+     * @psalm-param TValue $value
+     * @dataProvider scalarFillValues
+     */
+    public function testFillAppendsScalarValues(int $amount, $value): void
+    {
+        self::assertIsScalar($value);
+        /** @var OrderedListInterface<TValue> $list */
+        $list = new GenericOrderedList([]);
+        $list = $list->fill(0, $amount, $value);
+        self::assertEquals(array_fill(0, $amount, $value), $list->toNativeArray());
+    }
+
+    /**
+     * @template mixed
+     * @psalm-return Generator<string,array{0:int,1:list<mixed>,2:mixed,3:non-empty-string}>
+     */
+    public function invalidStartIndices(): Generator
+    {
+        yield 'negative' => [
+            -1,
+            [],
+            0,
+            'Given $startIndex must be greater than or equal to',
+        ];
+
+        yield 'non continues index' => [
+            1,
+            [],
+            0,
+            'to keep the list a continious list.',
+        ];
+
+        yield 'non continues index #2' => [
+            10,
+            [0, 1, 2,],
+            3,
+            'to keep the list a continious list.',
+        ];
+    }
+
+    /**
+     * @psalm-return Generator<string,array{0:int,1:mixed}>
+     */
+    public function scalarFillValues(): Generator
+    {
+        yield 'int' => [
+            1,
+            0,
+        ];
+
+        yield 'string' => [
+            99,
+            'foo',
+        ];
+
+        yield 'float' => [
+            10,
+            0.1,
+        ];
+
+        yield 'true' => [
+            8,
+            true,
+        ];
+
+        yield 'false' => [
+            50,
+            false,
+        ];
+    }
+
+    public function testFillUsesCallbackToGenerateValue(): void
+    {
+        $callback = static function (int $index): string {
+            return chr($index + 65);
+        };
+
+        /** @var OrderedListInterface<string> $list */
+        $abc = new GenericOrderedList([]);
+        $abc = $abc->fill(0, 25, $callback);
+
+        self::assertEquals([
+            'A',
+            'B',
+            'C',
+            'D',
+            'E',
+            'F',
+            'G',
+            'H',
+            'I',
+            'J',
+            'K',
+            'L',
+            'M',
+            'N',
+            'O',
+            'P',
+            'Q',
+            'R',
+            'S',
+            'T',
+            'U',
+            'V',
+            'W',
+            'X',
+            'Y',
+            'Z',
+        ], $abc->toNativeArray());
     }
 }
