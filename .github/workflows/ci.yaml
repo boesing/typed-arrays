@@ -3,10 +3,15 @@ on: [push, pull_request]
 jobs:
   run:
     runs-on: ${{ matrix.operating-system }}
+    continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
         operating-system: [ubuntu-latest, macos-latest]
         php-versions: ['7.3', '7.4', '8.0']
+        experimental: [false]
+        include:
+          - php: "8.0"
+            experimental: true
     name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
     steps:
       - name: Checkout
