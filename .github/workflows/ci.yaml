@@ -33,3 +33,6 @@ jobs:
 
       - name: Check codestyle
         run: vendor/bin/phpcs -s
+
+      - name: Check code with Psalm
+        run: vendor/bin/psalm --shepherd
