@@ -1,18 +1,23 @@
 {
     "name": "boesing/typed-arrays",
-    "description": "Hashmap and Collection",
     "type": "library",
+    "description": "Hashmap and Collection",
     "license": "MIT",
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "config": {
-        "preferred-install": "dist",
-        "sort-packages": true
-    },
     "require": {
         "php": "^7.3 || ~8.0.0",
         "thecodingmachine/safe": "^1.3",
         "webmozart/assert": "^1.9"
+    },
+    "require-dev": {
+        "doctrine/coding-standard": "^8.1",
+        "lcobucci/clock": "^1.2",
+        "phpunit/phpunit": "^9.2",
+        "psalm/plugin-phpunit": "^0.12.2",
+        "vimeo/psalm": "^3.16"
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true
     },
     "autoload": {
         "psr-4": {
@@ -24,10 +29,10 @@
             "Boesing\\TypedArrays\\": "tests/"
         }
     },
-    "require-dev": {
-        "lcobucci/clock": "^1.2",
-        "phpunit/phpunit": "^9.2",
-        "psalm/plugin-phpunit": "^0.12.2",
-        "vimeo/psalm": "^3.16"
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "scripts": {
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf"
     }
 }

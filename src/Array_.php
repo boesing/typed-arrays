@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Boesing\TypedArrays;
@@ -7,22 +8,25 @@ use ArrayIterator;
 use DateTimeInterface;
 use Traversable;
 use Webmozart\Assert\Assert;
+
+use function array_keys;
+use function count;
 use function end;
 use function in_array;
 use function is_object;
+use function reset;
 use function spl_object_id;
 
 /**
+ * @internal
+ *
  * @template            TKey of array-key
  * @template            TValue
  * @template-implements ArrayInterface<TKey,TValue>
- * @internal
  */
 abstract class Array_ implements ArrayInterface
 {
-    /**
-     * @psalm-var array<TKey,TValue>
-     */
+    /** @psalm-var array<TKey,TValue> */
     protected $data;
 
     /**
@@ -86,7 +90,7 @@ abstract class Array_ implements ArrayInterface
     protected function valueComparator(): callable
     {
         return static function ($a, $b): int {
-            if (!is_object($a) || !is_object($b)) {
+            if (! is_object($a) || ! is_object($b)) {
                 return $a <=> $b;
             }
 

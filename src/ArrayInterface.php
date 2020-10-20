@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Boesing\TypedArrays;
@@ -7,10 +8,11 @@ use Countable;
 use IteratorAggregate;
 
 /**
+ * @internal
+ *
  * @template         TKey of array-key
  * @template         TValue
  * @template-extends IteratorAggregate<TKey,TValue>
- * @internal
  */
 interface ArrayInterface extends IteratorAggregate, Countable
 {

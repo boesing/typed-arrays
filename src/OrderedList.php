@@ -1,19 +1,27 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Boesing\TypedArrays;
 
 use Webmozart\Assert\Assert;
+
 use function array_combine;
 use function array_fill;
+use function array_filter;
 use function array_keys;
 use function array_map;
 use function array_merge;
 use function array_replace;
+use function array_udiff;
+use function array_uintersect;
 use function array_values;
+use function hash;
 use function is_callable;
 use function serialize;
 use function sort;
+use function usort;
+
 use const SORT_NATURAL;
 
 /**
@@ -36,7 +44,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
     public function merge(...$stack): OrderedListInterface
     {
         $instance = clone $this;
-        $values = array_map(static function (OrderedListInterface $list): array {
+        $values   = array_map(static function (OrderedListInterface $list): array {
             return $list->toNativeArray();
         }, $stack);
 
@@ -54,7 +62,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
     public function add($element): OrderedListInterface
     {
-        $instance = clone $this;
+        $instance         = clone $this;
         $instance->data[] = $element;
 
         return $instance;
@@ -67,7 +75,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
     public function sort(?callable $callback = null): OrderedListInterface
     {
-        $data = $this->data;
+        $data     = $this->data;
         $instance = clone $this;
         if ($callback === null) {
             sort($data, SORT_NATURAL);
@@ -95,7 +103,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
             $valueComparator ?? $this->valueComparator()
         );
 
-        $instance = clone $this;
+        $instance       = clone $this;
         $instance->data = array_values(array_merge(
             $diff1,
             $diff2
@@ -106,7 +114,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
     public function intersect(OrderedListInterface $other, ?callable $valueComparator = null): OrderedListInterface
     {
-        $instance = clone $this;
+        $instance       = clone $this;
         $instance->data = array_values(array_uintersect(
             $instance->data,
             $other->toNativeArray(),
@@ -148,7 +156,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
     public function filter(callable $callback): OrderedListInterface
     {
-        $instance = clone $this;
+        $instance       = clone $this;
         $instance->data = array_values(
             array_filter($this->data, $callback)
         );
@@ -173,7 +181,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
         foreach ($instance->data as $value) {
             $identifier = $unificationIdentifierGenerator($value);
-            $unique = $unified->get($identifier) ?? $value;
+            $unique     = $unified->get($identifier) ?? $value;
 
             if ($callback) {
                 $unique = $callback($unique, $value);
@@ -212,14 +220,14 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
     /**
      * @psalm-param TValue|Closure(int $index):TValue $value
-     *
      * @psalm-return array<int,TValue>
      */
     private function createListFilledWithValues(int $start, int $amount, $value): array
     {
-        if (!is_callable($value)) {
+        if (! is_callable($value)) {
             /** @psalm-var array<int,TValue> $list */
             $list = array_fill($start, $amount, $value);
+
             return $list;
         }
 

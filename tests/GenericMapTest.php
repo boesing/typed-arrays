@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Boesing\TypedArrays;
@@ -10,6 +11,11 @@ use Generator;
 use Lcobucci\Clock\FrozenClock;
 use PHPUnit\Framework\TestCase;
 use stdClass;
+
+use function array_map;
+use function strlen;
+use function strnatcmp;
+use function trim;
 
 final class GenericMapTest extends TestCase
 {
@@ -24,9 +30,9 @@ final class GenericMapTest extends TestCase
         array $expected,
         array $stack
     ): void {
-        $map = new GenericMap($initial);
-        $merged = $map->merge(...
-            array_map(
+        $map    = new GenericMap($initial);
+        $merged = $map->merge(
+            ...array_map(
                 static function (array $map): MapInterface {
                     return new GenericMap($map);
                 },
@@ -43,30 +49,26 @@ final class GenericMapTest extends TestCase
     public function mergeStacks(): Generator
     {
         yield 'single' => [
-            [
-                'foo' => 'bar',
-            ],
+            ['foo' => 'bar'],
             [
                 'foo' => 'bar',
                 'baz' => 'bar',
             ],
             [
-                ['baz' => 'bar',],
+                ['baz' => 'bar'],
             ],
         ];
 
         yield 'multiple' => [
-            [
-                'foo' => 'bar',
-            ],
+            ['foo' => 'bar'],
             [
                 'foo' => 'bar',
                 'baz' => 'bar',
                 'qoo' => 'ooq',
             ],
             [
-                ['baz' => 'bar',],
-                ['baz' => 'bar', 'qoo' => 'ooq',],
+                ['baz' => 'bar'],
+                ['baz' => 'bar', 'qoo' => 'ooq'],
             ],
         ];
     }
@@ -128,37 +130,33 @@ final class GenericMapTest extends TestCase
 
     public function testKeysReturnExpectedValues(): void
     {
-        $map = new GenericMap(['foo' => 'bar', 'bar' => 'baz']);
+        $map  = new GenericMap(['foo' => 'bar', 'bar' => 'baz']);
         $keys = $map->keys();
         self::assertEquals(['foo', 'bar'], $keys->toNativeArray());
     }
 
     public function testCanRemoveElement(): void
     {
-        $element = new GenericObject(1);
+        $element  = new GenericObject(1);
         $element2 = new GenericObject(2);
 
         $map = new GenericMap(['first' => $element, 'second' => $element2]);
 
         $map = $map->removeElement($element);
 
-        self::assertEquals([
-            'second' => $element2,
-        ], $map->toNativeArray());
+        self::assertEquals(['second' => $element2], $map->toNativeArray());
     }
 
     public function testCanRemoveByKey(): void
     {
-        $element = new GenericObject(1);
+        $element  = new GenericObject(1);
         $element2 = new GenericObject(2);
 
         $map = new GenericMap(['first' => $element, 'second' => $element2]);
 
         $map = $map->removeElementByKey('first');
 
-        self::assertEquals([
-            'second' => $element2,
-        ], $map->toNativeArray());
+        self::assertEquals(['second' => $element2], $map->toNativeArray());
     }
 
     public function testDiffKeys(): void
@@ -196,7 +194,7 @@ final class GenericMapTest extends TestCase
      */
     public function testWillConvertToOrderedList(array $initial, array $expected, ?callable $sorter): void
     {
-        $map = new GenericMap($initial);
+        $map  = new GenericMap($initial);
         $list = $map->toOrderedList($sorter);
 
         self::assertEquals($expected, $list->toNativeArray());
@@ -232,7 +230,7 @@ final class GenericMapTest extends TestCase
             ],
             static function (int $a, int $b): int {
                 return $a <=> $b;
-            }
+            },
         ];
     }
 
@@ -245,15 +243,13 @@ final class GenericMapTest extends TestCase
             'qoo' => 'ooq',
         ]);
 
-        /** @var MapInterface<string> $map1 */
+        /** @var MapInterface<string> $map2 */
         $map2 = new GenericMap([
             'foo' => 'bar',
             'ooq' => 'qoo',
         ]);
 
-        self::assertEquals([
-            'foo' => 'bar',
-        ], $map1->intersect($map2)->toNativeArray());
+        self::assertEquals(['foo' => 'bar'], $map1->intersect($map2)->toNativeArray());
     }
 
     public function testAssocIntersectionReturnExpectedValues(): void
@@ -271,9 +267,7 @@ final class GenericMapTest extends TestCase
             'ooq' => 'qoo',
         ]);
 
-        self::assertEquals([
-            'foo' => 'bar',
-        ], $map1->intersectAssoc($map2)->toNativeArray());
+        self::assertEquals(['foo' => 'bar'], $map1->intersectAssoc($map2)->toNativeArray());
     }
 
     public function testAssocIntersectionReturnExpectedValuesWhenCustomComparatorWasProvided(): void
@@ -291,9 +285,7 @@ final class GenericMapTest extends TestCase
             'ooq' => 'qoo',
         ]);
 
-        self::assertEquals([
-            'foo' => 'bar',
-        ], $map1->intersectAssoc($map2, static function (string $a, string $b): int {
+        self::assertEquals(['foo' => 'bar'], $map1->intersectAssoc($map2, static function (string $a, string $b): int {
             return trim($a) <=> trim($b);
         })->toNativeArray());
     }
@@ -313,9 +305,7 @@ final class GenericMapTest extends TestCase
             'ooq' => 'qoo',
         ]);
 
-        self::assertEquals([
-            'foo' => 'bar',
-        ], $map1->intersectUsingKeys($map2)->toNativeArray());
+        self::assertEquals(['foo' => 'bar'], $map1->intersectUsingKeys($map2)->toNativeArray());
     }
 
     public function testIntersectionWithKeysReturnExpectedValuesWhenCustomComparatorProvided(): void
@@ -351,7 +341,7 @@ final class GenericMapTest extends TestCase
     public function testCanDiff(array $initial, array $other, array $expected, ?callable $comparator): void
     {
         /** @psalm-suppress PossiblyInvalidArgument */
-        $map = new GenericMap($initial);
+        $map  = new GenericMap($initial);
         $diff = $map->diff(new GenericMap($other), $comparator);
         self::assertEquals($expected, $diff->toNativeArray());
     }
@@ -370,6 +360,7 @@ final class GenericMapTest extends TestCase
     public function diffs(): Generator
     {
         $clock = new FrozenClock(new DateTimeImmutable());
+
         yield 'simple' => [
             [
                 'foo' => 'bar',
@@ -380,9 +371,7 @@ final class GenericMapTest extends TestCase
                 'foo' => 'bar',
                 'bar' => 'foo',
             ],
-            [
-                'baz' => 'qoo',
-            ],
+            ['baz' => 'qoo'],
             null,
         ];
 
@@ -412,12 +401,8 @@ final class GenericMapTest extends TestCase
                 'value1' => $value1,
                 'value2' => $value2,
             ],
-            [
-                'value1' => $value1,
-            ],
-            [
-                'value2' => $value2,
-            ],
+            ['value1' => $value1],
+            ['value2' => $value2],
             null,
         ];
 
@@ -425,16 +410,12 @@ final class GenericMapTest extends TestCase
         $object2 = new stdClass();
 
         yield 'object' => [
-            [
-                'object1' => $object1,
-            ],
+            ['object1' => $object1],
             [
                 'object1' => $object1,
                 'object2' => $object2,
             ],
-            [
-                'object2' => $object2,
-            ],
+            ['object2' => $object2],
             null,
         ];
 
@@ -446,12 +427,8 @@ final class GenericMapTest extends TestCase
                 'object1' => $object1,
                 'object2' => $object2,
             ],
-            [
-                'object2' => $object2,
-            ],
-            [
-                'object1' => $object1,
-            ],
+            ['object2' => $object2],
+            ['object1' => $object1],
             static function (object $a, object $b): int {
                 return $a->id <=> $b->id;
             },
@@ -474,12 +451,12 @@ final class GenericMapTest extends TestCase
             'qoo' => 'ooq',
         ]);
 
-        $map2 = new GenericMap([
-            'qoo' => 'ooq',
-        ]);
+        $map2 = new GenericMap(['qoo' => 'ooq']);
 
-        self::assertEquals([
-            'qoo' => 'ooq',
-        ], $map1->intersectUserAssoc($map2, $valueComparator, $keyComparator)->toNativeArray());
+        self::assertEquals(
+            ['qoo' => 'ooq'],
+            $map1->intersectUserAssoc($map2, $valueComparator, $keyComparator)
+                ->toNativeArray()
+        );
     }
 }
