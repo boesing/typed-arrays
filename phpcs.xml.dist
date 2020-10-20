@@ -23,5 +23,9 @@
         <!-- Ignore -->
         <exclude name="Squiz.Arrays.ArrayDeclaration.ValueNoNewline"/>
         <exclude name="SlevomatCodingStandard.Classes.SuperfluousInterfaceNaming.SuperfluousSuffix"/>
+        <!-- Can be removed with dropping support for PHP 7.3 -->
+        <exclude name="SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint"/>
+        <!-- Can be removed with dropping support for PHP 7.4 -->
+        <exclude name="SlevomatCodingStandard..ControlStructures.RequireNullCoalesceEqualOperator"/>
     </rule>
 </ruleset>
