@@ -26,6 +26,6 @@
         <!-- Can be removed with dropping support for PHP 7.3 -->
         <exclude name="SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint"/>
         <!-- Can be removed with dropping support for PHP 7.4 -->
-        <exclude name="SlevomatCodingStandard..ControlStructures.RequireNullCoalesceEqualOperator"/>
+        <exclude name="SlevomatCodingStandard.ControlStructures.RequireNullCoalesceEqualOperator.RequiredNullCoalesceEqualOperator"/>
     </rule>
 </ruleset>
