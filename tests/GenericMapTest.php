@@ -243,7 +243,7 @@ final class GenericMapTest extends TestCase
             'qoo' => 'ooq',
         ]);
 
-        /** @var MapInterface<string> $map1 */
+        /** @var MapInterface<string> $map2 */
         $map2 = new GenericMap([
             'foo' => 'bar',
             'ooq' => 'qoo',
@@ -453,6 +453,10 @@ final class GenericMapTest extends TestCase
 
         $map2 = new GenericMap(['qoo' => 'ooq']);
 
-        self::assertEquals(['qoo' => 'ooq'], $map1->intersectUserAssoc($map2, $valueComparator, $keyComparator)->toNativeArray());
+        self::assertEquals(
+            ['qoo' => 'ooq'],
+            $map1->intersectUserAssoc($map2, $valueComparator, $keyComparator)
+                ->toNativeArray()
+        );
     }
 }
