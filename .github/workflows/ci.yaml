@@ -32,4 +32,4 @@ jobs:
         run: vendor/bin/phpunit
 
       - name: Check codestyle
-        run: vendor/bin/phpcs
+        run: vendor/bin/phpcs -s
