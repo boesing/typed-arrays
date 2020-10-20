@@ -30,3 +30,6 @@ jobs:
 
       - name: Test with phpunit
         run: vendor/bin/phpunit
+
+      - name: Check codestyle
+        run: vendor/bin/phpcs

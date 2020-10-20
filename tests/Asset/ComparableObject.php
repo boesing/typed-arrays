@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Boesing\TypedArrays\Asset;
@@ -7,9 +8,7 @@ use Boesing\TypedArrays\ComparatorInterface;
 
 final class ComparableObject implements ComparatorInterface
 {
-    /**
-     * @var int
-     */
+    /** @var int */
     private $id;
 
     public function __construct(int $id)

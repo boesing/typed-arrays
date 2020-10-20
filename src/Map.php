@@ -1,15 +1,27 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Boesing\TypedArrays;
 
 use Webmozart\Assert\Assert;
+
 use function array_diff_ukey;
+use function array_filter;
 use function array_intersect_ukey;
 use function array_keys;
+use function array_map;
+use function array_merge;
+use function array_udiff;
 use function array_uintersect;
 use function array_uintersect_uassoc;
 use function array_values;
+use function asort;
+use function uasort;
+use function usort;
+
+use const ARRAY_FILTER_USE_BOTH;
+use const SORT_NATURAL;
 
 /**
  * @template            TValue
@@ -18,7 +30,6 @@ use function array_values;
  */
 abstract class Map extends Array_ implements MapInterface
 {
-
     /**
      * @psalm-param array<string,TValue> $data
      */
@@ -40,7 +51,7 @@ abstract class Map extends Array_ implements MapInterface
 
     public function sort(?callable $callback = null): MapInterface
     {
-        $data = $this->data;
+        $data     = $this->data;
         $instance = clone $this;
         if ($callback === null) {
             asort($data, SORT_NATURAL);
@@ -57,13 +68,13 @@ abstract class Map extends Array_ implements MapInterface
 
     public function diffKeys(MapInterface $other, ?callable $keyComparator = null): MapInterface
     {
-        $instance = clone $this;
+        $instance  = clone $this;
         $otherData = $other->toNativeArray();
 
         /** @psalm-var array<string,TValue> $diff1 */
         $diff1 = array_diff_ukey($this->data, $otherData, $keyComparator ?? $this->keyComparator());
         /** @psalm-var array<string,TValue> $diff2 */
-        $diff2 = array_diff_ukey($otherData, $this->data, $keyComparator ?? $this->keyComparator());
+        $diff2  = array_diff_ukey($otherData, $this->data, $keyComparator ?? $this->keyComparator());
         $merged = array_merge(
             $diff1,
             $diff2
@@ -98,7 +109,7 @@ abstract class Map extends Array_ implements MapInterface
 
     public function filter(callable $callback): MapInterface
     {
-        $instance = clone $this;
+        $instance       = clone $this;
         $instance->data = array_filter($this->data, $callback, ARRAY_FILTER_USE_BOTH);
 
         return $instance;
@@ -113,7 +124,7 @@ abstract class Map extends Array_ implements MapInterface
 
     public function put($key, $value): MapInterface
     {
-        $instance = clone $this;
+        $instance             = clone $this;
         $instance->data[$key] = $value;
 
         return $instance;
@@ -126,7 +137,7 @@ abstract class Map extends Array_ implements MapInterface
 
     public function intersect(MapInterface $other, ?callable $valueComparator = null): MapInterface
     {
-        $instance = clone $this;
+        $instance       = clone $this;
         $instance->data = $this->intersection($other, $valueComparator, null);
 
         return $instance;
@@ -142,8 +153,12 @@ abstract class Map extends Array_ implements MapInterface
     {
         if ($valueComparator && $keyComparator) {
             /** @psalm-var array<string,TValue> $intersection */
-            $intersection = array_uintersect_uassoc($this->data, $other->toNativeArray(), $valueComparator,
-                $keyComparator);
+            $intersection = array_uintersect_uassoc(
+                $this->data,
+                $other->toNativeArray(),
+                $valueComparator,
+                $keyComparator
+            );
 
             return $intersection;
         }
@@ -155,7 +170,7 @@ abstract class Map extends Array_ implements MapInterface
             return $intersection;
         }
 
-        if (!$valueComparator) {
+        if (! $valueComparator) {
             $valueComparator = $this->valueComparator();
         }
 
@@ -167,7 +182,7 @@ abstract class Map extends Array_ implements MapInterface
 
     public function intersectAssoc(MapInterface $other, ?callable $valueComparator = null): MapInterface
     {
-        $instance = clone $this;
+        $instance       = clone $this;
         $instance->data = $this->intersection($other, $valueComparator, null);
 
         return $instance;
@@ -175,7 +190,7 @@ abstract class Map extends Array_ implements MapInterface
 
     public function intersectUsingKeys(MapInterface $other, ?callable $keyComparator = null): MapInterface
     {
-        $instance = clone $this;
+        $instance       = clone $this;
         $instance->data = $this->intersection($other, null, $keyComparator);
 
         return $instance;
@@ -186,7 +201,7 @@ abstract class Map extends Array_ implements MapInterface
         ?callable $valueComparator = null,
         ?callable $keyComparator = null
     ): MapInterface {
-        $instance = clone $this;
+        $instance       = clone $this;
         $instance->data = $this->intersection($other, $valueComparator, $keyComparator);
 
         return $instance;
@@ -209,7 +224,7 @@ abstract class Map extends Array_ implements MapInterface
         );
 
         $instance = clone $this;
-        $merged = array_merge(
+        $merged   = array_merge(
             $diff1,
             $diff2
         );

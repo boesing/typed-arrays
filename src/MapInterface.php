@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Boesing\TypedArrays;
@@ -9,7 +10,6 @@ namespace Boesing\TypedArrays;
  */
 interface MapInterface extends ArrayInterface
 {
-
     /**
      * @psalm-param  Closure(TValue $value,string $key):bool $callback
      * @psalm-return MapInterface<TValue>
@@ -26,7 +26,6 @@ interface MapInterface extends ArrayInterface
 
     /**
      * @psalm-param  list<MapInterface<TValue>> $stack
-     *
      * @psalm-return MapInterface<TValue>
      * @psalm-immutable
      */
@@ -43,7 +42,6 @@ interface MapInterface extends ArrayInterface
     /**
      * @template     TNewValue
      * @psalm-param  Closure(TValue $a):TNewValue $callback
-     *
      * @psalm-return MapInterface<TNewValue>
      * @psalm-immutable
      */

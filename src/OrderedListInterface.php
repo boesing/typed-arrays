@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Boesing\TypedArrays;
@@ -47,7 +48,6 @@ interface OrderedListInterface extends ArrayInterface
     /**
      * @template     TNewValue
      * @psalm-param  Closure(TValue $a):TNewValue $callback
-     *
      * @psalm-return OrderedListInterface<TNewValue>
      * @psalm-immutable
      */
@@ -85,7 +85,6 @@ interface OrderedListInterface extends ArrayInterface
     /**
      * @psalm-param (Closure(TValue $value):non-empty-string)|null $unificationIdentifierGenerator
      * @psalm-param (Closure(TValue $value,TValue $other):TValue)|null  $callback
-     *
      * @psalm-return OrderedListInterface<TValue>
      * @psalm-immutable
      */
@@ -95,10 +94,11 @@ interface OrderedListInterface extends ArrayInterface
     ): OrderedListInterface;
 
     /**
+     * @throws InvalidArgumentException if start index does is not fitting in the current list state.
+     *
      * @psalm-param TValue|Closure(int $index):TValue $value
      * @psalm-return OrderedListInterface<TValue>
      * @psalm-immutable
-     * @throws InvalidArgumentException if start index does is not fitting in the current list state.
      */
     public function fill(int $startIndex, int $amount, $value): OrderedListInterface;
 }

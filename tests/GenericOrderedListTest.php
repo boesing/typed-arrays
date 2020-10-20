@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Boesing\TypedArrays;
@@ -12,7 +13,9 @@ use Lcobucci\Clock\FrozenClock;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Webmozart\Assert\Assert;
+
 use function array_fill;
+use function array_map;
 use function chr;
 use function md5;
 use function mt_rand;
@@ -21,7 +24,6 @@ use function strnatcmp;
 
 final class GenericOrderedListTest extends TestCase
 {
-
     /**
      * @psalm-param  list<mixed> $values
      * @psalm-param  (Closure(mixed $a,mixed $b):int)|null $callback
@@ -51,8 +53,8 @@ final class GenericOrderedListTest extends TestCase
     ): void {
         $list = new GenericOrderedList($initial);
 
-        $merged = $list->merge(...
-            array_map(
+        $merged = $list->merge(
+            ...array_map(
                 static function (array $list): OrderedListInterface {
                     return new GenericOrderedList($list);
                 },
@@ -117,7 +119,7 @@ final class GenericOrderedListTest extends TestCase
                 'foo',
             ],
             [
-                ['baz', 'foo',],
+                ['baz', 'foo'],
             ],
         ];
 
@@ -135,8 +137,8 @@ final class GenericOrderedListTest extends TestCase
                 'foo',
             ],
             [
-                ['baz', 'foo',],
-                ['baz', 'foo',],
+                ['baz', 'foo'],
+                ['baz', 'foo'],
             ],
         ];
     }
@@ -187,9 +189,7 @@ final class GenericOrderedListTest extends TestCase
 
     public function testCanReceiveSpecificItem(): void
     {
-        $list = new GenericOrderedList([
-            'foo',
-        ]);
+        $list = new GenericOrderedList(['foo']);
 
         self::assertEquals(
             'foo',
@@ -199,8 +199,7 @@ final class GenericOrderedListTest extends TestCase
 
     public function testReturnsNullWhenSpecificItemNotFound(): void
     {
-        $list = new GenericOrderedList([
-        ]);
+        $list = new GenericOrderedList([]);
 
         self::assertNull($list->at(0));
     }
@@ -235,6 +234,7 @@ final class GenericOrderedListTest extends TestCase
     public function diffs(): Generator
     {
         $clock = new FrozenClock(new DateTimeImmutable());
+
         yield 'simple' => [
             [
                 'foo',
@@ -245,9 +245,7 @@ final class GenericOrderedListTest extends TestCase
                 'foo',
                 'bar',
             ],
-            [
-                'baz',
-            ],
+            ['baz'],
             null,
         ];
 
@@ -277,12 +275,8 @@ final class GenericOrderedListTest extends TestCase
                 $value1,
                 $value2,
             ],
-            [
-                $value1,
-            ],
-            [
-                $value2,
-            ],
+            [$value1],
+            [$value2],
             null,
         ];
 
@@ -290,16 +284,12 @@ final class GenericOrderedListTest extends TestCase
         $object2 = new stdClass();
 
         yield 'object' => [
-            [
-                $object1,
-            ],
+            [$object1],
             [
                 $object1,
                 $object2,
             ],
-            [
-                $object2,
-            ],
+            [$object2],
             null,
         ];
 
@@ -311,12 +301,8 @@ final class GenericOrderedListTest extends TestCase
                 $object1,
                 $object2,
             ],
-            [
-                $object2,
-            ],
-            [
-                $object1,
-            ],
+            [$object2],
+            [$object1],
             static function (object $a, object $b): int {
                 return $a->id <=> $b->id;
             },
@@ -361,16 +347,14 @@ final class GenericOrderedListTest extends TestCase
                 'bar',
                 'baz',
             ],
-            [
-                'bar',
-            ],
+            ['bar'],
             null,
         ];
 
         yield 'datetime' => [
             [
-                $now = $clock->now(),
-                $tenSeconds = $clock->now()->modify('+10 seconds'),
+                $now           = $clock->now(),
+                $tenSeconds    = $clock->now()->modify('+10 seconds'),
                 $twentySeconds = $clock->now()->modify('+20 seconds'),
             ],
             [
@@ -395,12 +379,8 @@ final class GenericOrderedListTest extends TestCase
                 $value1,
                 $value2,
             ],
-            [
-                $value1,
-            ],
-            [
-                $value1,
-            ],
+            [$value1],
+            [$value1],
             null,
         ];
 
@@ -408,16 +388,12 @@ final class GenericOrderedListTest extends TestCase
         $object2 = new stdClass();
 
         yield 'object' => [
-            [
-                $object1,
-            ],
+            [$object1],
             [
                 $object1,
                 $object2,
             ],
-            [
-                $object1,
-            ],
+            [$object1],
             null,
         ];
 
@@ -429,12 +405,8 @@ final class GenericOrderedListTest extends TestCase
                 $object1,
                 $object2,
             ],
-            [
-                $object2,
-            ],
-            [
-                $object2,
-            ],
+            [$object2],
+            [$object2],
             static function (object $a, object $b): int {
                 return $a->id <=> $b->id;
             },
@@ -498,9 +470,7 @@ final class GenericOrderedListTest extends TestCase
             return $object !== $object2;
         });
 
-        self::assertEquals([
-            $object1,
-        ], $filtered->toNativeArray());
+        self::assertEquals([$object1], $filtered->toNativeArray());
     }
 
     public function testCanRemove(): void
@@ -515,9 +485,7 @@ final class GenericOrderedListTest extends TestCase
 
         $list = $list->removeElement($object2);
 
-        self::assertEquals([
-            $object1,
-        ], $list->toNativeArray());
+        self::assertEquals([$object1], $list->toNativeArray());
     }
 
     /**
@@ -541,7 +509,7 @@ final class GenericOrderedListTest extends TestCase
 
     public function testUsesCallbackOnDeduplication(): void
     {
-        $list = new GenericOrderedList([1, 2, 3, 1]);
+        $list           = new GenericOrderedList([1, 2, 3, 1]);
         $callbackCalled = false;
 
         /** @psalm-suppress InvalidArgument */
@@ -562,9 +530,7 @@ final class GenericOrderedListTest extends TestCase
                 1,
                 1,
             ],
-            [
-                1,
-            ],
+            [1],
             null,
         ];
 
@@ -594,9 +560,10 @@ final class GenericOrderedListTest extends TestCase
             null,
         ];
 
-        $object1 = new GenericObject(1);
-        $object2 = new GenericObject(2);
+        $object1            = new GenericObject(1);
+        $object2            = new GenericObject(2);
         $object3WithIdFrom1 = new GenericObject(1);
+
         yield 'objects' => [
             [
                 $object1,
@@ -658,7 +625,7 @@ final class GenericOrderedListTest extends TestCase
     {
         $object1 = new GenericObject(1);
         $object2 = new GenericObject(2);
-        $list = new GenericOrderedList([$object1, $object2]);
+        $list    = new GenericOrderedList([$object1, $object2]);
         self::assertEquals($object1, $list->first());
         self::assertEquals($object2, $list->last());
     }
@@ -680,7 +647,7 @@ final class GenericOrderedListTest extends TestCase
     public function testIteratorContainsExpectedData(): void
     {
         /** @var OrderedListInterface<string> $list */
-        $list = new GenericOrderedList(['1 ', '2']);
+        $list     = new GenericOrderedList(['1 ', '2']);
         $expected = 0;
         foreach ($list as $integer => $string) {
             self::assertEquals($expected++, $integer);
@@ -758,7 +725,7 @@ final class GenericOrderedListTest extends TestCase
 
         yield 'non continues index #2' => [
             10,
-            [0, 1, 2,],
+            [0, 1, 2],
             3,
             'to keep the list a continious list.',
         ];
@@ -801,7 +768,7 @@ final class GenericOrderedListTest extends TestCase
             return chr($index + 65);
         };
 
-        /** @var OrderedListInterface<string> $list */
+        /** @var OrderedListInterface<string> $abc */
         $abc = new GenericOrderedList([]);
         $abc = $abc->fill(0, 25, $callback);
 
