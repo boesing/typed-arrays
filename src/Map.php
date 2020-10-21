@@ -139,10 +139,10 @@ abstract class Map extends Array_ implements MapInterface
     /**
      * @psalm-mutation-free
      */
-    public function get($key)
+    public function get(string $key)
     {
-        if (! array_key_exists($key, $this->data)) {
-            throw new OutOfBoundsException(sprintf('There is no value stored for provided key: %s', (string) $key));
+        if (! $this->has($key)) {
+            throw new OutOfBoundsException(sprintf('There is no value stored for provided key: %s', $key));
         }
 
         return $this->data[$key];
@@ -266,5 +266,13 @@ abstract class Map extends Array_ implements MapInterface
     public function map(callable $callback): MapInterface
     {
         return new GenericMap(array_map($callback, $this->data));
+    }
+
+    /**
+     * @psalm-mutation-free
+     */
+    public function has(string $key): bool
+    {
+        return array_key_exists($key, $this->data);
     }
 }

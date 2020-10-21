@@ -92,12 +92,11 @@ interface MapInterface extends ArrayInterface
     public function put($key, $value): MapInterface;
 
     /**
-     * @psalm-param string $key
      * @psalm-return TValue
      * @throws OutOfBoundsException if key does not exist.
      * @psalm-mutation-free
      */
-    public function get($key);
+    public function get(string $key);
 
     /**
      * @psalm-param MapInterface<TValue> $other
@@ -124,4 +123,9 @@ interface MapInterface extends ArrayInterface
         ?callable $valueComparator = null,
         ?callable $keyComparator = null
     ): MapInterface;
+
+    /**
+     * @psalm-mutation-free
+     */
+    public function has(string $key): bool;
 }
