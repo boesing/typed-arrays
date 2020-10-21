@@ -872,12 +872,16 @@ final class GenericOrderedListTest extends TestCase
     {
         yield 'empty list' => [
             [],
-            static function (): bool {return true;},
+            static function (): bool {
+                return true;
+            },
         ];
 
         yield 'non-empty list but finding impossible' => [
             [1, 2, 3],
-            static function (): bool {return false;},
+            static function (): bool {
+                return false;
+            },
         ];
     }
 
