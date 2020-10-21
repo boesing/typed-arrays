@@ -10,6 +10,7 @@ use DateTimeImmutable;
 use Generator;
 use InvalidArgumentException;
 use Lcobucci\Clock\FrozenClock;
+use OutOfBoundsException;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Webmozart\Assert\Assert;
@@ -849,5 +850,55 @@ final class GenericOrderedListTest extends TestCase
         $sliced   = $instance->slice(-2, 1);
 
         self::assertEquals([2], $sliced->toNativeArray());
+    }
+
+    /**
+     * @template TValue
+     * @psalm-param list<TValue>    $initial
+     * @psalm-param Closure(TValue $value):bool $callback
+     * @dataProvider findOutOfBoundExceptions
+     */
+    public function testFindThrowsOutOfBoundsExceptionWhenValueNotFound(array $initial, callable $callback): void
+    {
+        $instance = new GenericOrderedList($initial);
+        $this->expectException(OutOfBoundsException::class);
+        $instance->find($callback);
+    }
+
+    /**
+     * @psalm-return Generator<string,array{0:list<mixed>,1:(Closure(mixed $value):bool)}>
+     */
+    public function findOutOfBoundExceptions(): Generator
+    {
+        yield 'empty list' => [
+            [],
+            static function (): bool {
+                return true;
+            },
+        ];
+
+        yield 'non-empty list but finding impossible' => [
+            [1, 2, 3],
+            static function (): bool {
+                return false;
+            },
+        ];
+    }
+
+    public function testFindWillLocateFirstMatch(): void
+    {
+        $list = new GenericOrderedList([
+            ['id' => 1, 'position' => 1],
+            ['id' => 1, 'position' => 2],
+        ]);
+
+        $value = $list->find(static function (array $value) {
+            return $value['id'] === 1;
+        });
+
+        self::assertEquals([
+            'id' => 1,
+            'position' => 1,
+        ], $value);
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Boesing\TypedArrays;
 
 use InvalidArgumentException;
+use OutOfBoundsException;
 
 /**
  * @template         TValue
@@ -98,4 +99,12 @@ interface OrderedListInterface extends ArrayInterface
      * @psalm-mutation-free
      */
     public function slice(int $offset, ?int $length = null): OrderedListInterface;
+
+    /**
+     * @psalm-param Closure(TValue $value):bool $callback
+     * @psalm-return TValue
+     * @psalm-mutation-free
+     * @throws OutOfBoundsException if value could not be found with provided callback.
+     */
+    public function find(callable $callback);
 }
