@@ -13,6 +13,7 @@ use function array_keys;
 use function array_map;
 use function array_merge;
 use function array_replace;
+use function array_slice;
 use function array_udiff;
 use function array_uintersect;
 use function array_values;
@@ -237,5 +238,16 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         }
 
         return $list;
+    }
+
+    /**
+     * @psalm-mutation-free
+     */
+    public function slice(int $offset, ?int $length = null): OrderedListInterface
+    {
+        $instance       = clone $this;
+        $instance->data = array_slice($this->data, $offset, $length, false);
+
+        return $instance;
     }
 }
