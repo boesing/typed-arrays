@@ -467,4 +467,23 @@ final class GenericMapTest extends TestCase
         $this->expectException(OutOfBoundsException::class);
         $map->get('foo');
     }
+
+    public function testHasDetectsExistingKey(): void
+    {
+        $map = new GenericMap(['foo' => 'bar']);
+
+        self::assertTrue($map->has('foo'));
+    }
+
+    public function testHasReturnsFalseOnEmptyMap(): void
+    {
+        $map = new GenericMap([]);
+        self::assertFalse($map->has('foo'));
+    }
+
+    public function testHasReturnsFalseForDueToCaseSensitivity(): void
+    {
+        $map = new GenericMap(['foo' => 'bar']);
+        self::assertFalse($map->has('Foo'));
+    }
 }
