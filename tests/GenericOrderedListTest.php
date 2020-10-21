@@ -804,16 +804,16 @@ final class GenericOrderedListTest extends TestCase
 
     public function testSliceIsImmutable(): void
     {
-        $instance = new GenericOrderedList([]);
+        $instance    = new GenericOrderedList([]);
         $newInstance = $instance->slice(0);
 
-        self::assertNotEquals($instance, $newInstance);
+        self::assertNotSame($instance, $newInstance);
     }
 
     public function testSliceCanHandlePositiveOffset(): void
     {
         $instance = new GenericOrderedList([0, 1, 2, 3]);
-        $sliced = $instance->slice(2);
+        $sliced   = $instance->slice(2);
 
         self::assertEquals([
             2,
@@ -824,7 +824,7 @@ final class GenericOrderedListTest extends TestCase
     public function testSliceCanHandleNegativeOffset(): void
     {
         $instance = new GenericOrderedList([0, 1, 2, 3]);
-        $sliced = $instance->slice(-2);
+        $sliced   = $instance->slice(-2);
 
         self::assertEquals([
             2,
@@ -835,7 +835,7 @@ final class GenericOrderedListTest extends TestCase
     public function testSliceCanLimitResult(): void
     {
         $instance = new GenericOrderedList([0, 1, 2, 3]);
-        $sliced = $instance->slice(1, 2);
+        $sliced   = $instance->slice(1, 2);
 
         self::assertEquals([
             1,
@@ -846,10 +846,8 @@ final class GenericOrderedListTest extends TestCase
     public function testSliceCanLimitResultForNegativeOffset(): void
     {
         $instance = new GenericOrderedList([0, 1, 2, 3]);
-        $sliced = $instance->slice(-2, 1);
+        $sliced   = $instance->slice(-2, 1);
 
-        self::assertEquals([
-            2,
-        ], $sliced->toNativeArray());
+        self::assertEquals([2], $sliced->toNativeArray());
     }
 }
