@@ -46,11 +46,17 @@ abstract class Array_ implements ArrayInterface
         return new ArrayIterator($this->data);
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function contains($element): bool
     {
         return in_array($element, $this->data, true);
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function first()
     {
         if ($this->data === []) {
@@ -60,6 +66,9 @@ abstract class Array_ implements ArrayInterface
         return reset($this->data);
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function last()
     {
         if ($this->data === []) {
@@ -69,16 +78,25 @@ abstract class Array_ implements ArrayInterface
         return end($this->data);
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function isEmpty(): bool
     {
         return $this->count() === 0;
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function count(): int
     {
         return count($this->data);
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function toNativeArray(): array
     {
         return $this->data;
