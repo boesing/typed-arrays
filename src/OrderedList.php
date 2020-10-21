@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Boesing\TypedArrays;
 
+use Closure;
+use OutOfBoundsException;
 use Webmozart\Assert\Assert;
 
 use function array_combine;
@@ -252,5 +254,19 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         $instance->data = array_slice($this->data, $offset, $length, false);
 
         return $instance;
+    }
+
+    /**
+     * @psalm-mutation-free
+     */
+    public function find(callable $callback)
+    {
+        foreach ($this->data as $value) {
+            if ($callback($value)) {
+                return $value;
+            }
+        }
+
+        throw new OutOfBoundsException('Could not find value with provided callback.');
     }
 }
