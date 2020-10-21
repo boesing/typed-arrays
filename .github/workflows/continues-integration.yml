@@ -8,13 +8,13 @@ on:
 jobs:
 
   coding-standard:
-    fail-fast: true
 
     name: "Coding Standard"
 
     runs-on: "${{ matrix.operating-system }}"
 
     strategy:
+      fail-fast: true
       matrix:
         operating-system: ['ubuntu-latest']
         php-version: ['7.4']
@@ -77,7 +77,7 @@ jobs:
         experimental: [false]
         include:
           - php: "8.0"
-            composer-options: "--ignore-platform-reqs"
+            composer-options: "--ignore-platform-req=php"
 
     steps:
       - name: Checkout
@@ -92,7 +92,7 @@ jobs:
           update: true
 
       - name: Install dependencies
-        run: composer install --no-progress --prefer-dist --optimize-autoloader
+        run: composer install --no-progress --prefer-dist --optimize-autoloader ${{ matrix.composer-options }}
 
       - name: Execute tests
         run: vendor/bin/phpunit --colors=always --coverage-clover=build/coverage-clover.xml --coverage-xml=build/coverage-xml --log-junit build/coverage-junit.xml --coverage-text
