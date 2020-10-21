@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Boesing\TypedArrays;
 
+use OutOfBoundsException;
+
 /**
  * @template         TValue
  * @template-extends ArrayInterface<string,TValue>
@@ -91,7 +93,8 @@ interface MapInterface extends ArrayInterface
 
     /**
      * @psalm-param string $key
-     * @psalm-return TValue|null
+     * @psalm-return TValue
+     * @throws OutOfBoundsException if key does not exist.
      * @psalm-mutation-free
      */
     public function get($key);

@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Boesing\TypedArrays;
 
+use OutOfBoundsException;
 use Webmozart\Assert\Assert;
 
 use function array_diff_ukey;
 use function array_filter;
 use function array_intersect_ukey;
+use function array_key_exists;
 use function array_keys;
 use function array_map;
 use function array_merge;
@@ -17,6 +19,7 @@ use function array_uintersect;
 use function array_uintersect_uassoc;
 use function array_values;
 use function asort;
+use function sprintf;
 use function uasort;
 use function usort;
 
@@ -138,7 +141,11 @@ abstract class Map extends Array_ implements MapInterface
      */
     public function get($key)
     {
-        return $this->data[$key] ?? null;
+        if (! array_key_exists($key, $this->data)) {
+            throw new OutOfBoundsException(sprintf('There is no value stored for provided key: %s', (string) $key));
+        }
+
+        return $this->data[$key];
     }
 
     public function intersect(MapInterface $other, ?callable $valueComparator = null): MapInterface

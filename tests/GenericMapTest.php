@@ -9,6 +9,7 @@ use Boesing\TypedArrays\Asset\GenericObject;
 use DateTimeImmutable;
 use Generator;
 use Lcobucci\Clock\FrozenClock;
+use OutOfBoundsException;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -458,5 +459,12 @@ final class GenericMapTest extends TestCase
             $map1->intersectUserAssoc($map2, $valueComparator, $keyComparator)
                 ->toNativeArray()
         );
+    }
+
+    public function testGetThrowsOutOfBoundsExceptionWhenKeyDoesNotExist(): void
+    {
+        $map = new GenericMap([]);
+        $this->expectException(OutOfBoundsException::class);
+        $map->get('foo');
     }
 }
