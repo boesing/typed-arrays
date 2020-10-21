@@ -115,6 +115,9 @@ abstract class Map extends Array_ implements MapInterface
         return $instance;
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function keys(): OrderedListInterface
     {
         $keys = array_keys($this->data);
@@ -130,6 +133,9 @@ abstract class Map extends Array_ implements MapInterface
         return $instance;
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function get($key)
     {
         return $this->data[$key] ?? null;

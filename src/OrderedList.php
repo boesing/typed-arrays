@@ -68,6 +68,9 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         return $instance;
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function at(int $position)
     {
         return $this->data[$position] ?? null;
