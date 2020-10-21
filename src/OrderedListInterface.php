@@ -101,4 +101,10 @@ interface OrderedListInterface extends ArrayInterface
      * @psalm-immutable
      */
     public function fill(int $startIndex, int $amount, $value): OrderedListInterface;
+
+    /**
+     * @psalm-return OrderedListInterface<TValue>
+     * @psalm-mutation-free
+     */
+    public function slice(int $offset, ?int $length = null): OrderedListInterface;
 }
