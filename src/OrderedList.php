@@ -11,6 +11,7 @@ use Webmozart\Assert\Assert;
 use function array_combine;
 use function array_fill;
 use function array_filter;
+use function array_key_exists;
 use function array_keys;
 use function array_map;
 use function array_merge;
@@ -23,6 +24,7 @@ use function hash;
 use function is_callable;
 use function serialize;
 use function sort;
+use function sprintf;
 use function usort;
 
 use const SORT_NATURAL;
@@ -76,7 +78,11 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
      */
     public function at(int $position)
     {
-        return $this->data[$position] ?? null;
+        if (! array_key_exists($position, $this->data)) {
+            throw new OutOfBoundsException(sprintf('There is no value stored in that position: %d', $position));
+        }
+
+        return $this->data[$position];
     }
 
     public function sort(?callable $callback = null): OrderedListInterface
@@ -187,7 +193,11 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
         foreach ($instance->data as $value) {
             $identifier = $unificationIdentifierGenerator($value);
-            $unique     = $unified->get($identifier) ?? $value;
+            try {
+                $unique = $unified->get($identifier);
+            } catch (OutOfBoundsException $exception) {
+                $unique = $value;
+            }
 
             if ($callback) {
                 $unique = $callback($unique, $value);

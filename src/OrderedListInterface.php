@@ -20,7 +20,8 @@ interface OrderedListInterface extends ArrayInterface
     public function add($element): OrderedListInterface;
 
     /**
-     * @psalm-return TValue|null
+     * @psalm-return TValue
+     * @throws OutOfBoundsException If position does not exist.
      * @psalm-mutation-free
      */
     public function at(int $position);

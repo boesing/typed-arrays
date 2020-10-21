@@ -202,7 +202,8 @@ final class GenericOrderedListTest extends TestCase
     {
         $list = new GenericOrderedList([]);
 
-        self::assertNull($list->at(0));
+        $this->expectException(OutOfBoundsException::class);
+        $list->at(0);
     }
 
     /**
@@ -631,11 +632,18 @@ final class GenericOrderedListTest extends TestCase
         self::assertEquals($object2, $list->last());
     }
 
-    public function testFirstAndLastReturnNullOnEmptyList(): void
+    public function testFirstThrowsOutOfBoundsExceptionWhenListIsEmpty(): void
     {
         $list = new GenericOrderedList([]);
-        self::assertNull($list->first());
-        self::assertNull($list->last());
+        $this->expectException(OutOfBoundsException::class);
+        $list->first();
+    }
+
+    public function testLastThrowsOutOfBoundsExceptionWhenListIsEmpty(): void
+    {
+        $list = new GenericOrderedList([]);
+        $this->expectException(OutOfBoundsException::class);
+        $list->last();
     }
 
     public function testContainsDoesExactMatch(): void

@@ -6,6 +6,7 @@ namespace Boesing\TypedArrays;
 
 use Countable;
 use IteratorAggregate;
+use OutOfBoundsException;
 
 /**
  * @internal
@@ -23,14 +24,16 @@ interface ArrayInterface extends IteratorAggregate, Countable
     public function contains($element): bool;
 
     /**
-     * @psalm-return TValue|null
+     * @psalm-return TValue
      * @psalm-mutation-free
+     * @throws OutOfBoundsException if there are no values available.
      */
     public function first();
 
     /**
-     * @psalm-return TValue|null
+     * @psalm-return TValue
      * @psalm-mutation-free
+     * @throws OutOfBoundsException if there are no values available.
      */
     public function last();
 

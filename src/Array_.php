@@ -6,6 +6,7 @@ namespace Boesing\TypedArrays;
 
 use ArrayIterator;
 use DateTimeInterface;
+use OutOfBoundsException;
 use Traversable;
 use Webmozart\Assert\Assert;
 
@@ -59,8 +60,8 @@ abstract class Array_ implements ArrayInterface
      */
     public function first()
     {
-        if ($this->data === []) {
-            return null;
+        if ($this->isEmpty()) {
+            throw new OutOfBoundsException('There are no values available.');
         }
 
         return reset($this->data);
@@ -71,8 +72,8 @@ abstract class Array_ implements ArrayInterface
      */
     public function last()
     {
-        if ($this->data === []) {
-            return null;
+        if ($this->isEmpty()) {
+            throw new OutOfBoundsException('There are no values available.');
         }
 
         return end($this->data);
