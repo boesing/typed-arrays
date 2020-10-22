@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Boesing\TypedArrays;
 
 /**
- * @internal
- *
  * @template         TValue
  * @template-extends OrderedList<TValue>
  */
