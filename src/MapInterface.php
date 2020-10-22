@@ -128,4 +128,12 @@ interface MapInterface extends ArrayInterface
      * @psalm-mutation-free
      */
     public function has(string $key): bool;
+
+    /**
+     * Partitions the current map into those items which are filtered by the callback and those which don't.
+     *
+     * @psalm-param Closure(TValue $value):bool $callback
+     * @psalm-return array{0:MapInterface<TValue>,1:MapInterface<TValue>}
+     */
+    public function partition(callable $callback): array;
 }

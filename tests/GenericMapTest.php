@@ -14,6 +14,7 @@ use PHPUnit\Framework\TestCase;
 use stdClass;
 
 use function array_map;
+use function in_array;
 use function strlen;
 use function strnatcmp;
 use function trim;
@@ -485,5 +486,86 @@ final class GenericMapTest extends TestCase
     {
         $map = new GenericMap(['foo' => 'bar']);
         self::assertFalse($map->has('Foo'));
+    }
+
+    /**
+     * @template TValue
+     * @psalm-param array<string,TValue> $initial
+     * @psalm-param Closure(TValue $value):bool $callback
+     * @psalm-param array<string,TValue> $filteredExpectation
+     * @psalm-param array<string,TValue>    $unfilteredExpectation
+     *
+     * @dataProvider partitions
+     */
+    public function testPartitioningReturnsTwoMapsWithExpectedValues(
+        array $initial,
+        callable $callback,
+        array $filteredExpectation,
+        array $unfilteredExpectation
+    ): void {
+        $map = new GenericMap($initial);
+
+        [$filtered, $unfiltered] = $map->partition($callback);
+        self::assertEquals($filtered->toNativeArray(), $filteredExpectation);
+        self::assertEquals($unfiltered->toNativeArray(), $unfilteredExpectation);
+    }
+
+    /**
+     * @return Generator<
+     *     string,
+     *     array{0:array<string,mixed>,1:Closure(mixed $value):bool,2:array<string,mixed>,3:array<string,mixed>}
+     * >
+     */
+    public function partitions(): Generator
+    {
+        yield 'all filtered' => [
+            [
+                'foo' => 'bar',
+                'bar' => 'baz',
+                'qoo' => 'ooq',
+            ],
+            static function (): bool {
+                return true;
+            },
+            [
+                'foo' => 'bar',
+                'bar' => 'baz',
+                'qoo' => 'ooq',
+            ],
+            [],
+        ];
+
+        yield 'none filtered' => [
+            [
+                'foo' => 'bar',
+                'bar' => 'baz',
+                'qoo' => 'ooq',
+            ],
+            static function (): bool {
+                return false;
+            },
+            [],
+            [
+                'foo' => 'bar',
+                'bar' => 'baz',
+                'qoo' => 'ooq',
+            ],
+        ];
+
+        yield 'some filtered' => [
+            [
+                'foo' => 'bar',
+                'bar' => 'baz',
+                'qoo' => 'ooq',
+            ],
+            static function (string $value): bool {
+                return in_array($value, ['baz', 'ooq'], true);
+            },
+            [
+                'bar' => 'baz',
+                'qoo' => 'ooq',
+            ],
+            ['foo' => 'bar'],
+        ];
     }
 }

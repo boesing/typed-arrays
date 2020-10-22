@@ -18,6 +18,7 @@ use Webmozart\Assert\Assert;
 use function array_fill;
 use function array_map;
 use function chr;
+use function in_array;
 use function md5;
 use function mt_rand;
 use function spl_object_hash;
@@ -908,5 +909,83 @@ final class GenericOrderedListTest extends TestCase
             'id' => 1,
             'position' => 1,
         ], $value);
+    }
+
+    /**
+     * @template TValue
+     * @psalm-param list<TValue> $initial
+     * @psalm-param Closure(TValue $value):bool $callback
+     * @psalm-param list<TValue> $filteredExpectation
+     * @psalm-param list<TValue> $unfilteredExpectation
+     *
+     * @dataProvider partitions
+     */
+    public function testPartitioningReturnsTwoMapsWithExpectedValues(
+        array $initial,
+        callable $callback,
+        array $filteredExpectation,
+        array $unfilteredExpectation
+    ): void {
+        $map = new GenericOrderedList($initial);
+
+        [$filtered, $unfiltered] = $map->partition($callback);
+        self::assertEquals($filtered->toNativeArray(), $filteredExpectation);
+        self::assertEquals($unfiltered->toNativeArray(), $unfilteredExpectation);
+    }
+
+    /**
+     * @return Generator<string,array{0:list<mixed>,1:Closure(mixed $value):bool,2:list<mixed>,3:list<mixed>}>
+     */
+    public function partitions(): Generator
+    {
+        yield 'all filtered' => [
+            [
+                'bar',
+                'baz',
+                'ooq',
+            ],
+            static function (): bool {
+                return true;
+            },
+            [
+                'bar',
+                'baz',
+                'ooq',
+            ],
+            [],
+        ];
+
+        yield 'none filtered' => [
+            [
+                'bar',
+                'baz',
+                'ooq',
+            ],
+            static function (): bool {
+                return false;
+            },
+            [],
+            [
+                'bar',
+                'baz',
+                'ooq',
+            ],
+        ];
+
+        yield 'some filtered' => [
+            [
+                'bar',
+                'baz',
+                'ooq',
+            ],
+            static function (string $value): bool {
+                return in_array($value, ['baz', 'ooq'], true);
+            },
+            [
+                'baz',
+                'ooq',
+            ],
+            ['bar'],
+        ];
     }
 }

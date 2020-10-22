@@ -158,8 +158,8 @@ abstract class Map extends Array_ implements MapInterface
 
     /**
      * @psalm-param MapInterface<TValue> $other
-     * @psalm-param  (Closure(TValue $a,TValue $b):int)|null $valueComparator
-     * @psalm-param  (Closure(string $value,string $b):int)|null $keyComparator
+     * @psalm-param (Closure(TValue $a,TValue $b):int)|null $valueComparator
+     * @psalm-param (Closure(string $value,string $b):int)|null $keyComparator
      * @psalm-return array<string,TValue>
      */
     private function intersection(MapInterface $other, ?callable $valueComparator, ?callable $keyComparator): array
@@ -274,5 +274,26 @@ abstract class Map extends Array_ implements MapInterface
     public function has(string $key): bool
     {
         return array_key_exists($key, $this->data);
+    }
+
+    public function partition(callable $callback): array
+    {
+        $filtered = $unfiltered = [];
+
+        foreach ($this->data as $key => $element) {
+            if ($callback($element)) {
+                $filtered[$key] = $element;
+                continue;
+            }
+
+            $unfiltered[$key] = $element;
+        }
+
+        $instance1       = clone $this;
+        $instance1->data = $filtered;
+        $instance2       = clone $this;
+        $instance2->data = $unfiltered;
+
+        return [$instance1, $instance2];
     }
 }
