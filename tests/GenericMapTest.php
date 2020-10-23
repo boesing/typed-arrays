@@ -12,6 +12,7 @@ use Lcobucci\Clock\FrozenClock;
 use OutOfBoundsException;
 use PHPUnit\Framework\TestCase;
 use stdClass;
+use Webmozart\Assert\Assert;
 
 use function array_map;
 use function in_array;
@@ -32,14 +33,21 @@ final class GenericMapTest extends TestCase
         array $expected,
         array $stack
     ): void {
-        $map    = new GenericMap($initial);
+        /** @var MapInterface<string,mixed> $map */
+        $map = new GenericMap($initial);
+
+        /** @psalm-var list<MapInterface<string,mixed>> $stackOfMaps */
+        $stackOfMaps = array_map(
+            static function (array $map): MapInterface {
+                return new GenericMap($map);
+            },
+            $stack
+        );
+
+        Assert::allIsInstanceOf($stackOfMaps, MapInterface::class);
+
         $merged = $map->merge(
-            ...array_map(
-                static function (array $map): MapInterface {
-                    return new GenericMap($map);
-                },
-                $stack
-            )
+            ...$stackOfMaps
         );
 
         self::assertEquals($expected, $merged->toNativeArray());
@@ -77,7 +85,7 @@ final class GenericMapTest extends TestCase
 
     /**
      * @psalm-param  array<string,mixed> $values
-     * @psalm-param  (Closure(mixed $a,mixed $b):int)|null $callback
+     * @psalm-param  (Closure(mixed,mixed):int)|null $callback
      * @psalm-param  array<string,mixed> $sorted
      * @dataProvider sorting
      */
@@ -94,7 +102,7 @@ final class GenericMapTest extends TestCase
     /**
      * @psalm-return Generator<
      *     non-empty-string,
-     *     array{0:array<string,mixed>,1:(Closure(mixed $a,mixed $b):int)|null,2:array<string,mixed>}
+     *     array{0:array<string,mixed>,1:(Closure(mixed,mixed):int)|null,2:array<string,mixed>}
      * >
      */
     public function sorting(): Generator
@@ -163,9 +171,9 @@ final class GenericMapTest extends TestCase
 
     public function testDiffKeys(): void
     {
-        /** @psalm-var MapInterface<string> $map1 */
+        /** @psalm-var MapInterface<string,string> $map1 */
         $map1 = new GenericMap(['foo' => 'bar']);
-        /** @psalm-var MapInterface<string> $map2 */
+        /** @psalm-var MapInterface<string,string> $map2 */
         $map2 = new GenericMap(['foo' => 'bar', 'bar' => 'baz']);
 
         self::assertEquals(['bar' => 'baz'], $map1->diffKeys($map2)->toNativeArray());
@@ -175,7 +183,7 @@ final class GenericMapTest extends TestCase
     {
         $object1 = new GenericObject(1);
         $object2 = new GenericObject(2);
-        /** @psalm-var MapInterface<GenericObject> $map */
+        /** @psalm-var MapInterface<string,GenericObject> $map */
         $map = new GenericMap([
             'first' => $object1,
             'second' => $object2,
@@ -191,7 +199,7 @@ final class GenericMapTest extends TestCase
     /**
      * @psalm-param array<string,mixed> $initial
      * @psalm-param list<mixed>         $expected
-     * @psalm-param (Closure(mixed $a,mixed $b):int)|null $sorter
+     * @psalm-param (Closure(mixed,mixed):int)|null $sorter
      * @dataProvider orderedLists
      */
     public function testWillConvertToOrderedList(array $initial, array $expected, ?callable $sorter): void
@@ -205,7 +213,7 @@ final class GenericMapTest extends TestCase
     /**
      * @psalm-return Generator<
      *     non-empty-string,
-     *     array{0:array<string,mixed>,1:list<mixed>,2:(Closure(mixed $a,mixed $b):int)|null}>
+     *     array{0:array<string,mixed>,1:list<mixed>,2:(Closure(mixed,mixed):int)|null}>
      */
     public function orderedLists(): Generator
     {
@@ -238,14 +246,14 @@ final class GenericMapTest extends TestCase
 
     public function testIntersectionReturnExpectedValues(): void
     {
-        /** @var MapInterface<string> $map1 */
+        /** @var MapInterface<string,string> $map1 */
         $map1 = new GenericMap([
             'foo' => 'bar',
             'bar' => 'baz',
             'qoo' => 'ooq',
         ]);
 
-        /** @var MapInterface<string> $map2 */
+        /** @var MapInterface<string,string> $map2 */
         $map2 = new GenericMap([
             'foo' => 'bar',
             'ooq' => 'qoo',
@@ -256,14 +264,14 @@ final class GenericMapTest extends TestCase
 
     public function testAssocIntersectionReturnExpectedValues(): void
     {
-        /** @var MapInterface<string> $map1 */
+        /** @var MapInterface<string,string> $map1 */
         $map1 = new GenericMap([
             'foo' => 'bar',
             'bar' => 'baz',
             'qoo' => 'ooq',
         ]);
 
-        /** @var MapInterface<string> $map2 */
+        /** @var MapInterface<string,string> $map2 */
         $map2 = new GenericMap([
             'foo' => 'bar',
             'ooq' => 'qoo',
@@ -274,14 +282,14 @@ final class GenericMapTest extends TestCase
 
     public function testAssocIntersectionReturnExpectedValuesWhenCustomComparatorWasProvided(): void
     {
-        /** @var MapInterface<string> $map1 */
+        /** @var MapInterface<string,string> $map1 */
         $map1 = new GenericMap([
             'foo' => 'bar',
             'bar' => 'baz',
             'qoo' => 'ooq',
         ]);
 
-        /** @var MapInterface<string> $map2 */
+        /** @var MapInterface<string,string> $map2 */
         $map2 = new GenericMap([
             'foo' => 'bar ',
             'ooq' => 'qoo',
@@ -294,14 +302,14 @@ final class GenericMapTest extends TestCase
 
     public function testIntersectionWithKeysReturnExpectedValues(): void
     {
-        /** @var MapInterface<string> $map1 */
+        /** @var MapInterface<string,string> $map1 */
         $map1 = new GenericMap([
             'foo' => 'bar',
             'bar' => 'baz',
             'qoo' => 'ooq',
         ]);
 
-        /** @var MapInterface<string> $map2 */
+        /** @var MapInterface<string,string> $map2 */
         $map2 = new GenericMap([
             'foo' => 'bar',
             'ooq' => 'qoo',
@@ -312,14 +320,14 @@ final class GenericMapTest extends TestCase
 
     public function testIntersectionWithKeysReturnExpectedValuesWhenCustomComparatorProvided(): void
     {
-        /** @var MapInterface<string> $map1 */
+        /** @var MapInterface<string,string> $map1 */
         $map1 = new GenericMap([
             'foo' => 'bar',
             'bar' => 'baz',
             'qoo' => 'ooq',
         ]);
 
-        /** @var MapInterface<string> $map2 */
+        /** @var MapInterface<string,string> $map2 */
         $map2 = new GenericMap([
             'foo' => 'bar',
             'ooq' => 'qoo',
@@ -337,14 +345,17 @@ final class GenericMapTest extends TestCase
      * @param array<string,mixed> $initial
      * @param array<string,mixed> $other
      * @param array<string,mixed> $expected
-     * @psalm-param (Closure(mixed $a,mixed $b):int)|null $comparator
+     * @psalm-param (Closure(mixed,mixed):int)|null $comparator
+     *
      * @dataProvider diffs
      */
     public function testCanDiff(array $initial, array $other, array $expected, ?callable $comparator): void
     {
-        /** @psalm-suppress PossiblyInvalidArgument */
-        $map  = new GenericMap($initial);
-        $diff = $map->diff(new GenericMap($other), $comparator);
+        /** @var MapInterface<string,mixed> $map */
+        $map = new GenericMap($initial);
+        /** @var MapInterface<string,mixed> $otherMap */
+        $otherMap = new GenericMap($other);
+        $diff     = $map->diff($otherMap, $comparator);
         self::assertEquals($expected, $diff->toNativeArray());
     }
 
@@ -355,7 +366,7 @@ final class GenericMapTest extends TestCase
      *      0:array<string,mixed>,
      *      1:array<string,mixed>,
      *      2:array<string,mixed>,
-     *      3:(Closure(mixed $a,mixed $b):int)|null
+     *      3:(Closure(mixed,mixed):int)|null
      *     }
      * >
      */
@@ -447,12 +458,13 @@ final class GenericMapTest extends TestCase
             return $a <=> $b;
         };
 
-        /** @var MapInterface<string> $map1 */
+        /** @var MapInterface<string,string> $map1 */
         $map1 = new GenericMap([
             'foo' => 'bar',
             'qoo' => 'ooq',
         ]);
 
+        /** @var MapInterface<string,string> $map2 */
         $map2 = new GenericMap(['qoo' => 'ooq']);
 
         self::assertEquals(
@@ -464,6 +476,7 @@ final class GenericMapTest extends TestCase
 
     public function testGetThrowsOutOfBoundsExceptionWhenKeyDoesNotExist(): void
     {
+        /** @var MapInterface<string,string> $map */
         $map = new GenericMap([]);
         $this->expectException(OutOfBoundsException::class);
         $map->get('foo');
@@ -471,6 +484,7 @@ final class GenericMapTest extends TestCase
 
     public function testHasDetectsExistingKey(): void
     {
+        /** @var MapInterface<string,string> $map */
         $map = new GenericMap(['foo' => 'bar']);
 
         self::assertTrue($map->has('foo'));
@@ -478,12 +492,14 @@ final class GenericMapTest extends TestCase
 
     public function testHasReturnsFalseOnEmptyMap(): void
     {
+        /** @var MapInterface<string,string> $map */
         $map = new GenericMap([]);
         self::assertFalse($map->has('foo'));
     }
 
     public function testHasReturnsFalseForDueToCaseSensitivity(): void
     {
+        /** @var MapInterface<string,string> $map */
         $map = new GenericMap(['foo' => 'bar']);
         self::assertFalse($map->has('Foo'));
     }

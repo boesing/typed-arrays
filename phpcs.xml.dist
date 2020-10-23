@@ -23,6 +23,8 @@
         <!-- Ignore -->
         <exclude name="Squiz.Arrays.ArrayDeclaration.ValueNoNewline"/>
         <exclude name="SlevomatCodingStandard.Classes.SuperfluousInterfaceNaming.SuperfluousSuffix"/>
+        <exclude name="Generic.NamingConventions.ConstructorName.OldStyle"/>
+        <exclude name="Generic.CodeAnalysis.UselessOverridingMethod.Found"/>
         <!-- Can be removed with dropping support for PHP 7.3 -->
         <exclude name="SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint"/>
         <!-- Can be removed with dropping support for PHP 7.4 -->
