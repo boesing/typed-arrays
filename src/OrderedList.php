@@ -279,4 +279,25 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
         throw new OutOfBoundsException('Could not find value with provided callback.');
     }
+
+    public function partition(callable $callback): array
+    {
+        $filtered = $unfiltered = [];
+
+        foreach ($this->data as $element) {
+            if ($callback($element)) {
+                $filtered[] = $element;
+                continue;
+            }
+
+            $unfiltered[] = $element;
+        }
+
+        $instance1       = clone $this;
+        $instance1->data = $filtered;
+        $instance2       = clone $this;
+        $instance2->data = $unfiltered;
+
+        return [$instance1, $instance2];
+    }
 }

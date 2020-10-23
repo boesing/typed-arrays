@@ -108,4 +108,13 @@ interface OrderedListInterface extends ArrayInterface
      * @throws OutOfBoundsException if value could not be found with provided callback.
      */
     public function find(callable $callback);
+
+    /**
+     * Partitions the current list into those items which are filtered by the callback and those which don't.
+     *
+     * @param Closure(TValue $value):bool $callback
+     *
+     * @psalm-return array{0:OrderedListInterface<TValue>,1:OrderedListInterface<TValue>}
+     */
+    public function partition(callable $callback): array;
 }
