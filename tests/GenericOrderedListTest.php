@@ -28,7 +28,7 @@ final class GenericOrderedListTest extends TestCase
 {
     /**
      * @psalm-param  list<mixed> $values
-     * @psalm-param  (Closure(mixed $a,mixed $b):int)|null $callback
+     * @psalm-param  (Closure(mixed,mixed):int)|null $callback
      * @psalm-param  list<mixed> $sorted
      * @dataProvider sorting
      */
@@ -69,7 +69,7 @@ final class GenericOrderedListTest extends TestCase
     /**
      * @psalm-return Generator<
      *     non-empty-string,
-     *     array{0:list<mixed>,1:(Closure(mixed $a,mixed $b):int)|null,2:list<mixed>}>
+     *     array{0:list<mixed>,1:(Closure(mixed,mixed):int)|null,2:list<mixed>}>
      */
     public function sorting(): Generator
     {
@@ -211,7 +211,7 @@ final class GenericOrderedListTest extends TestCase
      * @psalm-param list<mixed> $initial
      * @psalm-param list<mixed> $other
      * @psalm-param list<mixed> $expected
-     * @psalm-param (Closure(mixed $a,mixed $b):int)|null $comparator
+     * @psalm-param (Closure(mixed,mixed):int)|null $comparator
      *
      * @dataProvider diffs
      */
@@ -231,7 +231,7 @@ final class GenericOrderedListTest extends TestCase
     /**
      * @psalm-return Generator<
      *     non-empty-string,
-     *     array{0:list<mixed>,1:list<mixed>,2:list<mixed>,3:(Closure(mixed $a, mixed $b):int)|null}
+     *     array{0:list<mixed>,1:list<mixed>,2:list<mixed>,3:(Closure(mixed, mixed):int)|null}
      * >
      */
     public function diffs(): Generator
@@ -316,7 +316,7 @@ final class GenericOrderedListTest extends TestCase
      * @psalm-param list<mixed> $initial
      * @psalm-param list<mixed> $other
      * @psalm-param list<mixed> $expected
-     * @psalm-param (Closure(mixed $a,mixed $b):int)|null $comparator
+     * @psalm-param (Closure(mixed,mixed):int)|null $comparator
      *
      * @dataProvider intersections
      */
@@ -494,7 +494,7 @@ final class GenericOrderedListTest extends TestCase
     /**
      * @psalm-param list<mixed> $initial
      * @psalm-param list<mixed> $expected
-     * @psalm-param (Closure(mixed $a):non-empty-string)|null $unificationIdentifierGenerator
+     * @psalm-param (Closure(mixed):non-empty-string)|null $unificationIdentifierGenerator
      *
      * @dataProvider deduplications
      */
@@ -523,7 +523,7 @@ final class GenericOrderedListTest extends TestCase
     }
 
     /**
-     * @psalm-return Generator<string,array{0:list<mixed>,1:list<mixed>,2:(Closure(mixed $a):non-empty-string)|null}>
+     * @psalm-return Generator<string,array{0:list<mixed>,1:list<mixed>,2:(Closure(mixed):non-empty-string)|null}>
      */
     public function deduplications(): Generator
     {
@@ -663,13 +663,6 @@ final class GenericOrderedListTest extends TestCase
             self::assertEquals($expected++, $integer);
             self::assertEquals($list->at($integer), $string);
         }
-    }
-
-    public function testAcceptsOnlyValueList(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        /** @psalm-suppress InvalidArgument */
-        new GenericOrderedList([1 => 1]);
     }
 
     public function testToMapConversionErrorsOnIntegerishKeys(): void

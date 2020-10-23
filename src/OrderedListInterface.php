@@ -27,13 +27,13 @@ interface OrderedListInterface extends ArrayInterface
     public function at(int $position);
 
     /**
-     * @psalm-param  Closure(TValue $value):bool $callback
+     * @psalm-param  Closure(TValue):bool $callback
      * @psalm-return OrderedListInterface<TValue>
      */
     public function filter(callable $callback): OrderedListInterface;
 
     /**
-     * @psalm-param  (Closure(TValue $a,TValue $b):int)|null $callback
+     * @psalm-param  (Closure(TValue,TValue):int)|null $callback
      * @psalm-return OrderedListInterface<TValue>
      */
     public function sort(?callable $callback = null): OrderedListInterface;
@@ -46,28 +46,29 @@ interface OrderedListInterface extends ArrayInterface
 
     /**
      * @template     TNewValue
-     * @psalm-param  Closure(TValue $a):TNewValue $callback
+     * @psalm-param  Closure(TValue):TNewValue $callback
      * @psalm-return OrderedListInterface<TNewValue>
      */
     public function map(callable $callback): OrderedListInterface;
 
     /**
      * @psalm-param  OrderedListInterface<TValue> $other
-     * @psalm-param  (Closure(TValue $a,TValue $b):int)|null $valueComparator
+     * @psalm-param  (Closure(TValue,TValue):int)|null $valueComparator
      * @psalm-return OrderedListInterface<TValue>
      */
     public function intersect(OrderedListInterface $other, ?callable $valueComparator = null): OrderedListInterface;
 
     /**
      * @psalm-param  OrderedListInterface<TValue> $other
-     * @psalm-param  (Closure(TValue $a,TValue $b):int)|null $valueComparator
+     * @psalm-param  (Closure(TValue,TValue):int)|null $valueComparator
      * @psalm-return OrderedListInterface<TValue>
      */
     public function diff(OrderedListInterface $other, ?callable $valueComparator = null): OrderedListInterface;
 
     /**
-     * @psalm-param  Closure(TValue $value):non-empty-string $keyGenerator
-     * @psalm-return MapInterface<TValue>
+     * @template TKey of non-empty-string
+     * @psalm-param  Closure(TValue):TKey $keyGenerator
+     * @psalm-return MapInterface<TKey,TValue>
      */
     public function toMap(callable $keyGenerator): MapInterface;
 
@@ -78,8 +79,8 @@ interface OrderedListInterface extends ArrayInterface
     public function removeElement($element): OrderedListInterface;
 
     /**
-     * @psalm-param (Closure(TValue $value):non-empty-string)|null $unificationIdentifierGenerator
-     * @psalm-param (Closure(TValue $value,TValue $other):TValue)|null  $callback
+     * @psalm-param (Closure(TValue):non-empty-string)|null $unificationIdentifierGenerator
+     * @psalm-param (Closure(TValue,TValue):TValue)|null  $callback
      * @psalm-return OrderedListInterface<TValue>
      */
     public function unify(
@@ -90,7 +91,7 @@ interface OrderedListInterface extends ArrayInterface
     /**
      * @throws InvalidArgumentException if start index does is not fitting in the current list state.
      *
-     * @psalm-param TValue|Closure(int $index):TValue $value
+     * @psalm-param TValue|Closure(int):TValue $value
      * @psalm-return OrderedListInterface<TValue>
      */
     public function fill(int $startIndex, int $amount, $value): OrderedListInterface;
@@ -102,7 +103,7 @@ interface OrderedListInterface extends ArrayInterface
     public function slice(int $offset, ?int $length = null): OrderedListInterface;
 
     /**
-     * @psalm-param Closure(TValue $value):bool $callback
+     * @psalm-param Closure(TValue):bool $callback
      * @psalm-return TValue
      * @psalm-mutation-free
      * @throws OutOfBoundsException if value could not be found with provided callback.

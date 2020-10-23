@@ -41,8 +41,6 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
      */
     final public function __construct(array $data)
     {
-        /** @psalm-suppress RedundantCondition */
-        Assert::isList($data);
         parent::__construct($data);
     }
 
@@ -136,6 +134,11 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         return $instance;
     }
 
+    /**
+     * @template TKey of non-empty-string
+     * @psalm-param  Closure(TValue $value):TKey $keyGenerator
+     * @psalm-return MapInterface<TKey,TValue>
+     */
     public function toMap(callable $keyGenerator): MapInterface
     {
         $keys = array_map($keyGenerator, $this->data);
@@ -153,7 +156,10 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
          */
         Assert::allStringNotEmpty(array_keys($combined));
 
-        return new GenericMap($combined);
+        /** @var MapInterface<TKey,TValue> $map */
+        $map = new GenericMap($combined);
+
+        return $map;
     }
 
     public function removeElement($element): OrderedListInterface
@@ -183,12 +189,15 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         /** @psalm-suppress MissingClosureParamType */
         $unificationIdentifierGenerator = $unificationIdentifierGenerator
             ?? static function ($value): string {
-                return hash('sha256', serialize($value));
+                $hash = hash('sha256', serialize($value));
+                Assert::stringNotEmpty($hash);
+
+                return $hash;
             };
 
         $instance = clone $this;
 
-        /** @psalm-var MapInterface<TValue> $unified */
+        /** @psalm-var MapInterface<non-empty-string,TValue> $unified */
         $unified = new GenericMap([]);
 
         foreach ($instance->data as $value) {

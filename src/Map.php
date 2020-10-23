@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Boesing\TypedArrays;
 
 use OutOfBoundsException;
-use Webmozart\Assert\Assert;
 
 use function array_diff_ukey;
 use function array_filter;
@@ -27,21 +26,13 @@ use const ARRAY_FILTER_USE_BOTH;
 use const SORT_NATURAL;
 
 /**
+ * @template            TKey of string
  * @template            TValue
- * @template-extends    Array_<string,TValue>
- * @template-implements MapInterface<TValue>
+ * @template-extends    Array_<TKey,TValue>
+ * @template-implements MapInterface<TKey,TValue>
  */
 abstract class Map extends Array_ implements MapInterface
 {
-    /**
-     * @psalm-param array<string,TValue> $data
-     */
-    public function __construct(array $data)
-    {
-        Assert::isMap($data);
-        parent::__construct($data);
-    }
-
     public function merge(...$stack): MapInterface
     {
         $instance = clone $this;
@@ -74,9 +65,9 @@ abstract class Map extends Array_ implements MapInterface
         $instance  = clone $this;
         $otherData = $other->toNativeArray();
 
-        /** @psalm-var array<string,TValue> $diff1 */
+        /** @psalm-var array<TKey,TValue> $diff1 */
         $diff1 = array_diff_ukey($this->data, $otherData, $keyComparator ?? $this->keyComparator());
-        /** @psalm-var array<string,TValue> $diff2 */
+        /** @psalm-var array<TKey,TValue> $diff2 */
         $diff2  = array_diff_ukey($otherData, $this->data, $keyComparator ?? $this->keyComparator());
         $merged = array_merge(
             $diff1,
@@ -89,7 +80,7 @@ abstract class Map extends Array_ implements MapInterface
     }
 
     /**
-     * @psalm-return callable(string $a,string $b):int
+     * @psalm-return Closure(TKey,TKey):int
      */
     private function keyComparator(): callable
     {
@@ -157,15 +148,15 @@ abstract class Map extends Array_ implements MapInterface
     }
 
     /**
-     * @psalm-param MapInterface<TValue> $other
-     * @psalm-param (Closure(TValue $a,TValue $b):int)|null $valueComparator
-     * @psalm-param (Closure(string $value,string $b):int)|null $keyComparator
-     * @psalm-return array<string,TValue>
+     * @psalm-param MapInterface<TKey,TValue> $other
+     * @psalm-param (Closure(TValue,TValue):int)|null $valueComparator
+     * @psalm-param (Closure(TKey,TKey):int)|null $keyComparator
+     * @psalm-return array<TKey,TValue>
      */
     private function intersection(MapInterface $other, ?callable $valueComparator, ?callable $keyComparator): array
     {
         if ($valueComparator && $keyComparator) {
-            /** @psalm-var array<string,TValue> $intersection */
+            /** @psalm-var array<TKey,TValue> $intersection */
             $intersection = array_uintersect_uassoc(
                 $this->data,
                 $other->toNativeArray(),
@@ -177,7 +168,7 @@ abstract class Map extends Array_ implements MapInterface
         }
 
         if ($keyComparator) {
-            /** @psalm-var array<string,TValue> $intersection */
+            /** @psalm-var array<TKey,TValue> $intersection */
             $intersection = array_intersect_ukey($this->data, $other->toNativeArray(), $keyComparator);
 
             return $intersection;
@@ -187,7 +178,7 @@ abstract class Map extends Array_ implements MapInterface
             $valueComparator = $this->valueComparator();
         }
 
-        /** @psalm-var array<string,TValue> $intersection */
+        /** @psalm-var array<TKey,TValue> $intersection */
         $intersection = array_uintersect($this->data, $other->toNativeArray(), $valueComparator);
 
         return $intersection;
@@ -222,14 +213,14 @@ abstract class Map extends Array_ implements MapInterface
 
     public function diff(MapInterface $other, ?callable $valueComparator = null): MapInterface
     {
-        /** @psalm-var array<string,TValue> $diff1 */
+        /** @psalm-var array<TKey,TValue> $diff1 */
         $diff1 = array_udiff(
             $this->toNativeArray(),
             $other->toNativeArray(),
             $valueComparator ?? $this->valueComparator()
         );
 
-        /** @psalm-var array<string,TValue> $diff2 */
+        /** @psalm-var array<TKey,TValue> $diff2 */
         $diff2 = array_udiff(
             $other->toNativeArray(),
             $this->toNativeArray(),
@@ -257,10 +248,16 @@ abstract class Map extends Array_ implements MapInterface
 
     public function removeElement($element): MapInterface
     {
-        /** @psalm-suppress MissingClosureParamType */
-        return $this->filter(static function ($value) use ($element): bool {
-            return $value !== $element;
-        });
+        $instance = clone $this;
+        foreach ($instance->data as $key => $value) {
+            if ($value !== $element) {
+                continue;
+            }
+
+            unset($instance->data[$key]);
+        }
+
+        return $instance;
     }
 
     public function map(callable $callback): MapInterface

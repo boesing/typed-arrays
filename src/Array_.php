@@ -8,9 +8,7 @@ use ArrayIterator;
 use DateTimeInterface;
 use OutOfBoundsException;
 use Traversable;
-use Webmozart\Assert\Assert;
 
-use function array_keys;
 use function count;
 use function end;
 use function in_array;
@@ -33,9 +31,8 @@ abstract class Array_ implements ArrayInterface
     /**
      * @psalm-param array<TKey,TValue> $data
      */
-    protected function __construct(array $data)
+    public function __construct(array $data)
     {
-        Assert::allValidArrayKey(array_keys($data));
         $this->data = $data;
     }
 
