@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Boesing\TypedArrays;
 
+use Closure;
 use OutOfBoundsException;
 
 use function array_diff_ukey;
@@ -292,5 +293,35 @@ abstract class Map extends Array_ implements MapInterface
         $instance2->data = $unfiltered;
 
         return [$instance1, $instance2];
+    }
+
+    /**
+     * @template TGroup of non-empty-string
+     * @psalm-param Closure(TValue):TGroup $callback
+     *
+     * @psalm-return MapInterface<TGroup,MapInterface<TKey,TValue>>
+     */
+    public function group(callable $callback): MapInterface
+    {
+        /**
+         * @psalm-var MapInterface<TGroup,MapInterface<TKey,TValue>> $groups
+         */
+        $groups = new GenericMap([]);
+
+        foreach ($this->data as $key => $value) {
+            $groupIdentifier = $callback($value);
+            try {
+                /** @psalm-suppress ImpureMethodCall */
+                $group = $groups->get($groupIdentifier);
+            } catch (OutOfBoundsException $exception) {
+                $group       = clone $this;
+                $group->data = [];
+            }
+
+            /** @psalm-suppress ImpureMethodCall */
+            $groups = $groups->put($groupIdentifier, $group->put($key, $value));
+        }
+
+        return $groups;
     }
 }

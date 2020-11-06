@@ -309,4 +309,32 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
         return [$instance1, $instance2];
     }
+
+    /**
+     * @template TGroup of non-empty-string
+     * @psalm-param Closure(TValue):TGroup $callback
+     *
+     * @psalm-return MapInterface<TGroup,OrderedListInterface<TValue>>
+     */
+    public function group(callable $callback): MapInterface
+    {
+        /** @var MapInterface<TGroup,OrderedListInterface<TValue>> $groups */
+        $groups = new GenericMap([]);
+        foreach ($this as $value) {
+            $groupName = $callback($value);
+            /** @psalm-suppress ImpureMethodCall */
+            if (! $groups->has($groupName)) {
+                $groups = $groups->put($groupName, new GenericOrderedList([$value]));
+                continue;
+            }
+
+            /** @psalm-suppress ImpureMethodCall */
+            $existingGroup = $groups->get($groupName);
+            $existingGroup = $existingGroup->add($value);
+            /** @psalm-suppress ImpureMethodCall */
+            $groups = $groups->put($groupName, $existingGroup);
+        }
+
+        return $groups;
+    }
 }

@@ -13,7 +13,7 @@
         "lcobucci/clock": "^1.2",
         "phpunit/phpunit": "^9.2",
         "psalm/plugin-phpunit": "^0.12.2",
-        "vimeo/psalm": "~3.16.0"
+        "vimeo/psalm": "^4.0"
     },
     "config": {
         "preferred-install": "dist",
@@ -33,6 +33,7 @@
     "prefer-stable": true,
     "scripts": {
         "cs-check": "phpcs",
-        "cs-fix": "phpcbf"
+        "cs-fix": "phpcbf",
+        "analyze": "vendor/bin/psalm --stats"
     }
 }

@@ -603,4 +603,26 @@ final class GenericMapTest extends TestCase
         self::assertTrue($filtered->has('foo'));
         self::assertEquals('bar', $filtered->get('foo'));
     }
+
+    public function testWillGroupValuesToNewInstancesOfInitialInstance(): void
+    {
+        $map = new GenericMap([
+            'foo' => $object1 = new GenericObject(1),
+            'bar' => $object2 = new GenericObject(2),
+        ]);
+
+        $grouped = $map->group(static function (GenericObject $object): string {
+            return $object->id % 2 ? 'a' : 'b';
+        });
+
+        self::assertTrue($grouped->has('a'));
+        self::assertTrue($grouped->has('b'));
+
+        $a = $grouped->get('a');
+        self::assertCount(1, $a);
+        self::assertEquals($object1, $a->get('foo'));
+        $b = $grouped->get('b');
+        self::assertCount(1, $b);
+        self::assertEquals($object2, $b->get('bar'));
+    }
 }

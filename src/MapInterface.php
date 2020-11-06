@@ -139,4 +139,12 @@ interface MapInterface extends ArrayInterface
      * @psalm-return array{0:MapInterface<TKey,TValue>,1:MapInterface<TKey,TValue>}
      */
     public function partition(callable $callback): array;
+
+    /**
+     * @template TGroup of non-empty-string
+     * @psalm-param Closure(TValue):TGroup $callback
+     *
+     * @psalm-return MapInterface<TGroup,MapInterface<TKey,TValue>>
+     */
+    public function group(callable $callback): MapInterface;
 }
