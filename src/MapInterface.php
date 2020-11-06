@@ -81,7 +81,6 @@ interface MapInterface extends ArrayInterface
 
     /**
      * @psalm-return OrderedListInterface<TKey>
-     * @psalm-mutation-free
      */
     public function keys(): OrderedListInterface;
 
@@ -96,7 +95,6 @@ interface MapInterface extends ArrayInterface
      * @psalm-param TKey $key
      * @psalm-return TValue
      * @throws OutOfBoundsException if key does not exist.
-     * @psalm-mutation-free
      */
     public function get(string $key);
 
@@ -128,7 +126,6 @@ interface MapInterface extends ArrayInterface
 
     /**
      * @psalm-param TKey $key
-     * @psalm-mutation-free
      */
     public function has(string $key): bool;
 
