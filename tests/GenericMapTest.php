@@ -164,7 +164,7 @@ final class GenericMapTest extends TestCase
 
         $map = new GenericMap(['first' => $element, 'second' => $element2]);
 
-        $map = $map->removeElementByKey('first');
+        $map = $map->unset('first');
 
         self::assertEquals(['second' => $element2], $map->toNativeArray());
     }
