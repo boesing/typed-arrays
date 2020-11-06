@@ -33,13 +33,14 @@ use const SORT_NATURAL;
  * @template            TValue
  * @template-extends    Array_<int,TValue>
  * @template-implements OrderedListInterface<TValue>
+ * @psalm-immutable
  */
 abstract class OrderedList extends Array_ implements OrderedListInterface
 {
     /**
      * @psalm-param list<TValue> $data
      */
-    final public function __construct(array $data)
+    final public function __construct(array $data = [])
     {
         parent::__construct($data);
     }
@@ -51,13 +52,14 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
             return $list->toNativeArray();
         }, $stack);
 
-        $instance->data = array_values(array_merge($this->data, ...$values));
+        $instance->data = array_values(array_merge($instance->data, ...$values));
 
         return $instance;
     }
 
     public function map(callable $callback): OrderedListInterface
     {
+        /** @psalm-suppress ImpureFunctionCall */
         return new GenericOrderedList(array_values(
             array_map($callback, $this->data)
         ));
@@ -71,9 +73,6 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         return $instance;
     }
 
-    /**
-     * @psalm-mutation-free
-     */
     public function at(int $position)
     {
         if (! array_key_exists($position, $this->data)) {
@@ -85,8 +84,8 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
     public function sort(?callable $callback = null): OrderedListInterface
     {
-        $data     = $this->data;
         $instance = clone $this;
+        $data     = $instance->data;
         if ($callback === null) {
             sort($data, SORT_NATURAL);
             $instance->data = $data;
@@ -94,6 +93,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
             return $instance;
         }
 
+        /** @psalm-suppress ImpureFunctionCall */
         usort($data, $callback);
         $instance->data = $data;
 
@@ -102,18 +102,24 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
     public function diff(OrderedListInterface $other, ?callable $valueComparator = null): OrderedListInterface
     {
+        $instance = clone $this;
+
+        $valueComparator = $valueComparator ?? $this->valueComparator();
+
+        /** @psalm-suppress ImpureFunctionCall */
         $diff1 = array_udiff(
-            $this->toNativeArray(),
+            $instance->toNativeArray(),
             $other->toNativeArray(),
-            $valueComparator ?? $this->valueComparator()
-        );
-        $diff2 = array_udiff(
-            $other->toNativeArray(),
-            $this->toNativeArray(),
-            $valueComparator ?? $this->valueComparator()
+            $valueComparator
         );
 
-        $instance       = clone $this;
+        /** @psalm-suppress ImpureFunctionCall */
+        $diff2 = array_udiff(
+            $other->toNativeArray(),
+            $instance->toNativeArray(),
+            $valueComparator
+        );
+
         $instance->data = array_values(array_merge(
             $diff1,
             $diff2
@@ -124,7 +130,8 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
     public function intersect(OrderedListInterface $other, ?callable $valueComparator = null): OrderedListInterface
     {
-        $instance       = clone $this;
+        $instance = clone $this;
+        /** @psalm-suppress ImpureFunctionCall */
         $instance->data = array_values(array_uintersect(
             $instance->data,
             $other->toNativeArray(),
@@ -141,7 +148,9 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
      */
     public function toMap(callable $keyGenerator): MapInterface
     {
-        $keys = array_map($keyGenerator, $this->data);
+        $instance = clone $this;
+        /** @psalm-suppress ImpureFunctionCall */
+        $keys = array_map($keyGenerator, $instance->data);
         Assert::allStringNotEmpty($keys);
 
         $combined = array_combine(
@@ -166,7 +175,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
     {
         /** @psalm-suppress MissingClosureParamType */
         return $this->filter(
-            static function ($value) use ($element): bool {
+            static function (/** @param TValue $value */ $value) use ($element): bool {
                 return $value !== $element;
             }
         );
@@ -174,9 +183,10 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
     public function filter(callable $callback): OrderedListInterface
     {
-        $instance       = clone $this;
+        $instance = clone $this;
+        /** @psalm-suppress ImpureFunctionCall */
         $instance->data = array_values(
-            array_filter($this->data, $callback)
+            array_filter($instance->data, $callback)
         );
 
         return $instance;
@@ -203,6 +213,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         foreach ($instance->data as $value) {
             $identifier = $unificationIdentifierGenerator($value);
             try {
+                /** @psalm-suppress ImpureMethodCall */
                 $unique = $unified->get($identifier);
             } catch (OutOfBoundsException $exception) {
                 $unique = $value;
@@ -212,9 +223,11 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
                 $unique = $callback($unique, $value);
             }
 
+            /** @psalm-suppress ImpureMethodCall */
             $unified = $unified->put($identifier, $unique);
         }
 
+        /** @psalm-suppress ImpureMethodCall */
         $instance->data = $unified->toOrderedList()->toNativeArray();
 
         return $instance;
@@ -249,6 +262,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
      */
     private function createListFilledWithValues(int $start, int $amount, $value): array
     {
+        /** @psalm-suppress ImpureFunctionCall */
         if (! is_callable($value)) {
             /** @psalm-var array<int,TValue> $list */
             $list = array_fill($start, $amount, $value);
@@ -264,9 +278,6 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         return $list;
     }
 
-    /**
-     * @psalm-mutation-free
-     */
     public function slice(int $offset, ?int $length = null): OrderedListInterface
     {
         $instance       = clone $this;
@@ -275,9 +286,6 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         return $instance;
     }
 
-    /**
-     * @psalm-mutation-free
-     */
     public function find(callable $callback)
     {
         foreach ($this->data as $value) {

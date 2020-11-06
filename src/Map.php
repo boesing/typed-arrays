@@ -31,9 +31,18 @@ use const SORT_NATURAL;
  * @template            TValue
  * @template-extends    Array_<TKey,TValue>
  * @template-implements MapInterface<TKey,TValue>
+ * @psalm-immutable
  */
 abstract class Map extends Array_ implements MapInterface
 {
+    /**
+     * @psalm-param array<TKey,TValue> $data
+     */
+    public function __construct(array $data = [])
+    {
+        parent::__construct($data);
+    }
+
     public function merge(...$stack): MapInterface
     {
         $instance = clone $this;
@@ -46,8 +55,8 @@ abstract class Map extends Array_ implements MapInterface
 
     public function sort(?callable $callback = null): MapInterface
     {
-        $data     = $this->data;
         $instance = clone $this;
+        $data     = $instance->data;
         if ($callback === null) {
             asort($data, SORT_NATURAL);
             $instance->data = $data;
@@ -55,6 +64,7 @@ abstract class Map extends Array_ implements MapInterface
             return $instance;
         }
 
+        /** @psalm-suppress ImpureFunctionCall */
         uasort($data, $callback);
         $instance->data = $data;
 
@@ -63,13 +73,20 @@ abstract class Map extends Array_ implements MapInterface
 
     public function diffKeys(MapInterface $other, ?callable $keyComparator = null): MapInterface
     {
-        $instance  = clone $this;
-        $otherData = $other->toNativeArray();
+        $instance      = clone $this;
+        $otherData     = $other->toNativeArray();
+        $keyComparator = $keyComparator ?? $this->keyComparator();
 
-        /** @psalm-var array<TKey,TValue> $diff1 */
-        $diff1 = array_diff_ukey($this->data, $otherData, $keyComparator ?? $this->keyComparator());
-        /** @psalm-var array<TKey,TValue> $diff2 */
-        $diff2  = array_diff_ukey($otherData, $this->data, $keyComparator ?? $this->keyComparator());
+        /**
+         * @psalm-var array<TKey,TValue> $diff1
+         * @psalm-suppress ImpureFunctionCall
+         */
+        $diff1 = array_diff_ukey($instance->data, $otherData, $keyComparator);
+        /**
+         * @psalm-var array<TKey,TValue> $diff2
+         * @psalm-suppress ImpureFunctionCall
+         */
+        $diff2  = array_diff_ukey($otherData, $instance->data, $keyComparator);
         $merged = array_merge(
             $diff1,
             $diff2
@@ -97,6 +114,8 @@ abstract class Map extends Array_ implements MapInterface
         }
 
         $data = $this->data;
+
+        /** @psalm-suppress ImpureFunctionCall */
         usort($data, $sorter);
 
         return new GenericOrderedList($data);
@@ -104,15 +123,13 @@ abstract class Map extends Array_ implements MapInterface
 
     public function filter(callable $callback): MapInterface
     {
-        $instance       = clone $this;
-        $instance->data = array_filter($this->data, $callback, ARRAY_FILTER_USE_BOTH);
+        $instance = clone $this;
+        /** @psalm-suppress ImpureFunctionCall */
+        $instance->data = array_filter($instance->data, $callback, ARRAY_FILTER_USE_BOTH);
 
         return $instance;
     }
 
-    /**
-     * @psalm-mutation-free
-     */
     public function keys(): OrderedListInterface
     {
         $keys = array_keys($this->data);
@@ -128,9 +145,6 @@ abstract class Map extends Array_ implements MapInterface
         return $instance;
     }
 
-    /**
-     * @psalm-mutation-free
-     */
     public function get(string $key)
     {
         if (! $this->has($key)) {
@@ -157,7 +171,10 @@ abstract class Map extends Array_ implements MapInterface
     private function intersection(MapInterface $other, ?callable $valueComparator, ?callable $keyComparator): array
     {
         if ($valueComparator && $keyComparator) {
-            /** @psalm-var array<TKey,TValue> $intersection */
+            /**
+             * @psalm-var array<TKey,TValue> $intersection
+             * @psalm-suppress ImpureFunctionCall
+             */
             $intersection = array_uintersect_uassoc(
                 $this->data,
                 $other->toNativeArray(),
@@ -169,7 +186,10 @@ abstract class Map extends Array_ implements MapInterface
         }
 
         if ($keyComparator) {
-            /** @psalm-var array<TKey,TValue> $intersection */
+            /**
+             * @psalm-var array<TKey,TValue> $intersection
+             * @psalm-suppress ImpureFunctionCall
+             */
             $intersection = array_intersect_ukey($this->data, $other->toNativeArray(), $keyComparator);
 
             return $intersection;
@@ -179,7 +199,10 @@ abstract class Map extends Array_ implements MapInterface
             $valueComparator = $this->valueComparator();
         }
 
-        /** @psalm-var array<TKey,TValue> $intersection */
+        /**
+         * @psalm-var array<TKey,TValue> $intersection
+         * @psalm-suppress ImpureFunctionCall
+         */
         $intersection = array_uintersect($this->data, $other->toNativeArray(), $valueComparator);
 
         return $intersection;
@@ -214,14 +237,20 @@ abstract class Map extends Array_ implements MapInterface
 
     public function diff(MapInterface $other, ?callable $valueComparator = null): MapInterface
     {
-        /** @psalm-var array<TKey,TValue> $diff1 */
+        /**
+         * @psalm-var array<TKey,TValue> $diff1
+         * @psalm-suppress ImpureFunctionCall
+         */
         $diff1 = array_udiff(
             $this->toNativeArray(),
             $other->toNativeArray(),
             $valueComparator ?? $this->valueComparator()
         );
 
-        /** @psalm-var array<TKey,TValue> $diff2 */
+        /**
+         * @psalm-var array<TKey,TValue> $diff2
+         * @psalm-suppress ImpureFunctionCall
+         */
         $diff2 = array_udiff(
             $other->toNativeArray(),
             $this->toNativeArray(),
@@ -263,12 +292,12 @@ abstract class Map extends Array_ implements MapInterface
 
     public function map(callable $callback): MapInterface
     {
-        return new GenericMap(array_map($callback, $this->data));
+        $instance = clone $this;
+
+        /** @psalm-suppress ImpureFunctionCall */
+        return new GenericMap(array_map($callback, $instance->data));
     }
 
-    /**
-     * @psalm-mutation-free
-     */
     public function has(string $key): bool
     {
         return array_key_exists($key, $this->data);

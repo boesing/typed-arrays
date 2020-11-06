@@ -10,6 +10,7 @@ use OutOfBoundsException;
 /**
  * @template         TValue
  * @template-extends ArrayInterface<int,TValue>
+ * @psalm-immutable
  */
 interface OrderedListInterface extends ArrayInterface
 {
@@ -22,7 +23,6 @@ interface OrderedListInterface extends ArrayInterface
     /**
      * @psalm-return TValue
      * @throws OutOfBoundsException If position does not exist.
-     * @psalm-mutation-free
      */
     public function at(int $position);
 
@@ -98,14 +98,12 @@ interface OrderedListInterface extends ArrayInterface
 
     /**
      * @psalm-return OrderedListInterface<TValue>
-     * @psalm-mutation-free
      */
     public function slice(int $offset, ?int $length = null): OrderedListInterface;
 
     /**
      * @psalm-param Closure(TValue):bool $callback
      * @psalm-return TValue
-     * @psalm-mutation-free
      * @throws OutOfBoundsException if value could not be found with provided callback.
      */
     public function find(callable $callback);

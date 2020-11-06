@@ -22,6 +22,7 @@ use function spl_object_id;
  * @template            TKey of array-key
  * @template            TValue
  * @template-implements ArrayInterface<TKey,TValue>
+ * @psalm-immutable
  */
 abstract class Array_ implements ArrayInterface
 {
@@ -31,7 +32,7 @@ abstract class Array_ implements ArrayInterface
     /**
      * @psalm-param array<TKey,TValue> $data
      */
-    public function __construct(array $data)
+    protected function __construct(array $data)
     {
         $this->data = $data;
     }
@@ -44,17 +45,11 @@ abstract class Array_ implements ArrayInterface
         return new ArrayIterator($this->data);
     }
 
-    /**
-     * @psalm-mutation-free
-     */
     public function contains($element): bool
     {
         return in_array($element, $this->data, true);
     }
 
-    /**
-     * @psalm-mutation-free
-     */
     public function first()
     {
         if ($this->isEmpty()) {
@@ -64,9 +59,6 @@ abstract class Array_ implements ArrayInterface
         return reset($this->data);
     }
 
-    /**
-     * @psalm-mutation-free
-     */
     public function last()
     {
         if ($this->isEmpty()) {
@@ -76,25 +68,16 @@ abstract class Array_ implements ArrayInterface
         return end($this->data);
     }
 
-    /**
-     * @psalm-mutation-free
-     */
     public function isEmpty(): bool
     {
         return $this->count() === 0;
     }
 
-    /**
-     * @psalm-mutation-free
-     */
     public function count(): int
     {
         return count($this->data);
     }
 
-    /**
-     * @psalm-mutation-free
-     */
     public function toNativeArray(): array
     {
         return $this->data;
