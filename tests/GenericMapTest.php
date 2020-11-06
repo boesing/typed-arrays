@@ -505,11 +505,11 @@ final class GenericMapTest extends TestCase
     }
 
     /**
-     * @template TValue
+     * @template    TValue
      * @psalm-param array<string,TValue> $initial
      * @psalm-param Closure(TValue $value):bool $callback
      * @psalm-param array<string,TValue> $filteredExpectation
-     * @psalm-param array<string,TValue>    $unfilteredExpectation
+     * @psalm-param array<string,TValue> $unfilteredExpectation
      *
      * @dataProvider partitions
      */
@@ -583,5 +583,24 @@ final class GenericMapTest extends TestCase
             ],
             ['foo' => 'bar'],
         ];
+    }
+
+    public function testWillFilter(): void
+    {
+        $map = new GenericMap([
+            'foo' => 'bar',
+            'bar' => 'baz',
+        ]);
+
+        $filtered = $map->filter(
+            static function (string $value): bool {
+                return $value === 'bar';
+            }
+        );
+
+        self::assertNotSame($map, $filtered);
+        self::assertCount(1, $filtered);
+        self::assertTrue($filtered->has('foo'));
+        self::assertEquals('bar', $filtered->get('foo'));
     }
 }
