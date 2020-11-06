@@ -981,4 +981,28 @@ final class GenericOrderedListTest extends TestCase
             ['bar'],
         ];
     }
+
+    public function testWillGroupValuesToNewInstancesOfInitialInstance(): void
+    {
+        $list = new GenericOrderedList([
+            $object1 = new GenericObject(1),
+            $object2 = new GenericObject(2),
+            $object3 = new GenericObject(3),
+        ]);
+
+        $grouped = $list->group(static function (GenericObject $object): string {
+            return $object->id % 2 ? 'a' : 'b';
+        });
+
+        self::assertTrue($grouped->has('a'));
+        self::assertTrue($grouped->has('b'));
+
+        $a = $grouped->get('a');
+        self::assertCount(2, $a);
+        self::assertEquals($object1, $a->at(0));
+        self::assertEquals($object3, $a->at(1));
+        $b = $grouped->get('b');
+        self::assertCount(1, $b);
+        self::assertEquals($object2, $b->at(0));
+    }
 }
