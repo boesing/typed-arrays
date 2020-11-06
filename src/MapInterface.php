@@ -77,7 +77,7 @@ interface MapInterface extends ArrayInterface
      * @psalm-param  TKey $key
      * @psalm-return MapInterface<TKey,TValue>
      */
-    public function removeElementByKey($key): MapInterface;
+    public function unset($key): MapInterface;
 
     /**
      * @psalm-return OrderedListInterface<TKey>

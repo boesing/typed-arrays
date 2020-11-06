@@ -238,7 +238,7 @@ abstract class Map extends Array_ implements MapInterface
         return $instance;
     }
 
-    public function removeElementByKey($key): MapInterface
+    public function unset($key): MapInterface
     {
         $instance = clone $this;
         unset($instance->data[$key]);
