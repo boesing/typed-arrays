@@ -694,6 +694,12 @@ final class GenericMapTest extends TestCase
         self::assertSame($exists, $map->exists($callback));
     }
 
+    public function testEmptyMapWontFindExistence(): void
+    {
+        $map = new GenericMap();
+        self::assertFalse($map->exists(static function (): bool {return true;}));
+    }
+
     /**
      * @psalm-return Generator<non-empty-string,array{0:array<non-empty-string,mixed>,1:Closure(mixed):bool,2:bool}>
      */

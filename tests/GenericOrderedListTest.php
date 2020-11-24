@@ -1076,6 +1076,12 @@ final class GenericOrderedListTest extends TestCase
         self::assertSame($exists, $list->exists($callback));
     }
 
+    public function testEmptyListWontFindExistence(): void
+    {
+        $list = new GenericOrderedList();
+        self::assertFalse($list->exists(static function (): bool {return true;}));
+    }
+
     /**
      * @psalm-return Generator<non-empty-string,array{0:list<mixed>,1:Closure(mixed):bool,2:bool}>
      */
