@@ -107,4 +107,15 @@ abstract class Array_ implements ArrayInterface
             return $a <=> $b;
         };
     }
+
+    public function allSatisfy(callable $callback): bool
+    {
+        foreach ($this->data as $value) {
+            if (! $callback($value)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

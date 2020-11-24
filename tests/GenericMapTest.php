@@ -625,4 +625,59 @@ final class GenericMapTest extends TestCase
         self::assertCount(1, $b);
         self::assertEquals($object2, $b->get('bar'));
     }
+
+    /**
+     * @template T
+     * @psalm-param array<string,T> $elements
+     * @psalm-param Closure(T):bool $callback
+     * @dataProvider satisfactions
+     */
+    public function testAllElementsWillSatisfyCallback(array $elements, callable $callback): void
+    {
+        $map = new GenericMap($elements);
+        self::assertTrue($map->allSatisfy($callback));
+    }
+
+    public function testElementsWontSatisfyCallback(): void
+    {
+        $map = new GenericMap(['foo' => 'bar']);
+
+        self::assertFalse($map->allSatisfy(static function (): bool {
+            return false;
+        }));
+    }
+
+    public function testEmptyMapWillSatisfyCallback(): void
+    {
+        $map = new GenericMap([]);
+        self::assertTrue($map->allSatisfy(static function (): bool {
+            return false;
+        }));
+    }
+
+    /**
+     * @psalm-return Generator<non-empty-string,array{0:array<non-empty-string,mixed>,1:Closure(mixed):bool}>
+     */
+    public function satisfactions(): Generator
+    {
+        yield 'only 1' => [
+            [
+                'one' => 1,
+                'another one' => 1,
+            ],
+            static function (int $value): bool {
+                return $value === 1;
+            },
+        ];
+
+        yield 'all same string length' => [
+            [
+                'foo' => 'foo',
+                'bar' => 'foo',
+            ],
+            static function (string $value): bool {
+                return strlen($value) === 3;
+            },
+        ];
+    }
 }

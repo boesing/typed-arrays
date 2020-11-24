@@ -41,4 +41,11 @@ interface ArrayInterface extends IteratorAggregate, Countable
      * @psalm-return array<TKey,TValue>
      */
     public function toNativeArray(): array;
+
+    /**
+     * Tests if all elements satisfy the given predicate.
+     *
+     * @psalm-param Closure(TValue):bool $callback
+     */
+    public function allSatisfy(callable $callback): bool;
 }
