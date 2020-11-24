@@ -683,7 +683,7 @@ final class GenericMapTest extends TestCase
 
     /**
      * @template T
-     * @psalm-param array<non-empty-string,T> $map
+     * @psalm-param array<non-empty-string,T> $data
      * @psalm-param Closure(T):bool $callback
      * @dataProvider existenceTests
      */
