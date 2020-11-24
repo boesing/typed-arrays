@@ -22,6 +22,7 @@ use function in_array;
 use function md5;
 use function mt_rand;
 use function spl_object_hash;
+use function strlen;
 use function strnatcmp;
 
 final class GenericOrderedListTest extends TestCase
@@ -208,9 +209,9 @@ final class GenericOrderedListTest extends TestCase
     }
 
     /**
-     * @psalm-param list<mixed> $initial
-     * @psalm-param list<mixed> $other
-     * @psalm-param list<mixed> $expected
+     * @psalm-param  list<mixed> $initial
+     * @psalm-param  list<mixed> $other
+     * @psalm-param  list<mixed> $expected
      * @psalm-param (Closure(mixed,mixed):int)|null $comparator
      *
      * @dataProvider diffs
@@ -313,9 +314,9 @@ final class GenericOrderedListTest extends TestCase
     }
 
     /**
-     * @psalm-param list<mixed> $initial
-     * @psalm-param list<mixed> $other
-     * @psalm-param list<mixed> $expected
+     * @psalm-param  list<mixed> $initial
+     * @psalm-param  list<mixed> $other
+     * @psalm-param  list<mixed> $expected
      * @psalm-param (Closure(mixed,mixed):int)|null $comparator
      *
      * @dataProvider intersections
@@ -492,8 +493,8 @@ final class GenericOrderedListTest extends TestCase
     }
 
     /**
-     * @psalm-param list<mixed> $initial
-     * @psalm-param list<mixed> $expected
+     * @psalm-param  list<mixed> $initial
+     * @psalm-param  list<mixed> $expected
      * @psalm-param (Closure(mixed):non-empty-string)|null $unificationIdentifierGenerator
      *
      * @dataProvider deduplications
@@ -676,8 +677,8 @@ final class GenericOrderedListTest extends TestCase
 
     /**
      * @template     TValue
-     * @psalm-param list<TValue> $initial
-     * @psalm-param TValue       $fillUp
+     * @psalm-param  list<TValue> $initial
+     * @psalm-param  TValue       $fillUp
      * @dataProvider invalidStartIndices
      */
     public function testFillWillThrowExceptionWhenStartIndexIsInvalid(
@@ -694,7 +695,7 @@ final class GenericOrderedListTest extends TestCase
 
     /**
      * @template     TValue
-     * @psalm-param TValue $value
+     * @psalm-param  TValue $value
      * @dataProvider scalarFillValues
      */
     public function testFillAppendsScalarValues(int $amount, $value): void
@@ -707,7 +708,7 @@ final class GenericOrderedListTest extends TestCase
     }
 
     /**
-     * @template mixed
+     * @template     mixed
      * @psalm-return Generator<string,array{0:int,1:list<mixed>,2:mixed,3:non-empty-string}>
      */
     public function invalidStartIndices(): Generator
@@ -855,9 +856,9 @@ final class GenericOrderedListTest extends TestCase
     }
 
     /**
-     * @template TValue
-     * @psalm-param list<TValue>    $initial
-     * @psalm-param Closure(TValue $value):bool $callback
+     * @template     TValue
+     * @psalm-param  list<TValue>    $initial
+     * @psalm-param  Closure(TValue $value):bool $callback
      * @dataProvider findOutOfBoundExceptions
      */
     public function testFindThrowsOutOfBoundsExceptionWhenValueNotFound(array $initial, callable $callback): void
@@ -905,11 +906,11 @@ final class GenericOrderedListTest extends TestCase
     }
 
     /**
-     * @template TValue
-     * @psalm-param list<TValue> $initial
-     * @psalm-param Closure(TValue $value):bool $callback
-     * @psalm-param list<TValue> $filteredExpectation
-     * @psalm-param list<TValue> $unfilteredExpectation
+     * @template     TValue
+     * @psalm-param  list<TValue> $initial
+     * @psalm-param  Closure(TValue $value):bool $callback
+     * @psalm-param  list<TValue> $filteredExpectation
+     * @psalm-param  list<TValue> $unfilteredExpectation
      *
      * @dataProvider partitions
      */
@@ -1004,5 +1005,61 @@ final class GenericOrderedListTest extends TestCase
         $b = $grouped->get('b');
         self::assertCount(1, $b);
         self::assertEquals($object2, $b->at(0));
+    }
+
+    /**
+     * @template     T
+     * @psalm-param  list<T> $data
+     * @psalm-param  Closure(T):bool $callback
+     * @dataProvider satisfactions
+     */
+    public function testAllWillSatisfyCallback(array $data, callable $callback): void
+    {
+        $list = new GenericOrderedList($data);
+        self::assertTrue($list->allSatisfy($callback));
+    }
+
+    public function testEmptyListWillSatisfyAnyCallback(): void
+    {
+        $list = new GenericOrderedList();
+        self::assertTrue($list->allSatisfy(static function (): bool {
+            return false;
+        }));
+    }
+
+    public function testWontSatisfyCallback(): void
+    {
+        $list = new GenericOrderedList(['foo']);
+        self::assertFalse($list->allSatisfy(static function (): bool {
+            return false;
+        }));
+    }
+
+    /**
+     * @psalm-return Generator<non-empty-string,array{0:list<mixed>,1:Closure(mixed):bool}>
+     */
+    public function satisfactions(): Generator
+    {
+        yield 'only 1' => [
+            [
+                1,
+                1,
+                1,
+            ],
+            static function (int $value): bool {
+                return $value === 1;
+            },
+        ];
+
+        yield 'same string length' => [
+            [
+                'foo',
+                'bar',
+                'baz',
+            ],
+            static function (string $value): bool {
+                return strlen($value) === 3;
+            },
+        ];
     }
 }
