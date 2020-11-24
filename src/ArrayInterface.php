@@ -48,4 +48,11 @@ interface ArrayInterface extends IteratorAggregate, Countable
      * @psalm-param Closure(TValue):bool $callback
      */
     public function allSatisfy(callable $callback): bool;
+
+    /**
+     * Tests for the existence of an element that satisfies the given predicate.
+     *
+     * @psalm-param Closure(TValue):bool $callback
+     */
+    public function exists(callable $callback): bool;
 }

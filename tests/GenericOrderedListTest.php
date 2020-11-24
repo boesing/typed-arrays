@@ -1062,4 +1062,69 @@ final class GenericOrderedListTest extends TestCase
             },
         ];
     }
+
+    /**
+     * @template T
+     * @psalm-param list<T> $list
+     * @psalm-param Closure(T):bool $callback
+     * @dataProvider existenceTests
+     */
+    public function testWillFindExistenceOfEntry(array $list, callable $callback, bool $exists): void
+    {
+        $list = new GenericOrderedList($list);
+
+        self::assertSame($exists, $list->exists($callback));
+    }
+
+    public function testEmptyListWontFindExistence(): void
+    {
+        $list = new GenericOrderedList();
+        self::assertFalse($list->exists(static function (): bool {
+            return true;
+        }));
+    }
+
+    /**
+     * @psalm-return Generator<non-empty-string,array{0:list<mixed>,1:Closure(mixed):bool,2:bool}>
+     */
+    public function existenceTests(): Generator
+    {
+        yield 'simple' => [
+            [
+                1,
+                2,
+                1,
+            ],
+            static function (int $value): bool {
+                return $value === 2;
+            },
+            true,
+        ];
+
+        yield 'loose comparison' => [
+            [
+                1,
+                2,
+                3,
+            ],
+            static function (int $value): bool {
+                // @codingStandardsIgnoreStart
+                return $value == '2';
+                // @codingStandardsIgnoreEnd
+            },
+            true,
+        ];
+
+        yield 'not found' => [
+            [
+                'foo',
+                'bar',
+                'baz',
+            ],
+            static function (string $value): bool {
+                return $value === 'qoo';
+            },
+            false,
+        ];
+    }
 }
