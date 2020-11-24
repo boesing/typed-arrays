@@ -745,4 +745,32 @@ final class GenericMapTest extends TestCase
             false,
         ];
     }
+
+    public function testWillSliceMap(): void
+    {
+        $map = new GenericMap([
+            'foo' => 'bar',
+            'bar' => 'baz',
+        ]);
+
+        $sliced = $map->slice(1);
+        self::assertNotSame($sliced, $map);
+        self::assertTrue($sliced->has('foo'));
+        self::assertFalse($sliced->has('bar'));
+    }
+
+    public function testCanSliceTheEndOfAMap(): void
+    {
+        $map = new GenericMap([
+            'foo' => 'bar',
+            'bar' => 'baz',
+            'baz' => 'qoo',
+        ]);
+
+        $sliced = $map->slice(-1);
+        self::assertNotSame($sliced, $map);
+        self::assertTrue($sliced->has('foo'));
+        self::assertTrue($sliced->has('bar'));
+        self::assertFalse($sliced->has('baz'));
+    }
 }
