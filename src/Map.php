@@ -14,6 +14,7 @@ use function array_key_exists;
 use function array_keys;
 use function array_map;
 use function array_merge;
+use function array_slice;
 use function array_udiff;
 use function array_uintersect;
 use function array_uintersect_uassoc;
@@ -352,5 +353,13 @@ abstract class Map extends Array_ implements MapInterface
         }
 
         return $groups;
+    }
+
+    public function slice(int $length): MapInterface
+    {
+        $instance       = clone $this;
+        $instance->data = array_slice($instance->data, 0, $length, true);
+
+        return $instance;
     }
 }

@@ -144,4 +144,6 @@ interface MapInterface extends ArrayInterface
      * @psalm-return MapInterface<TGroup,MapInterface<TKey,TValue>>
      */
     public function group(callable $callback): MapInterface;
+
+    public function slice(int $length): MapInterface;
 }
