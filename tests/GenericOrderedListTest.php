@@ -1079,7 +1079,9 @@ final class GenericOrderedListTest extends TestCase
     public function testEmptyListWontFindExistence(): void
     {
         $list = new GenericOrderedList();
-        self::assertFalse($list->exists(static function (): bool {return true;}));
+        self::assertFalse($list->exists(static function (): bool {
+            return true;
+        }));
     }
 
     /**

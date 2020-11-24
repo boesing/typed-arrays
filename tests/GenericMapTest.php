@@ -697,7 +697,9 @@ final class GenericMapTest extends TestCase
     public function testEmptyMapWontFindExistence(): void
     {
         $map = new GenericMap();
-        self::assertFalse($map->exists(static function (): bool {return true;}));
+        self::assertFalse($map->exists(static function (): bool {
+            return true;
+        }));
     }
 
     /**
