@@ -118,4 +118,15 @@ abstract class Array_ implements ArrayInterface
 
         return true;
     }
+
+    public function exists(callable $callback): bool
+    {
+        foreach ($this->data as $value) {
+            if ($callback($value)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

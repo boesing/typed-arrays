@@ -680,4 +680,61 @@ final class GenericMapTest extends TestCase
             },
         ];
     }
+
+    /**
+     * @template T
+     * @psalm-param array<non-empty-string,T> $list
+     * @psalm-param Closure(T):bool $callback
+     * @dataProvider existenceTests
+     */
+    public function testWillFindExistenceOfEntry(array $list, callable $callback, bool $exists): void
+    {
+        $list = new GenericMap($list);
+
+        self::assertSame($exists, $list->exists($callback));
+    }
+
+    /**
+     * @psalm-return Generator<non-empty-string,array{0:array<non-empty-string,mixed>,1:Closure(mixed):bool,2:bool}>
+     */
+    public function existenceTests(): Generator
+    {
+        yield 'simple' => [
+            [
+                'one' => 1,
+                'two' => 2,
+                'another one' => 1,
+            ],
+            static function (int $value): bool {
+                return $value === 2;
+            },
+            true,
+        ];
+
+        yield 'loose comparison' => [
+            [
+                'one' => 1,
+                'two' => 2,
+                'three' => 3,
+            ],
+            static function (int $value): bool {
+                // @codingStandardsIgnoreStart
+                return $value == '2';
+                // @codingStandardsIgnoreEnd
+            },
+            true,
+        ];
+
+        yield 'not found' => [
+            [
+                'foo' => 'foo',
+                'bar' => 'bar',
+                'baz' => 'baz',
+            ],
+            static function (string $value): bool {
+                return $value === 'qoo';
+            },
+            false,
+        ];
+    }
 }
