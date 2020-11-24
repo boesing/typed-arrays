@@ -683,15 +683,15 @@ final class GenericMapTest extends TestCase
 
     /**
      * @template T
-     * @psalm-param array<non-empty-string,T> $list
+     * @psalm-param array<non-empty-string,T> $map
      * @psalm-param Closure(T):bool $callback
      * @dataProvider existenceTests
      */
-    public function testWillFindExistenceOfEntry(array $list, callable $callback, bool $exists): void
+    public function testWillFindExistenceOfEntry(array $data, callable $callback, bool $exists): void
     {
-        $list = new GenericMap($list);
+        $map = new GenericMap($data);
 
-        self::assertSame($exists, $list->exists($callback));
+        self::assertSame($exists, $map->exists($callback));
     }
 
     /**
