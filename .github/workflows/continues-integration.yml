@@ -1,8 +1,5 @@
 name: CI Pipeline
 on:
-  push:
-    branches:
-      - "[0-9]+.[0-9]+.x"
   pull_request:
 
 jobs:
