@@ -175,7 +175,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
     {
         /** @psalm-suppress MissingClosureParamType */
         return $this->filter(
-            static function (/** @param TValue $value */ $value) use ($element): bool {
+            static function ($value) use ($element): bool {
                 return $value !== $element;
             }
         );
