@@ -345,4 +345,12 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
         return $groups;
     }
+
+    /**
+     * @psalm-return list<TValue>
+     */
+    public function jsonSerialize(): array
+    {
+        return array_values($this->data);
+    }
 }

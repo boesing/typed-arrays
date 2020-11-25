@@ -19,11 +19,14 @@ use function array_fill;
 use function array_map;
 use function chr;
 use function in_array;
+use function json_encode;
 use function md5;
 use function mt_rand;
 use function spl_object_hash;
 use function strlen;
 use function strnatcmp;
+
+use const JSON_THROW_ON_ERROR;
 
 final class GenericOrderedListTest extends TestCase
 {
@@ -1126,5 +1129,37 @@ final class GenericOrderedListTest extends TestCase
             },
             false,
         ];
+    }
+
+    public function testJsonSerializeOnEmptyListReturnsEmptyList(): void
+    {
+        $instance = new GenericOrderedList();
+        self::assertEquals('[]', json_encode($instance, JSON_THROW_ON_ERROR));
+    }
+
+    public function testJsonSerializeWillGenerateListOfEntries(): void
+    {
+        $list = new GenericOrderedList([
+            1,
+            2,
+            'foo',
+            3,
+        ]);
+
+        self::assertEquals('[1,2,"foo",3]', json_encode($list, JSON_THROW_ON_ERROR));
+    }
+
+    public function testRemovalOfEntryWillStillJsonSerializeListOfEntries(): void
+    {
+        $list = new GenericOrderedList([
+            1,
+            2,
+            'foo',
+            3,
+        ]);
+
+        $list = $list->removeElement(2);
+
+        self::assertEquals('[1,"foo",3]', json_encode($list, JSON_THROW_ON_ERROR));
     }
 }
