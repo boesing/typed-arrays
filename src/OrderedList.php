@@ -349,8 +349,19 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
     /**
      * @psalm-return list<TValue>
      */
+    public function toNativeArray(): array
+    {
+        $data = $this->data;
+        Assert::isList($data);
+
+        return $data;
+    }
+
+    /**
+     * @psalm-return list<TValue>
+     */
     public function jsonSerialize(): array
     {
-        return array_values($this->data);
+        return $this->toNativeArray();
     }
 }
