@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Boesing\TypedArrays;
 
+use JsonSerializable;
 use OutOfBoundsException;
 
 /**
@@ -11,7 +12,7 @@ use OutOfBoundsException;
  * @template         TValue
  * @template-extends ArrayInterface<TKey,TValue>
  */
-interface MapInterface extends ArrayInterface
+interface MapInterface extends ArrayInterface, JsonSerializable
 {
     /**
      * @psalm-param  Closure(TValue,TKey):bool $callback

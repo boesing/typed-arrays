@@ -175,7 +175,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
     {
         /** @psalm-suppress MissingClosureParamType */
         return $this->filter(
-            static function (/** @param TValue $value */ $value) use ($element): bool {
+            static function ($value) use ($element): bool {
                 return $value !== $element;
             }
         );
@@ -344,5 +344,24 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         }
 
         return $groups;
+    }
+
+    /**
+     * @psalm-return list<TValue>
+     */
+    public function toNativeArray(): array
+    {
+        $data = $this->data;
+        Assert::isList($data);
+
+        return $data;
+    }
+
+    /**
+     * @psalm-return list<TValue>
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->toNativeArray();
     }
 }

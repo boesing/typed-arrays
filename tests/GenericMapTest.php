@@ -16,9 +16,12 @@ use Webmozart\Assert\Assert;
 
 use function array_map;
 use function in_array;
+use function json_encode;
 use function strlen;
 use function strnatcmp;
 use function trim;
+
+use const JSON_THROW_ON_ERROR;
 
 final class GenericMapTest extends TestCase
 {
@@ -772,5 +775,23 @@ final class GenericMapTest extends TestCase
         self::assertTrue($sliced->has('foo'));
         self::assertTrue($sliced->has('bar'));
         self::assertFalse($sliced->has('baz'));
+    }
+
+    public function testJsonSerializeOnEmptyMapReturnsNull(): void
+    {
+        $instance = new GenericMap();
+        self::assertEquals('null', json_encode($instance, JSON_THROW_ON_ERROR));
+    }
+
+    public function testJsonSerializeWillGenerateMapOfEntries(): void
+    {
+        $list = new GenericMap([
+            'one' => 1,
+            'two' => 2,
+            'foo' => 'foo',
+            'three' => 3,
+        ]);
+
+        self::assertEquals('{"one":1,"two":2,"foo":"foo","three":3}', json_encode($list, JSON_THROW_ON_ERROR));
     }
 }

@@ -362,4 +362,13 @@ abstract class Map extends Array_ implements MapInterface
 
         return $instance;
     }
+
+    public function jsonSerialize(): ?array
+    {
+        if ($this->isEmpty()) {
+            return null;
+        }
+
+        return $this->data;
+    }
 }
