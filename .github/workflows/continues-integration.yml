@@ -70,7 +70,7 @@ jobs:
         php-version: ["7.3", "7.4", "8.0"]
         operating-system: ["ubuntu-latest", "macos-latest"]
         experimental: [false]
-        composer-dependencies: ['--prefer-lowest', '']
+        composer-dependencies: ['lowest', 'latest']
 
     steps:
       - name: Checkout
@@ -83,7 +83,11 @@ jobs:
           tools: "composer:v2"
 
       - name: Install dependencies
-        run: composer install --no-progress --prefer-dist --optimize-autoloader ${{ matrix.composer-options }} ${{ matrix.composer-dependencies }}
+        run: composer install --no-progress --prefer-dist --optimize-autoloader ${{ matrix.composer-options }}
+
+      - name: Ensure lowest dependencies
+        if: ${{ matrix.composer-dependencies == 'lowest }}
+        run: composer update --no-progress --prefer-dist --prefer-lowest ${{ matrix.composer-options }}
 
       - name: Execute tests
         run: vendor/bin/phpunit --colors=always --coverage-clover=build/coverage-clover.xml --coverage-xml=build/coverage-xml --log-junit build/coverage-junit.xml --coverage-text
