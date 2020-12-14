@@ -168,6 +168,7 @@ abstract class Map extends Array_ implements MapInterface
      * @psalm-param (Closure(TValue,TValue):int)|null $valueComparator
      * @psalm-param (Closure(TKey,TKey):int)|null $keyComparator
      * @psalm-return array<TKey,TValue>
+     * @phpcsSuppress SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedMethod
      */
     private function intersection(MapInterface $other, ?callable $valueComparator, ?callable $keyComparator): array
     {
