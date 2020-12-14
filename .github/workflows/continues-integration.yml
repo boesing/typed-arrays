@@ -86,7 +86,7 @@ jobs:
         run: composer install --no-progress --prefer-dist --optimize-autoloader ${{ matrix.composer-options }}
 
       - name: Ensure lowest dependencies
-        if: ${{ matrix.composer-dependencies == 'lowest }}
+        if: ${{ matrix.composer-dependencies == 'lowest' }}
         run: composer update --no-progress --prefer-dist --prefer-lowest ${{ matrix.composer-options }}
 
       - name: Execute tests
