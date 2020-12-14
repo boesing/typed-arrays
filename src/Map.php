@@ -158,7 +158,7 @@ abstract class Map extends Array_ implements MapInterface
     public function intersect(MapInterface $other, ?callable $valueComparator = null): MapInterface
     {
         $instance       = clone $this;
-        $instance->data = $this->intersection($other, $valueComparator, null);
+        $instance->data = $instance->intersection($other, $valueComparator, null);
 
         return $instance;
     }
@@ -212,7 +212,7 @@ abstract class Map extends Array_ implements MapInterface
     public function intersectAssoc(MapInterface $other, ?callable $valueComparator = null): MapInterface
     {
         $instance       = clone $this;
-        $instance->data = $this->intersection($other, $valueComparator, null);
+        $instance->data = $instance->intersection($other, $valueComparator, null);
 
         return $instance;
     }
@@ -220,7 +220,7 @@ abstract class Map extends Array_ implements MapInterface
     public function intersectUsingKeys(MapInterface $other, ?callable $keyComparator = null): MapInterface
     {
         $instance       = clone $this;
-        $instance->data = $this->intersection($other, null, $keyComparator);
+        $instance->data = $instance->intersection($other, null, $keyComparator);
 
         return $instance;
     }
@@ -231,7 +231,7 @@ abstract class Map extends Array_ implements MapInterface
         ?callable $keyComparator = null
     ): MapInterface {
         $instance       = clone $this;
-        $instance->data = $this->intersection($other, $valueComparator, $keyComparator);
+        $instance->data = $instance->intersection($other, $valueComparator, $keyComparator);
 
         return $instance;
     }
