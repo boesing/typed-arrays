@@ -9,11 +9,9 @@ use OutOfBoundsException;
 use Throwable;
 
 use function array_diff_ukey;
-use function array_filter;
 use function array_intersect_ukey;
 use function array_key_exists;
 use function array_keys;
-use function array_map;
 use function array_merge;
 use function array_slice;
 use function array_udiff;
@@ -25,7 +23,6 @@ use function sprintf;
 use function uasort;
 use function usort;
 
-use const ARRAY_FILTER_USE_BOTH;
 use const SORT_NATURAL;
 
 /**
@@ -126,8 +123,16 @@ abstract class Map extends Array_ implements MapInterface
     public function filter(callable $callback): MapInterface
     {
         $instance = clone $this;
-        /** @psalm-suppress ImpureFunctionCall */
-        $instance->data = array_filter($instance->data, $callback, ARRAY_FILTER_USE_BOTH);
+        $filtered = [];
+        foreach ($instance->data as $key => $value) {
+            if (! $callback($value, $key)) {
+                continue;
+            }
+
+            $filtered[$key] = $value;
+        }
+
+        $instance->data = $filtered;
 
         return $instance;
     }
@@ -293,12 +298,19 @@ abstract class Map extends Array_ implements MapInterface
         return $instance;
     }
 
+    /**
+     * @template     TNewValue
+     * @psalm-param  Closure(TValue,TKey):TNewValue $callback
+     * @psalm-return MapInterface<TKey,TNewValue>
+     */
     public function map(callable $callback): MapInterface
     {
-        $instance = clone $this;
+        $data = [];
+        foreach ($this->data as $key => $value) {
+            $data[$key] = $callback($value, $key);
+        }
 
-        /** @psalm-suppress ImpureFunctionCall */
-        return new GenericMap(array_map($callback, $instance->data));
+        return new GenericMap($data);
     }
 
     public function has(string $key): bool
