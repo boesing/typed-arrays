@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Boesing\TypedArrays;
@@ -7,9 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 final class TypedArrayFactoryTest extends TestCase
 {
-    /**
-     * @var TypedArrayFactory
-     */
+    /** @var TypedArrayFactory */
     private $factory;
 
     protected function setUp(): void
@@ -20,9 +19,7 @@ final class TypedArrayFactoryTest extends TestCase
 
     public function testCanCreateMapInstance(): void
     {
-        $map = $this->factory->createMap([
-            'foo' => 'bar',
-        ]);
+        $map = $this->factory->createMap(['foo' => 'bar']);
 
         self::assertEquals(['foo' => 'bar'], $map->toNativeArray());
     }
