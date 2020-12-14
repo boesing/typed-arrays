@@ -364,4 +364,9 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
     {
         return $this->toNativeArray();
     }
+
+    public function has(int $index): bool
+    {
+        return array_key_exists($index, $this->data);
+    }
 }

@@ -27,6 +27,8 @@ use function strlen;
 use function strnatcmp;
 
 use const JSON_THROW_ON_ERROR;
+use const PHP_INT_MAX;
+use const PHP_INT_MIN;
 
 final class GenericOrderedListTest extends TestCase
 {
@@ -1161,5 +1163,42 @@ final class GenericOrderedListTest extends TestCase
         $list = $list->removeElement(2);
 
         self::assertEquals('[1,"foo",3]', json_encode($list, JSON_THROW_ON_ERROR));
+    }
+
+    /**
+     * @param mixed $value
+     * @dataProvider listValues
+     */
+    public function testCanDetectExistingIndices($value): void
+    {
+        $list = new GenericOrderedList([$value]);
+
+        self::assertTrue($list->has(0));
+    }
+
+    public function testWontDetectNonExistingValue(): void
+    {
+        $list = new GenericOrderedList(['foo']);
+
+        self::assertFalse($list->has(1));
+    }
+
+    /**
+     * @return Generator<string,array{0:mixed}>
+     */
+    public function listValues(): Generator
+    {
+        yield 'string' => ['foo'];
+        yield 'empty string' => [''];
+        yield 'non breaking space' => [' '];
+        yield 'whitespace string' => [' '];
+        yield 'tab' => ["\t"];
+        yield 'integer' => [0];
+        yield 'positive integer' => [PHP_INT_MAX];
+        yield 'negative integer' => [PHP_INT_MIN];
+        yield 'null' => [null];
+        yield 'true' => [true];
+        yield 'false' => [false];
+        yield 'object' => [new stdClass()];
     }
 }
