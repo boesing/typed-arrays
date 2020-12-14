@@ -127,4 +127,10 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
     public function group(callable $callback): MapInterface;
 
     public function has(int $index): bool;
+
+    /**
+     * @param Closure(TValue,int):void $callback
+     * @throws OrderedErrorCollection If an error occured during execution.
+     */
+    public function forAll(callable $callback, bool $stopOnError = false): void;
 }

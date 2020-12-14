@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace Boesing\TypedArrays;
 
+use Boesing\TypedArrays\Asset\CallableObject;
 use Boesing\TypedArrays\Asset\ComparableObject;
 use Boesing\TypedArrays\Asset\GenericObject;
+use Closure;
 use DateTimeImmutable;
 use Generator;
 use Lcobucci\Clock\FrozenClock;
 use OutOfBoundsException;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use stdClass;
 use Webmozart\Assert\Assert;
 
@@ -25,6 +28,15 @@ use const JSON_THROW_ON_ERROR;
 
 final class GenericMapTest extends TestCase
 {
+    /** @var int */
+    private $iteration;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->iteration = 0;
+    }
+
     /**
      * @psalm-param  array<string,mixed>       $initial
      * @psalm-param  array<string,mixed>       $expected
@@ -630,7 +642,7 @@ final class GenericMapTest extends TestCase
     }
 
     /**
-     * @template T
+     * @template    T
      * @psalm-param array<string,T> $elements
      * @psalm-param Closure(T):bool $callback
      * @dataProvider satisfactions
@@ -793,5 +805,78 @@ final class GenericMapTest extends TestCase
         ]);
 
         self::assertEquals('{"one":1,"two":2,"foo":"foo","three":3}', json_encode($list, JSON_THROW_ON_ERROR));
+    }
+
+    public function testForAllIsExecutedForAllEntries(): void
+    {
+        $map = new GenericMap([
+            'foo' => 'bar',
+            'bar' => 'baz',
+            'qoo' => 'ooq',
+        ]);
+
+        $callable = new CallableObject(['bar', 'foo'], ['baz', 'bar'], ['ooq', 'qoo']);
+        /** @psalm-suppress MixedArgumentTypeCoercion */
+        $map->forAll($callable);
+    }
+
+    public function testWillGenerateErrorCollectionWhileExecutingForAll(): void
+    {
+        $map = new GenericMap([
+            'foo' => 'bar',
+            'bar' => 'baz',
+            'qoo' => 'ooq',
+        ]);
+
+        $callable = function (string $value, string $key): void {
+            $this->iteration++;
+
+            if ($key === 'bar') {
+                throw new RuntimeException($key);
+            }
+        };
+
+        $errorCollection = null;
+
+        try {
+            $map->forAll($callable);
+        } catch (MappedErrorCollection $errorCollection) {
+        }
+
+        self::assertEquals($map->count(), $this->iteration);
+        self::assertInstanceOf(MappedErrorCollection::class, $errorCollection);
+        $errors = $errorCollection->errors();
+        self::assertCount(1, $errors);
+        self::assertInstanceOf(RuntimeException::class, $errors->get('bar'));
+    }
+
+    public function testWillGenerateErrorCollectionWhileExecutingForAllButStopsExecutionOnError(): void
+    {
+        $map = new GenericMap([
+            'foo' => 'bar',
+            'bar' => 'baz',
+            'qoo' => 'ooq',
+        ]);
+
+        $callable = function (string $value, string $key): void {
+            $this->iteration++;
+            if ($key === 'bar') {
+                throw new RuntimeException($key);
+            }
+        };
+
+        $errorCollection = null;
+
+        try {
+            $map->forAll($callable, true);
+        } catch (MappedErrorCollection $errorCollection) {
+        }
+
+        self::assertNotEquals($map->count(), $this->iteration);
+        self::assertEquals(2, $this->iteration);
+        self::assertInstanceOf(MappedErrorCollection::class, $errorCollection);
+        $errors = $errorCollection->errors();
+        self::assertCount(1, $errors);
+        self::assertInstanceOf(RuntimeException::class, $errors->get('bar'));
     }
 }

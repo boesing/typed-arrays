@@ -147,4 +147,10 @@ interface MapInterface extends ArrayInterface, JsonSerializable
     public function group(callable $callback): MapInterface;
 
     public function slice(int $length): MapInterface;
+
+    /**
+     * @param Closure(TValue,TKey):void $callback
+     * @throws MappedErrorCollection If an error occured during execution.
+     */
+    public function forAll(callable $callback, bool $stopOnError = false): void;
 }

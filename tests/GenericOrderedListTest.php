@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Boesing\TypedArrays;
 
+use Boesing\TypedArrays\Asset\CallableObject;
 use Boesing\TypedArrays\Asset\ComparableObject;
 use Boesing\TypedArrays\Asset\GenericObject;
 use DateTimeImmutable;
@@ -12,6 +13,7 @@ use InvalidArgumentException;
 use Lcobucci\Clock\FrozenClock;
 use OutOfBoundsException;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use stdClass;
 use Webmozart\Assert\Assert;
 
@@ -32,6 +34,15 @@ use const PHP_INT_MIN;
 
 final class GenericOrderedListTest extends TestCase
 {
+    /** @var int */
+    private $iteration = 0;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->iteration = 0;
+    }
+
     /**
      * @psalm-param  list<mixed> $values
      * @psalm-param  (Closure(mixed,mixed):int)|null $callback
@@ -1200,5 +1211,79 @@ final class GenericOrderedListTest extends TestCase
         yield 'true' => [true];
         yield 'false' => [false];
         yield 'object' => [new stdClass()];
+    }
+
+    public function testForAllIsExecutedForAllEntries(): void
+    {
+        $list = new GenericOrderedList([
+            'bar',
+            'baz',
+            'ooq',
+        ]);
+
+        $callable = new CallableObject(['bar', 0], ['baz', 1], ['ooq', 2]);
+        /** @psalm-suppress MixedArgumentTypeCoercion */
+        $list->forAll($callable);
+    }
+
+    public function testWillGenerateErrorCollectionWhileExecutingForAll(): void
+    {
+        $list = new GenericOrderedList([
+            'bar',
+            'baz',
+            'ooq',
+        ]);
+
+        $callable = function (string $value, int $index): void {
+            $this->iteration++;
+
+            if ($index === 1) {
+                throw new RuntimeException((string) $index);
+            }
+        };
+
+        $errorCollection = null;
+
+        try {
+            $list->forAll($callable);
+        } catch (OrderedErrorCollection $errorCollection) {
+        }
+
+        self::assertEquals($list->count(), $this->iteration);
+        self::assertInstanceOf(OrderedErrorCollection::class, $errorCollection);
+        $errors = $errorCollection->errors();
+        self::assertCount($list->count(), $errors);
+        self::assertInstanceOf(RuntimeException::class, $errors->at(1));
+    }
+
+    public function testWillGenerateErrorCollectionWhileExecutingForAllButStopsExecutionOnError(): void
+    {
+        $list = new GenericOrderedList([
+            'bar',
+            'baz',
+            'ooq',
+        ]);
+
+        $callable = function (string $value, int $index): void {
+            $this->iteration++;
+            if ($index === 1) {
+                throw new RuntimeException((string) $index);
+            }
+        };
+
+        $errorCollection = null;
+
+        try {
+            $list->forAll($callable, true);
+        } catch (OrderedErrorCollection $errorCollection) {
+        }
+
+        self::assertNotEquals($list->count(), $this->iteration);
+        self::assertEquals(2, $this->iteration);
+        self::assertInstanceOf(OrderedErrorCollection::class, $errorCollection);
+        $errors = $errorCollection->errors();
+        self::assertCount(2, $errors);
+        self::assertNull($errors->at(0));
+        self::assertInstanceOf(RuntimeException::class, $errors->at(1));
     }
 }

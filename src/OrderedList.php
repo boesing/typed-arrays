@@ -6,6 +6,7 @@ namespace Boesing\TypedArrays;
 
 use Closure;
 use OutOfBoundsException;
+use Throwable;
 use Webmozart\Assert\Assert;
 
 use function array_combine;
@@ -368,5 +369,32 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
     public function has(int $index): bool
     {
         return array_key_exists($index, $this->data);
+    }
+
+    public function forAll(callable $callback, bool $stopOnError = false): void
+    {
+        /** @var OrderedListInterface<Throwable|null> $errors */
+        $errors = new GenericOrderedList([]);
+        $error  = false;
+        foreach ($this->data as $index => $value) {
+            $throwable = null;
+            try {
+                $callback($value, $index);
+            } catch (Throwable $throwable) {
+                $error = true;
+                if ($stopOnError) {
+                    break;
+                }
+            } finally {
+                /** @psalm-suppress ImpureMethodCall */
+                $errors = $errors->add($throwable);
+            }
+        }
+
+        if (! $error) {
+            return;
+        }
+
+        throw OrderedErrorCollection::create($errors);
     }
 }

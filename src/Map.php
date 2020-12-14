@@ -6,6 +6,7 @@ namespace Boesing\TypedArrays;
 
 use Closure;
 use OutOfBoundsException;
+use Throwable;
 
 use function array_diff_ukey;
 use function array_filter;
@@ -371,5 +372,29 @@ abstract class Map extends Array_ implements MapInterface
         }
 
         return $this->data;
+    }
+
+    public function forAll(callable $callback, bool $stopOnError = false): void
+    {
+        /** @var MapInterface<TKey,Throwable> $errors */
+        $errors = new GenericMap([]);
+        foreach ($this->data as $key => $value) {
+            try {
+                $callback($value, $key);
+            } catch (Throwable $throwable) {
+                /** @psalm-suppress ImpureMethodCall */
+                $errors = $errors->put($key, $throwable);
+
+                if ($stopOnError) {
+                    break;
+                }
+            }
+        }
+
+        if ($errors->isEmpty()) {
+            return;
+        }
+
+        throw MappedErrorCollection::create($errors);
     }
 }
