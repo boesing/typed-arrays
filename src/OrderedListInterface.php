@@ -125,4 +125,6 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
      * @psalm-return MapInterface<TGroup,OrderedListInterface<TValue>>
      */
     public function group(callable $callback): MapInterface;
+
+    public function has(int $index): bool;
 }
