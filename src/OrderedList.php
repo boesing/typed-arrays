@@ -11,7 +11,6 @@ use Webmozart\Assert\Assert;
 
 use function array_combine;
 use function array_fill;
-use function array_filter;
 use function array_key_exists;
 use function array_keys;
 use function array_map;
@@ -58,12 +57,19 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         return $instance;
     }
 
+    /**
+     * @template     TNewValue
+     * @psalm-param  Closure(TValue,int):TNewValue $callback
+     * @psalm-return OrderedListInterface<TNewValue>
+     */
     public function map(callable $callback): OrderedListInterface
     {
-        /** @psalm-suppress ImpureFunctionCall */
-        return new GenericOrderedList(array_values(
-            array_map($callback, $this->data)
-        ));
+        $data = [];
+        foreach ($this->data as $index => $value) {
+            $data[] = $callback($value, $index);
+        }
+
+        return new GenericOrderedList($data);
     }
 
     public function add($element): OrderedListInterface
@@ -144,19 +150,20 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
     /**
      * @template TKey of non-empty-string
-     * @psalm-param  Closure(TValue $value):TKey $keyGenerator
+     * @psalm-param  Closure(TValue $value,int):TKey $keyGenerator
      * @psalm-return MapInterface<TKey,TValue>
      */
     public function toMap(callable $keyGenerator): MapInterface
     {
         $instance = clone $this;
-        /** @psalm-suppress ImpureFunctionCall */
-        $keys = array_map($keyGenerator, $instance->data);
-        Assert::allStringNotEmpty($keys);
+        $keys     = [];
+        foreach ($instance->data as $index => $value) {
+            $keys[] = $keyGenerator($value, $index);
+        }
 
         $combined = array_combine(
             $keys,
-            $this->data
+            $instance->data
         );
 
         /**
@@ -166,10 +173,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
          */
         Assert::allStringNotEmpty(array_keys($combined));
 
-        /** @var MapInterface<TKey,TValue> $map */
-        $map = new GenericMap($combined);
-
-        return $map;
+        return new GenericMap($combined);
     }
 
     public function removeElement($element): OrderedListInterface
@@ -185,10 +189,16 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
     public function filter(callable $callback): OrderedListInterface
     {
         $instance = clone $this;
-        /** @psalm-suppress ImpureFunctionCall */
-        $instance->data = array_values(
-            array_filter($instance->data, $callback)
-        );
+        $filtered = [];
+        foreach ($instance->data as $index => $value) {
+            if (! $callback($value, $index)) {
+                continue;
+            }
+
+            $filtered[] = $value;
+        }
+
+        $instance->data = $filtered;
 
         return $instance;
     }

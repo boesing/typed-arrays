@@ -28,7 +28,7 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
     public function at(int $position);
 
     /**
-     * @psalm-param  Closure(TValue):bool $callback
+     * @psalm-param  Closure(TValue,int):bool $callback
      * @psalm-return OrderedListInterface<TValue>
      */
     public function filter(callable $callback): OrderedListInterface;
@@ -47,7 +47,7 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
 
     /**
      * @template     TNewValue
-     * @psalm-param  Closure(TValue):TNewValue $callback
+     * @psalm-param  Closure(TValue,int):TNewValue $callback
      * @psalm-return OrderedListInterface<TNewValue>
      */
     public function map(callable $callback): OrderedListInterface;

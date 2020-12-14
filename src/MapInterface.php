@@ -41,7 +41,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
 
     /**
      * @template     TNewValue
-     * @psalm-param  Closure(TValue):TNewValue $callback
+     * @psalm-param  Closure(TValue,TKey):TNewValue $callback
      * @psalm-return MapInterface<TKey,TNewValue>
      */
     public function map(callable $callback): MapInterface;
