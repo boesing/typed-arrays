@@ -146,6 +146,9 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      */
     public function group(callable $callback): MapInterface;
 
+    /**
+     * @psalm-return MapInterface<TKey,TValue>
+     */
     public function slice(int $length): MapInterface;
 
     /**
