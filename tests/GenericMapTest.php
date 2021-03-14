@@ -816,7 +816,6 @@ final class GenericMapTest extends TestCase
         ]);
 
         $callable = new CallableObject(['bar', 'foo'], ['baz', 'bar'], ['ooq', 'qoo']);
-        /** @psalm-suppress MixedArgumentTypeCoercion */
         $map->forAll($callable);
     }
 

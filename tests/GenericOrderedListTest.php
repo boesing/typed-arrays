@@ -238,7 +238,6 @@ final class GenericOrderedListTest extends TestCase
         array $expected,
         ?callable $comparator
     ): void {
-        /** @psalm-suppress PossiblyInvalidArgument */
         $list = new GenericOrderedList($initial);
         $diff = $list->diff(new GenericOrderedList($other), $comparator);
 
@@ -343,8 +342,7 @@ final class GenericOrderedListTest extends TestCase
         array $expected,
         ?callable $comparator
     ): void {
-        $collection = new GenericOrderedList($initial);
-        /** @psalm-suppress InvalidArgument */
+        $collection   = new GenericOrderedList($initial);
         $intersection = $collection->intersect(new GenericOrderedList($other), $comparator);
 
         self::assertEquals($expected, $intersection->toNativeArray());
@@ -790,7 +788,7 @@ final class GenericOrderedListTest extends TestCase
 
         /** @var OrderedListInterface<string> $abc */
         $abc = new GenericOrderedList([]);
-        $abc = $abc->fill(0, 25, $callback);
+        $abc = $abc->fill(0, 26, $callback);
 
         self::assertEquals([
             'A',
@@ -1222,7 +1220,6 @@ final class GenericOrderedListTest extends TestCase
         ]);
 
         $callable = new CallableObject(['bar', 0], ['baz', 1], ['ooq', 2]);
-        /** @psalm-suppress MixedArgumentTypeCoercion */
         $list->forAll($callable);
     }
 
