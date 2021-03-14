@@ -15,6 +15,9 @@
         "psalm/plugin-phpunit": "^0.15.1",
         "vimeo/psalm": "^4.6"
     },
+    "conflict": {
+        "vimeo/psalm": "4.6.2"
+    },
     "config": {
         "preferred-install": "dist",
         "sort-packages": true
