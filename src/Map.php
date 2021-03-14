@@ -385,27 +385,31 @@ abstract class Map extends Array_ implements MapInterface
         return $this->data;
     }
 
-    public function forAll(callable $callback, bool $stopOnError = false): void
+    public function forAll(callable $callback, bool $stopOnError = false): ForAllPromiseInterface
     {
-        /** @var MapInterface<TKey,Throwable> $errors */
-        $errors = new GenericMap([]);
-        foreach ($this->data as $key => $value) {
-            try {
-                $callback($value, $key);
-            } catch (Throwable $throwable) {
-                /** @psalm-suppress ImpureMethodCall */
-                $errors = $errors->put($key, $throwable);
+        $data = $this->data;
 
-                if ($stopOnError) {
-                    break;
+        return new ForAllPromise(static function () use ($data, $callback, $stopOnError): void {
+            /** @var MapInterface<TKey,Throwable> $errors */
+            $errors = new GenericMap([]);
+            foreach ($data as $key => $value) {
+                try {
+                    $callback($value, $key);
+                } catch (Throwable $throwable) {
+                    /** @psalm-suppress ImpureMethodCall */
+                    $errors = $errors->put($key, $throwable);
+
+                    if ($stopOnError) {
+                        break;
+                    }
                 }
             }
-        }
 
-        if ($errors->isEmpty()) {
-            return;
-        }
+            if ($errors->isEmpty()) {
+                return;
+            }
 
-        throw MappedErrorCollection::create($errors);
+            throw MappedErrorCollection::create($errors);
+        });
     }
 }

@@ -1283,4 +1283,39 @@ final class GenericOrderedListTest extends TestCase
         self::assertNull($errors->at(0));
         self::assertInstanceOf(RuntimeException::class, $errors->at(1));
     }
+
+    public function testForAllPromiseWillSuppressErrors(): void
+    {
+        $map = new GenericOrderedList(['bar']);
+
+        $callback = static function (): void {
+            throw new RuntimeException();
+        };
+        $map->forAll($callback)->suppressErrors();
+
+        $this->expectException(RuntimeException::class);
+        $map->forAll($callback);
+    }
+
+    public function testForAllPromiseWillExecuteFinallyMethodBeforeThrowingException(): void
+    {
+        $callbackInvoked = false;
+        $callback        = static function () use (&$callbackInvoked): void {
+            $callbackInvoked = true;
+        };
+
+        $map = new GenericOrderedList(['bar']);
+
+        $runtimeExceptionCaught = false;
+        try {
+            $map->forAll(static function (): void {
+                throw new RuntimeException();
+            })->finally($callback);
+        } catch (RuntimeException $exception) {
+            $runtimeExceptionCaught = true;
+        }
+
+        self::assertTrue($runtimeExceptionCaught);
+        self::assertTrue($callbackInvoked);
+    }
 }

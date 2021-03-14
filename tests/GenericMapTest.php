@@ -878,4 +878,39 @@ final class GenericMapTest extends TestCase
         self::assertCount(1, $errors);
         self::assertInstanceOf(RuntimeException::class, $errors->get('bar'));
     }
+
+    public function testForAllPromiseWillSuppressErrors(): void
+    {
+        $map = new GenericMap(['foo' => 'bar']);
+
+        $callback = static function (): void {
+            throw new RuntimeException();
+        };
+        $map->forAll($callback)->suppressErrors();
+
+        $this->expectException(RuntimeException::class);
+        $map->forAll($callback);
+    }
+
+    public function testForAllPromiseWillExecuteFinallyMethodBeforeThrowingException(): void
+    {
+        $callbackInvoked = false;
+        $callback        = static function () use (&$callbackInvoked): void {
+            $callbackInvoked = true;
+        };
+
+        $map = new GenericMap(['foo' => 'bar']);
+
+        $runtimeExceptionCaught = false;
+        try {
+            $map->forAll(static function (): void {
+                throw new RuntimeException();
+            })->finally($callback);
+        } catch (RuntimeException $exception) {
+            $runtimeExceptionCaught = true;
+        }
+
+        self::assertTrue($runtimeExceptionCaught);
+        self::assertTrue($callbackInvoked);
+    }
 }
