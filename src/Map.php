@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Boesing\TypedArrays;
 
-use Closure;
 use OutOfBoundsException;
 use Throwable;
 
@@ -97,7 +96,7 @@ abstract class Map extends Array_ implements MapInterface
     }
 
     /**
-     * @psalm-return Closure(TKey,TKey):int
+     * @psalm-return callable(TKey,TKey):int
      */
     private function keyComparator(): callable
     {
@@ -171,8 +170,8 @@ abstract class Map extends Array_ implements MapInterface
 
     /**
      * @psalm-param MapInterface<TKey,TValue> $other
-     * @psalm-param (Closure(TValue,TValue):int)|null $valueComparator
-     * @psalm-param (Closure(TKey,TKey):int)|null $keyComparator
+     * @psalm-param (callable(TValue,TValue):int)|null $valueComparator
+     * @psalm-param (callable(TKey,TKey):int)|null $keyComparator
      * @psalm-return array<TKey,TValue>
      * @phpcsSuppress SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedMethod
      */
@@ -300,7 +299,7 @@ abstract class Map extends Array_ implements MapInterface
 
     /**
      * @template     TNewValue
-     * @psalm-param  Closure(TValue,TKey):TNewValue $callback
+     * @psalm-param  callable(TValue,TKey):TNewValue $callback
      * @psalm-return MapInterface<TKey,TNewValue>
      */
     public function map(callable $callback): MapInterface
@@ -341,7 +340,7 @@ abstract class Map extends Array_ implements MapInterface
 
     /**
      * @template TGroup of non-empty-string
-     * @psalm-param Closure(TValue):TGroup $callback
+     * @psalm-param callable(TValue):TGroup $callback
      *
      * @psalm-return MapInterface<TGroup,MapInterface<TKey,TValue>>
      */

@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace Boesing\TypedArrays;
 
-use Closure;
 use OutOfBoundsException;
 use Throwable;
 use Webmozart\Assert\Assert;
 
-use function array_combine;
-use function array_fill;
 use function array_key_exists;
 use function array_keys;
 use function array_map;
@@ -59,7 +56,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
     /**
      * @template     TNewValue
-     * @psalm-param  Closure(TValue,int):TNewValue $callback
+     * @psalm-param  callable(TValue,int):TNewValue $callback
      * @psalm-return OrderedListInterface<TNewValue>
      */
     public function map(callable $callback): OrderedListInterface
@@ -150,35 +147,30 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
     /**
      * @template TKey of non-empty-string
-     * @psalm-param  Closure(TValue $value,int):TKey $keyGenerator
+     * @psalm-param  callable(TValue,int):TKey $keyGenerator
      * @psalm-return MapInterface<TKey,TValue>
      */
     public function toMap(callable $keyGenerator): MapInterface
     {
         $instance = clone $this;
-        $keys     = [];
+        $mapped   = [];
         foreach ($instance->data as $index => $value) {
-            $keys[] = $keyGenerator($value, $index);
+            $key          = $keyGenerator($value, $index);
+            $mapped[$key] = $value;
         }
-
-        $combined = array_combine(
-            $keys,
-            $instance->data
-        );
 
         /**
          * Integerish strings are converted to integer when used as array keys
          *
          * @link https://3v4l.org/Y2ld5
          */
-        Assert::allStringNotEmpty(array_keys($combined));
+        Assert::allStringNotEmpty(array_keys($mapped));
 
-        return new GenericMap($combined);
+        return new GenericMap($mapped);
     }
 
     public function removeElement($element): OrderedListInterface
     {
-        /** @psalm-suppress MissingClosureParamType */
         return $this->filter(
             static function ($value) use ($element): bool {
                 return $value !== $element;
@@ -268,25 +260,21 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
     }
 
     /**
-     * @psalm-param TValue|Closure(int $index):TValue $value
+     * @psalm-param TValue|callable(int):TValue $value
      * @psalm-return array<int,TValue>
      */
     private function createListFilledWithValues(int $start, int $amount, $value): array
     {
-        /** @psalm-suppress ImpureFunctionCall */
-        if (! is_callable($value)) {
-            /** @psalm-var array<int,TValue> $list */
-            $list = array_fill($start, $amount, $value);
-
-            return $list;
+        $filled = [];
+        for ($index = $start; $index < $amount; $index++) {
+            /**
+             * @psalm-suppress ImpureFunctionCall
+             * @psalm-suppress MixedAssignment https://github.com/vimeo/psalm/issues/5384
+             */
+            $filled[$index] = is_callable($value) ? $value($index) : $value;
         }
 
-        $list = [];
-        for ($index = $start; $index <= $amount; $index++) {
-            $list[$index] = $value($index);
-        }
-
-        return $list;
+        return $filled;
     }
 
     public function slice(int $offset, ?int $length = null): OrderedListInterface
@@ -331,7 +319,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
     /**
      * @template TGroup of non-empty-string
-     * @psalm-param Closure(TValue):TGroup $callback
+     * @psalm-param callable(TValue):TGroup $callback
      *
      * @psalm-return MapInterface<TGroup,OrderedListInterface<TValue>>
      */
@@ -396,7 +384,6 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
                     break;
                 }
             } finally {
-                /** @psalm-suppress ImpureMethodCall */
                 $errors = $errors->add($throwable);
             }
         }
