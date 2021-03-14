@@ -369,29 +369,33 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         return array_key_exists($index, $this->data);
     }
 
-    public function forAll(callable $callback, bool $stopOnError = false): void
+    public function forAll(callable $callback, bool $stopOnError = false): ForAllPromiseInterface
     {
-        /** @var OrderedListInterface<Throwable|null> $errors */
-        $errors = new GenericOrderedList([]);
-        $error  = false;
-        foreach ($this->data as $index => $value) {
-            $throwable = null;
-            try {
-                $callback($value, $index);
-            } catch (Throwable $throwable) {
-                $error = true;
-                if ($stopOnError) {
-                    break;
+        $data = $this->data;
+
+        return new ForAllPromise(static function () use ($data, $callback, $stopOnError): void {
+            /** @var OrderedListInterface<Throwable|null> $errors */
+            $errors = new GenericOrderedList([]);
+            $error  = false;
+            foreach ($data as $index => $value) {
+                $throwable = null;
+                try {
+                    $callback($value, $index);
+                } catch (Throwable $throwable) {
+                    $error = true;
+                    if ($stopOnError) {
+                        break;
+                    }
+                } finally {
+                    $errors = $errors->add($throwable);
                 }
-            } finally {
-                $errors = $errors->add($throwable);
             }
-        }
 
-        if (! $error) {
-            return;
-        }
+            if (! $error) {
+                return;
+            }
 
-        throw OrderedErrorCollection::create($errors);
+            throw OrderedErrorCollection::create($errors);
+        });
     }
 }
