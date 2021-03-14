@@ -12,8 +12,8 @@
         "doctrine/coding-standard": "^8.1",
         "lcobucci/clock": "^1.2",
         "phpunit/phpunit": "^9.2",
-        "psalm/plugin-phpunit": "^0.12.2",
-        "vimeo/psalm": "^4.0"
+        "psalm/plugin-phpunit": "^0.15.1",
+        "vimeo/psalm": "^4.6"
     },
     "config": {
         "preferred-install": "dist",
@@ -29,8 +29,6 @@
             "Boesing\\TypedArrays\\": "tests/"
         }
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "scripts": {
         "cs-check": "phpcs",
         "cs-fix": "phpcbf",
