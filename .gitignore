@@ -6,3 +6,6 @@
 /.phpcs-cache
 /build/**
 !/build/.gitkeep
+/build/psalm/**
+!/build/psalm
+!/build/psalm/.gitkeep
