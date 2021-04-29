@@ -248,7 +248,6 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
         $instance = clone $this;
 
-        /** @psalm-var list<TValue> $combined */
         $combined = array_replace(
             $this->data,
             $this->createListFilledWithValues($startIndex, $amount, $value)
