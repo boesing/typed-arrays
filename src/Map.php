@@ -396,7 +396,6 @@ abstract class Map extends Array_ implements MapInterface
                 try {
                     $callback($value, $key);
                 } catch (Throwable $throwable) {
-                    /** @psalm-suppress ImpureMethodCall */
                     $errors = $errors->put($key, $throwable);
 
                     if ($stopOnError) {
