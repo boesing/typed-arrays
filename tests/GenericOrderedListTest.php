@@ -221,6 +221,7 @@ final class GenericOrderedListTest extends TestCase
         $list = new GenericOrderedList([]);
 
         $this->expectException(OutOfBoundsException::class);
+        /** @psalm-suppress UnusedMethodCall */
         $list->at(0);
     }
 
@@ -530,7 +531,10 @@ final class GenericOrderedListTest extends TestCase
         $list           = new GenericOrderedList([1, 2, 3, 1]);
         $callbackCalled = false;
 
-        /** @psalm-suppress InvalidArgument */
+        /**
+         * @psalm-suppress InvalidArgument
+         * @psalm-suppress UnusedMethodCall
+         */
         $list->unify(null, static function () use (&$callbackCalled): void {
             $callbackCalled = true;
         });
@@ -652,6 +656,7 @@ final class GenericOrderedListTest extends TestCase
     {
         $list = new GenericOrderedList([]);
         $this->expectException(OutOfBoundsException::class);
+        /** @psalm-suppress UnusedMethodCall */
         $list->first();
     }
 
@@ -659,6 +664,7 @@ final class GenericOrderedListTest extends TestCase
     {
         $list = new GenericOrderedList([]);
         $this->expectException(OutOfBoundsException::class);
+        /** @psalm-suppress UnusedMethodCall */
         $list->last();
     }
 
@@ -684,6 +690,7 @@ final class GenericOrderedListTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $list = new GenericOrderedList([1, 2, 3]);
+        /** @psalm-suppress UnusedMethodCall */
         $list->toMap(static function (int $value): string {
             return (string) $value;
         });
@@ -704,6 +711,7 @@ final class GenericOrderedListTest extends TestCase
         $list = new GenericOrderedList($initial);
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage($expectedExceptionMessage);
+        /** @psalm-suppress UnusedMethodCall */
         $list->fill($startIndex, mt_rand(1, 10), $fillUp);
     }
 
@@ -879,6 +887,7 @@ final class GenericOrderedListTest extends TestCase
     {
         $instance = new GenericOrderedList($initial);
         $this->expectException(OutOfBoundsException::class);
+        /** @psalm-suppress UnusedMethodCall */
         $instance->find($callback);
     }
 
@@ -1220,7 +1229,7 @@ final class GenericOrderedListTest extends TestCase
         ]);
 
         $callable = new CallableObject(['bar', 0], ['baz', 1], ['ooq', 2]);
-        $list->forAll($callable);
+        $list->forAll($callable)->execute();
     }
 
     public function testWillGenerateErrorCollectionWhileExecutingForAll(): void
@@ -1231,6 +1240,7 @@ final class GenericOrderedListTest extends TestCase
             'ooq',
         ]);
 
+        /** @psalm-suppress UnusedClosureParam */
         $callable = function (string $value, int $index): void {
             $this->iteration++;
 
@@ -1242,7 +1252,7 @@ final class GenericOrderedListTest extends TestCase
         $errorCollection = null;
 
         try {
-            $list->forAll($callable);
+            $list->forAll($callable)->execute();
         } catch (OrderedErrorCollection $errorCollection) {
         }
 
@@ -1261,6 +1271,7 @@ final class GenericOrderedListTest extends TestCase
             'ooq',
         ]);
 
+        /** @psalm-suppress UnusedClosureParam */
         $callable = function (string $value, int $index): void {
             $this->iteration++;
             if ($index === 1) {
@@ -1271,7 +1282,7 @@ final class GenericOrderedListTest extends TestCase
         $errorCollection = null;
 
         try {
-            $list->forAll($callable, true);
+            $list->forAll($callable, true)->execute();
         } catch (OrderedErrorCollection $errorCollection) {
         }
 
@@ -1294,7 +1305,7 @@ final class GenericOrderedListTest extends TestCase
         $map->forAll($callback)->suppressErrors();
 
         $this->expectException(RuntimeException::class);
-        $map->forAll($callback);
+        $map->forAll($callback)->execute();
     }
 
     public function testForAllPromiseWillExecuteFinallyMethodBeforeThrowingException(): void

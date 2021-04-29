@@ -11,7 +11,7 @@ use function func_get_args;
 
 final class CallableObject
 {
-    /** @var array<int,array<int,mixed>> */
+    /** @var list<list<mixed>> */
     private $argumentAssertions;
 
     /** @var int */
@@ -22,6 +22,7 @@ final class CallableObject
      */
     public function __construct(array ...$argumentAssertions)
     {
+        \Webmozart\Assert\Assert::isList($argumentAssertions);
         $this->argumentAssertions = $argumentAssertions;
     }
 

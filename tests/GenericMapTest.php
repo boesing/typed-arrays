@@ -15,7 +15,6 @@ use OutOfBoundsException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;
-use Webmozart\Assert\Assert;
 
 use function array_map;
 use function in_array;
@@ -58,8 +57,6 @@ final class GenericMapTest extends TestCase
             },
             $stack
         );
-
-        Assert::allIsInstanceOf($stackOfMaps, MapInterface::class);
 
         $merged = $map->merge(
             ...$stackOfMaps
@@ -816,7 +813,7 @@ final class GenericMapTest extends TestCase
         ]);
 
         $callable = new CallableObject(['bar', 'foo'], ['baz', 'bar'], ['ooq', 'qoo']);
-        $map->forAll($callable);
+        $map->forAll($callable)->execute();
     }
 
     public function testWillGenerateErrorCollectionWhileExecutingForAll(): void
@@ -827,6 +824,7 @@ final class GenericMapTest extends TestCase
             'qoo' => 'ooq',
         ]);
 
+        /** @psalm-suppress UnusedClosureParam */
         $callable = function (string $value, string $key): void {
             $this->iteration++;
 
@@ -838,7 +836,7 @@ final class GenericMapTest extends TestCase
         $errorCollection = null;
 
         try {
-            $map->forAll($callable);
+            $map->forAll($callable)->execute();
         } catch (MappedErrorCollection $errorCollection) {
         }
 
@@ -857,6 +855,7 @@ final class GenericMapTest extends TestCase
             'qoo' => 'ooq',
         ]);
 
+        /** @psalm-suppress UnusedClosureParam */
         $callable = function (string $value, string $key): void {
             $this->iteration++;
             if ($key === 'bar') {
@@ -867,7 +866,7 @@ final class GenericMapTest extends TestCase
         $errorCollection = null;
 
         try {
-            $map->forAll($callable, true);
+            $map->forAll($callable, true)->execute();
         } catch (MappedErrorCollection $errorCollection) {
         }
 
@@ -889,7 +888,7 @@ final class GenericMapTest extends TestCase
         $map->forAll($callback)->suppressErrors();
 
         $this->expectException(RuntimeException::class);
-        $map->forAll($callback);
+        $map->forAll($callback)->execute();
     }
 
     public function testForAllPromiseWillExecuteFinallyMethodBeforeThrowingException(): void
