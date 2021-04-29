@@ -9,8 +9,6 @@ use IteratorAggregate;
 use OutOfBoundsException;
 
 /**
- * @internal
- *
  * @template         TKey of array-key
  * @template         TValue
  * @template-extends IteratorAggregate<TKey,TValue>
