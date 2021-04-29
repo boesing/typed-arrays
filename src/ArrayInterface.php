@@ -9,7 +9,8 @@ use IteratorAggregate;
 use OutOfBoundsException;
 
 /**
- * @internal
+ * @psalm-require-implements MapInterface
+ * @psalm-require-implements OrderedListInterface
  *
  * @template         TKey of array-key
  * @template         TValue
