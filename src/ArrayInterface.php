@@ -55,4 +55,9 @@ interface ArrayInterface extends IteratorAggregate, Countable
      * @psalm-param callable(TValue):bool $callback
      */
     public function exists(callable $callback): bool;
+
+    /**
+     * @return 0|positive-int
+     */
+    public function count(): int;
 }
