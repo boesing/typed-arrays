@@ -16,9 +16,11 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;
 
+use function array_keys;
 use function array_map;
 use function in_array;
 use function json_encode;
+use function ord;
 use function strlen;
 use function strnatcmp;
 use function trim;
@@ -911,5 +913,40 @@ final class GenericMapTest extends TestCase
 
         self::assertTrue($runtimeExceptionCaught);
         self::assertTrue($callbackInvoked);
+    }
+
+    public function testWillSortKeysAlphabeticallyWhenNoSorterIsPassed(): void
+    {
+        $map = new GenericMap([
+            'e' => '',
+            'd' => '',
+            'c' => '',
+            'b' => '',
+            'a' => '',
+        ]);
+
+        $keysSorted = $map->sortByKey();
+        self::assertEquals(['a', 'b', 'c', 'd', 'e'], array_keys($keysSorted->toNativeArray()));
+    }
+
+    public function testWillSortKeysByProvidedCustomSorter(): void
+    {
+        $data = [
+            'a' => '',
+            'b' => '',
+            'c' => '',
+            'd' => '',
+            'e' => '',
+        ];
+
+        $map = new GenericMap($data);
+
+        $sorter = static function (string $a, string $b): int {
+            return ord($b) <=> ord($a);
+        };
+
+        $keysSorted = $map->sortByKey($sorter);
+
+        self::assertEquals(['e', 'd', 'c', 'b', 'a'], array_keys($keysSorted->toNativeArray()));
     }
 }

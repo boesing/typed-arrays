@@ -156,4 +156,11 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * @throws MappedErrorCollection If an error occured during execution.
      */
     public function forAll(callable $callback): ForAllPromiseInterface;
+
+    /**
+     * @param (callable(TKey,TKey):int)|null $sorter
+     *
+     * @psalm-return MapInterface<TKey,TValue>
+     */
+    public function sortByKey(?callable $sorter = null): MapInterface;
 }
