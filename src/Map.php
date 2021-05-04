@@ -20,7 +20,9 @@ use function array_uintersect_uassoc;
 use function array_values;
 use function asort;
 use function sprintf;
+use function strcmp;
 use function uasort;
+use function uksort;
 use function usort;
 
 use const SORT_NATURAL;
@@ -101,8 +103,8 @@ abstract class Map extends Array_ implements MapInterface
      */
     private function keyComparator(): callable
     {
-        return static function ($a, $b): int {
-            return $a <=> $b;
+        return static function (string $a, string $b): int {
+            return strcmp($a, $b);
         };
     }
 
@@ -403,5 +405,17 @@ abstract class Map extends Array_ implements MapInterface
                 return MappedErrorCollection::create(new GenericMap($filtered));
             }
         };
+    }
+
+    public function sortByKey(?callable $sorter = null): MapInterface
+    {
+        $sorter   = $sorter ?? $this->keyComparator();
+        $data     = $this->data;
+        $instance = clone $this;
+        /** @psalm-suppress ImpureFunctionCall */
+        uksort($data, $sorter);
+        $instance->data = $data;
+
+        return $instance;
     }
 }
