@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Boesing\TypedArrays;
 
 use OutOfBoundsException;
-use Throwable;
 use Webmozart\Assert\Assert;
 
 use function array_key_exists;
@@ -18,6 +17,7 @@ use function array_slice;
 use function array_udiff;
 use function array_uintersect;
 use function array_values;
+use function assert;
 use function hash;
 use function is_callable;
 use function serialize;
@@ -369,34 +369,18 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         return array_key_exists($index, $this->data);
     }
 
-    public function forAll(callable $callback, bool $stopOnError = false): ForAllPromiseInterface
+    public function forAll(callable $callback): ForAllPromiseInterface
     {
-        $data = $this->data;
+        /** @psalm-suppress InternalClass */
+        return new class ($this->getIterator(), $callback) extends AbstractForAllPromise
+        {
+            protected function createThrowableErrorCollection(array $errors): OrderedErrorCollection
+            {
+                assert(array_values($errors) === $errors);
 
-        return new ForAllPromise(static function () use ($data, $callback, $stopOnError): void {
-            /** @var OrderedListInterface<Throwable|null> $errors */
-            $errors = new GenericOrderedList([]);
-            $error  = false;
-            foreach ($data as $index => $value) {
-                $throwable = null;
-                try {
-                    $callback($value, $index);
-                } catch (Throwable $throwable) {
-                    $error = true;
-                    if ($stopOnError) {
-                        break;
-                    }
-                } finally {
-                    $errors = $errors->add($throwable);
-                }
+                return OrderedErrorCollection::create(new GenericOrderedList($errors));
             }
-
-            if (! $error) {
-                return;
-            }
-
-            throw OrderedErrorCollection::create($errors);
-        });
+        };
     }
 
     public function reverse(): OrderedListInterface

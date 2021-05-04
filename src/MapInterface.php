@@ -155,5 +155,5 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * @param callable(TValue,TKey):void $callback
      * @throws MappedErrorCollection If an error occured during execution.
      */
-    public function forAll(callable $callback, bool $stopOnError = false): ForAllPromiseInterface;
+    public function forAll(callable $callback): ForAllPromiseInterface;
 }

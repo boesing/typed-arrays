@@ -866,7 +866,7 @@ final class GenericMapTest extends TestCase
         $errorCollection = null;
 
         try {
-            $map->forAll($callable, true)->execute();
+            $map->forAll($callable)->stopOnError()->execute();
         } catch (MappedErrorCollection $errorCollection) {
         }
 
