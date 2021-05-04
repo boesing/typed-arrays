@@ -24,6 +24,7 @@
         <!-- Ignore -->
         <exclude name="Squiz.Arrays.ArrayDeclaration.ValueNoNewline"/>
         <exclude name="SlevomatCodingStandard.Classes.SuperfluousInterfaceNaming.SuperfluousSuffix"/>
+        <exclude name="SlevomatCodingStandard.Classes.SuperfluousAbstractClassNaming.SuperfluousPrefix"/>
         <exclude name="Generic.NamingConventions.ConstructorName.OldStyle"/>
         <exclude name="Generic.CodeAnalysis.UselessOverridingMethod.Found"/>
         <!-- Can be removed with dropping support for PHP 7.3 -->
