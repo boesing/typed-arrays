@@ -19,11 +19,13 @@ use Webmozart\Assert\Assert;
 
 use function array_fill;
 use function array_map;
+use function array_reverse;
 use function chr;
 use function in_array;
 use function json_encode;
 use function md5;
 use function mt_rand;
+use function range;
 use function spl_object_hash;
 use function strlen;
 use function strnatcmp;
@@ -1328,5 +1330,14 @@ final class GenericOrderedListTest extends TestCase
 
         self::assertTrue($runtimeExceptionCaught);
         self::assertTrue($callbackInvoked);
+    }
+
+    public function testReverseWillProperlyReverseTheCollection(): void
+    {
+        $data     = range(0, 99);
+        $expected = array_reverse($data);
+
+        $list = new GenericOrderedList($data);
+        self::assertSame($expected, $list->reverse()->toNativeArray());
     }
 }

@@ -13,6 +13,7 @@ use function array_keys;
 use function array_map;
 use function array_merge;
 use function array_replace;
+use function array_reverse;
 use function array_slice;
 use function array_udiff;
 use function array_uintersect;
@@ -396,5 +397,13 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
             throw OrderedErrorCollection::create($errors);
         });
+    }
+
+    public function reverse(): OrderedListInterface
+    {
+        /** @psalm-var list<TValue> $reversed */
+        $reversed = array_reverse($this->data);
+
+        return new GenericOrderedList($reversed);
     }
 }
