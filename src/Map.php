@@ -8,6 +8,7 @@ use OutOfBoundsException;
 use Throwable;
 
 use function array_diff_ukey;
+use function array_filter;
 use function array_intersect_ukey;
 use function array_key_exists;
 use function array_keys;
@@ -385,30 +386,22 @@ abstract class Map extends Array_ implements MapInterface
         return $this->data;
     }
 
-    public function forAll(callable $callback, bool $stopOnError = false): ForAllPromiseInterface
+    public function forAll(callable $callback): ForAllPromiseInterface
     {
-        $data = $this->data;
+        /** @psalm-suppress InternalClass */
+        return new class ($this->getIterator(), $callback) extends AbstractForAllPromise
+        {
+            protected function createThrowableErrorCollection(array $errors): MappedErrorCollection
+            {
+                /**
+                 * Filter out all keys which do not have errors.
+                 *
+                 * @var array<string,Throwable> $filtered
+                 */
+                $filtered = array_filter($errors);
 
-        return new ForAllPromise(static function () use ($data, $callback, $stopOnError): void {
-            /** @var MapInterface<TKey,Throwable> $errors */
-            $errors = new GenericMap([]);
-            foreach ($data as $key => $value) {
-                try {
-                    $callback($value, $key);
-                } catch (Throwable $throwable) {
-                    $errors = $errors->put($key, $throwable);
-
-                    if ($stopOnError) {
-                        break;
-                    }
-                }
+                return MappedErrorCollection::create(new GenericMap($filtered));
             }
-
-            if ($errors->isEmpty()) {
-                return;
-            }
-
-            throw MappedErrorCollection::create($errors);
-        });
+        };
     }
 }

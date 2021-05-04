@@ -1284,7 +1284,7 @@ final class GenericOrderedListTest extends TestCase
         $errorCollection = null;
 
         try {
-            $list->forAll($callable, true)->execute();
+            $list->forAll($callable)->stopOnError()->execute();
         } catch (OrderedErrorCollection $errorCollection) {
         }
 

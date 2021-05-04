@@ -132,7 +132,7 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
      * @param callable(TValue,int):void $callback
      * @throws OrderedErrorCollection If an error occured during execution.
      */
-    public function forAll(callable $callback, bool $stopOnError = false): ForAllPromiseInterface;
+    public function forAll(callable $callback): ForAllPromiseInterface;
 
     /**
      * @psalm-return OrderedListInterface<TValue>
