@@ -10,7 +10,6 @@ use Boesing\TypedArrays\Asset\GenericObject;
 use DateTimeImmutable;
 use Generator;
 use InvalidArgumentException;
-use Lcobucci\Clock\FrozenClock;
 use OutOfBoundsException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -255,8 +254,6 @@ final class GenericOrderedListTest extends TestCase
      */
     public function diffs(): Generator
     {
-        $clock = new FrozenClock(new DateTimeImmutable());
-
         yield 'simple' => [
             [
                 'foo',
@@ -271,20 +268,22 @@ final class GenericOrderedListTest extends TestCase
             null,
         ];
 
+        $now = new DateTimeImmutable();
+
         yield 'datetime' => [
             [
-                $clock->now(),
-                $clock->now()->modify('+10 seconds'),
-                $clock->now()->modify('+20 seconds'),
+                $now,
+                $now->modify('+10 seconds'),
+                $now->modify('+20 seconds'),
             ],
             [
-                $clock->now(),
-                $clock->now()->modify('+10 seconds'),
-                $clock->now()->modify('+20 seconds'),
-                $clock->now()->modify('+30 seconds'),
+                $now,
+                $now->modify('+10 seconds'),
+                $now->modify('+20 seconds'),
+                $now->modify('+30 seconds'),
             ],
             [
-                $clock->now()->modify('+30 seconds'),
+                $now->modify('+30 seconds'),
             ],
             null,
         ];
@@ -357,7 +356,7 @@ final class GenericOrderedListTest extends TestCase
      */
     public function intersections(): Generator
     {
-        $clock = new FrozenClock(new DateTimeImmutable());
+        $now = new DateTimeImmutable();
 
         yield 'simple' => [
             [
@@ -374,15 +373,15 @@ final class GenericOrderedListTest extends TestCase
 
         yield 'datetime' => [
             [
-                $now           = $clock->now(),
-                $tenSeconds    = $clock->now()->modify('+10 seconds'),
-                $twentySeconds = $clock->now()->modify('+20 seconds'),
+                $now,
+                $tenSeconds    = $now->modify('+10 seconds'),
+                $twentySeconds = $now->modify('+20 seconds'),
             ],
             [
                 $now,
                 $tenSeconds,
                 $twentySeconds,
-                $clock->now()->modify('+30 seconds'),
+                $now->modify('+30 seconds'),
             ],
             [
                 $now,

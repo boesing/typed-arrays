@@ -10,7 +10,6 @@ use Boesing\TypedArrays\Asset\GenericObject;
 use Closure;
 use DateTimeImmutable;
 use Generator;
-use Lcobucci\Clock\FrozenClock;
 use OutOfBoundsException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -386,8 +385,6 @@ final class GenericMapTest extends TestCase
      */
     public function diffs(): Generator
     {
-        $clock = new FrozenClock(new DateTimeImmutable());
-
         yield 'simple' => [
             [
                 'foo' => 'bar',
@@ -402,20 +399,22 @@ final class GenericMapTest extends TestCase
             null,
         ];
 
+        $now = new DateTimeImmutable();
+
         yield 'datetime' => [
             [
-                'now' => $clock->now(),
-                '10seconds' => $clock->now()->modify('+10 seconds'),
-                '20seconds' => $clock->now()->modify('+20 seconds'),
+                'now' => $now,
+                '10seconds' => $now->modify('+10 seconds'),
+                '20seconds' => $now->modify('+20 seconds'),
             ],
             [
-                'now' => $clock->now(),
-                '10seconds' => $clock->now()->modify('+10 seconds'),
-                '20seconds' => $clock->now()->modify('+20 seconds'),
-                '30seconds' => $clock->now()->modify('+30 seconds'),
+                'now' => $now,
+                '10seconds' => $now->modify('+10 seconds'),
+                '20seconds' => $now->modify('+20 seconds'),
+                '30seconds' => $now->modify('+30 seconds'),
             ],
             [
-                '30seconds' => $clock->now()->modify('+30 seconds'),
+                '30seconds' => $now->modify('+30 seconds'),
             ],
             null,
         ];

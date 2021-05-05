@@ -9,7 +9,6 @@
     },
     "require-dev": {
         "doctrine/coding-standard": "^9.0",
-        "lcobucci/clock": "^1.2",
         "phpunit/phpunit": "^9.2",
         "psalm/plugin-phpunit": "^0.15.1",
         "vimeo/psalm": "^4.7"
