@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Boesing\TypedArrays;
 
+use Error;
 use JsonSerializable;
 use OutOfBoundsException;
 
@@ -163,4 +164,10 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * @psalm-return MapInterface<TKey,TValue>
      */
     public function sortByKey(?callable $sorter = null): MapInterface;
+
+    /**
+     * @psalm-param (callable(TValue):string)|null $callback
+     * @throws Error In case, the values are not `string` or {@see Stringable}.
+     */
+    public function join(string $separator = ''): string;
 }

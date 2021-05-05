@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Boesing\TypedArrays;
 
 use OutOfBoundsException;
+use RuntimeException;
 use Throwable;
 
 use function array_diff_ukey;
@@ -19,6 +20,7 @@ use function array_uintersect;
 use function array_uintersect_uassoc;
 use function array_values;
 use function asort;
+use function join;
 use function sprintf;
 use function strcmp;
 use function uasort;
@@ -417,5 +419,14 @@ abstract class Map extends Array_ implements MapInterface
         $instance->data = $data;
 
         return $instance;
+    }
+
+    public function join(string $separator = ''): string
+    {
+        try {
+            return join($separator, $this->data);
+        } catch (Throwable $throwable) {
+            throw new RuntimeException('Could not join map.', 0, $throwable);
+        }
     }
 }
