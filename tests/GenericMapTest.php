@@ -14,6 +14,7 @@ use OutOfBoundsException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;
+use Stringable;
 
 use function array_keys;
 use function array_map;
@@ -518,7 +519,7 @@ final class GenericMapTest extends TestCase
     }
 
     /**
-     * @template    TValue
+     * @template     TValue
      * @psalm-param array<string,TValue> $initial
      * @psalm-param Closure(TValue $value):bool $callback
      * @psalm-param array<string,TValue> $filteredExpectation
@@ -640,7 +641,7 @@ final class GenericMapTest extends TestCase
     }
 
     /**
-     * @template    T
+     * @template     T
      * @psalm-param array<string,T> $elements
      * @psalm-param Closure(T):bool $callback
      * @dataProvider satisfactions
@@ -695,9 +696,9 @@ final class GenericMapTest extends TestCase
     }
 
     /**
-     * @template T
+     * @template     T
      * @psalm-param array<non-empty-string,T> $data
-     * @psalm-param Closure(T):bool $callback
+     * @psalm-param Closure(T):bool           $callback
      * @dataProvider existenceTests
      */
     public function testWillFindExistenceOfEntry(array $data, callable $callback, bool $exists): void
@@ -947,5 +948,56 @@ final class GenericMapTest extends TestCase
         $keysSorted = $map->sortByKey($sorter);
 
         self::assertEquals(['e', 'd', 'c', 'b', 'a'], array_keys($keysSorted->toNativeArray()));
+    }
+
+    /**
+     * @param string|Stringable $joinableValue
+     *
+     * @dataProvider joinableValues
+     */
+    public function testCanJoin($joinableValue): void
+    {
+        $map = new GenericMap(['foo' => $joinableValue]);
+
+        self::assertEquals((string) $joinableValue, $map->join());
+    }
+
+    /**
+     * @psalm-return Generator<non-empty-string,array{0:string|Stringable}>
+     */
+    public function joinableValues(): Generator
+    {
+        yield 'simple string' => ['fooo bar'];
+
+        yield 'stringable object' => [
+            new class implements Stringable {
+                public function __toString(): string
+                {
+                    return 'string from __toString method';
+                }
+            },
+        ];
+    }
+
+    public function testWillPassthruJoinError(): void
+    {
+        $map = new GenericMap([
+            'foo' => new stdClass(),
+        ]);
+
+        $this->expectException(RuntimeException::class);
+        /** @psalm-suppress UnusedMethodCall */
+        $map->join();
+    }
+
+    public function testWillJoinValuesWithSeperator(): void
+    {
+        $map = new GenericMap([
+            'foo' => 'foo',
+            'bar' => 'bar',
+            'baz' => 'baz',
+        ]);
+
+        self::assertSame('foo:bar:baz', $map->join(':'));
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Boesing\TypedArrays;
 
+use Error;
 use InvalidArgumentException;
 use JsonSerializable;
 use OutOfBoundsException;
@@ -138,4 +139,10 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
      * @psalm-return OrderedListInterface<TValue>
      */
     public function reverse(): self;
+
+    /**
+     * @psalm-param (callable(TValue):string)|null $callback
+     * @throws Error In case, the values are not `string` or {@see Stringable}.
+     */
+    public function join(string $separator = ''): string;
 }

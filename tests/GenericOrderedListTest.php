@@ -14,6 +14,7 @@ use OutOfBoundsException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;
+use Stringable;
 use Webmozart\Assert\Assert;
 
 use function array_fill;
@@ -1338,5 +1339,54 @@ final class GenericOrderedListTest extends TestCase
 
         $list = new GenericOrderedList($data);
         self::assertSame($expected, $list->reverse()->toNativeArray());
+    }
+
+    /**
+     * @param string|Stringable $joinableValue
+     *
+     * @dataProvider joinableValues
+     */
+    public function testCanJoin($joinableValue): void
+    {
+        $list = new GenericOrderedList([$joinableValue]);
+
+        self::assertEquals((string) $joinableValue, $list->join());
+    }
+
+    /**
+     * @psalm-return Generator<non-empty-string,array{0:string|Stringable}>
+     */
+    public function joinableValues(): Generator
+    {
+        yield 'simple string' => ['fooo bar'];
+
+        yield 'stringable object' => [
+            new class implements Stringable {
+                public function __toString(): string
+                {
+                    return 'string from __toString method';
+                }
+            },
+        ];
+    }
+
+    public function testWillPassthruJoinError(): void
+    {
+        $list = new GenericOrderedList([new stdClass()]);
+
+        $this->expectException(RuntimeException::class);
+        /** @psalm-suppress UnusedMethodCall */
+        $list->join();
+    }
+
+    public function testWillJoinValuesWithSeperator(): void
+    {
+        $list = new GenericOrderedList([
+            'foo',
+            'bar',
+            'baz',
+        ]);
+
+        self::assertSame('foo:bar:baz', $list->join(':'));
     }
 }

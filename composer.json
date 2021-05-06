@@ -11,6 +11,7 @@
         "doctrine/coding-standard": "^9.0",
         "phpunit/phpunit": "^9.2",
         "psalm/plugin-phpunit": "^0.15.1",
+        "symfony/polyfill-php80": "^1.22",
         "vimeo/psalm": "^4.7"
     },
     "conflict": {
