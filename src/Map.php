@@ -20,7 +20,7 @@ use function array_uintersect;
 use function array_uintersect_uassoc;
 use function array_values;
 use function asort;
-use function join;
+use function implode;
 use function sprintf;
 use function strcmp;
 use function uasort;
@@ -424,7 +424,7 @@ abstract class Map extends Array_ implements MapInterface
     public function join(string $separator = ''): string
     {
         try {
-            return join($separator, $this->data);
+            return implode($separator, $this->data);
         } catch (Throwable $throwable) {
             throw new RuntimeException('Could not join map.', 0, $throwable);
         }

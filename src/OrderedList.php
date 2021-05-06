@@ -21,8 +21,8 @@ use function array_uintersect;
 use function array_values;
 use function assert;
 use function hash;
+use function implode;
 use function is_callable;
-use function join;
 use function serialize;
 use function sort;
 use function sprintf;
@@ -397,7 +397,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
     public function join(string $separator = ''): string
     {
         try {
-            return join($separator, $this->data);
+            return implode($separator, $this->data);
         } catch (Throwable $throwable) {
             throw new RuntimeException('Could not join ordered list.', 0, $throwable);
         }
