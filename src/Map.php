@@ -359,14 +359,12 @@ abstract class Map extends Array_ implements MapInterface
         foreach ($this->data as $key => $value) {
             $groupIdentifier = $callback($value);
             try {
-                /** @psalm-suppress ImpureMethodCall */
                 $group = $groups->get($groupIdentifier);
             } catch (OutOfBoundsException $exception) {
                 $group       = clone $this;
                 $group->data = [];
             }
 
-            /** @psalm-suppress ImpureMethodCall */
             $groups = $groups->put($groupIdentifier, $group->put($key, $value));
         }
 
@@ -428,5 +426,32 @@ abstract class Map extends Array_ implements MapInterface
         } catch (Throwable $throwable) {
             throw new RuntimeException('Could not join map.', 0, $throwable);
         }
+    }
+
+    /**
+     * @template TNewKey of string
+     * @param callable(TKey,TValue):TNewKey $keyGenerator
+     *
+     * @return MapInterface<TNewKey,TValue>
+     * @throws RuntimeException if a new key is being generated more than once.
+     */
+    public function keyExchange(callable $keyGenerator): MapInterface
+    {
+        /** @var MapInterface<TNewKey,TValue> $exchanged */
+        $exchanged = new GenericMap();
+
+        foreach ($this->data as $key => $value) {
+            $newKey = $keyGenerator($key, $value);
+            if ($exchanged->has($newKey)) {
+                throw new RuntimeException(sprintf(
+                    'Provided key generator generates the same key "%s" multiple times.',
+                    $newKey
+                ));
+            }
+
+            $exchanged = $exchanged->put($newKey, $value);
+        }
+
+        return $exchanged;
     }
 }

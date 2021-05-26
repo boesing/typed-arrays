@@ -7,6 +7,7 @@ namespace Boesing\TypedArrays;
 use Error;
 use JsonSerializable;
 use OutOfBoundsException;
+use RuntimeException;
 
 /**
  * @template         TKey of string
@@ -90,6 +91,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * @psalm-param TKey   $key
      * @psalm-param TValue $value
      * @psalm-return MapInterface<TKey,TValue>
+     * @psalm-mutation-free
      */
     public function put($key, $value): MapInterface;
 
@@ -97,6 +99,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * @psalm-param TKey $key
      * @psalm-return TValue
      * @throws OutOfBoundsException if key does not exist.
+     * @psalm-pure
      */
     public function get(string $key);
 
@@ -128,6 +131,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
 
     /**
      * @psalm-param TKey $key
+     * @psalm-mutation-free
      */
     public function has(string $key): bool;
 
@@ -170,4 +174,13 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * @throws Error In case, the values are not `string` or {@see Stringable}.
      */
     public function join(string $separator = ''): string;
+
+    /**
+     * @template TNewKey of string
+     * @param callable(TKey,TValue):TNewKey $keyGenerator
+     *
+     * @return MapInterface<TNewKey,TValue>
+     * @throws RuntimeException if a new key is being generated more than once.
+     */
+    public function keyExchange(callable $keyGenerator): MapInterface;
 }
