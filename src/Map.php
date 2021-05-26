@@ -67,7 +67,6 @@ abstract class Map extends Array_ implements MapInterface
             return $instance;
         }
 
-        /** @psalm-suppress ImpureFunctionCall */
         uasort($data, $callback);
         $instance->data = $data;
 
@@ -118,7 +117,6 @@ abstract class Map extends Array_ implements MapInterface
 
         $data = $this->data;
 
-        /** @psalm-suppress ImpureFunctionCall */
         usort($data, $sorter);
 
         return new GenericOrderedList($data);
@@ -359,14 +357,12 @@ abstract class Map extends Array_ implements MapInterface
         foreach ($this->data as $key => $value) {
             $groupIdentifier = $callback($value);
             try {
-                /** @psalm-suppress ImpureMethodCall */
                 $group = $groups->get($groupIdentifier);
             } catch (OutOfBoundsException $exception) {
                 $group       = clone $this;
                 $group->data = [];
             }
 
-            /** @psalm-suppress ImpureMethodCall */
             $groups = $groups->put($groupIdentifier, $group->put($key, $value));
         }
 

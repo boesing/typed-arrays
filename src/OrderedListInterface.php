@@ -29,13 +29,13 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
     public function at(int $position);
 
     /**
-     * @psalm-param  callable(TValue,int):bool $callback
+     * @psalm-param  pure-callable(TValue,int):bool $callback
      * @psalm-return OrderedListInterface<TValue>
      */
     public function filter(callable $callback): OrderedListInterface;
 
     /**
-     * @psalm-param  (callable(TValue,TValue):int)|null $callback
+     * @psalm-param  (pure-callable(TValue,TValue):int)|null $callback
      * @psalm-return OrderedListInterface<TValue>
      */
     public function sort(?callable $callback = null): OrderedListInterface;
@@ -48,28 +48,28 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
 
     /**
      * @template     TNewValue
-     * @psalm-param  callable(TValue,int):TNewValue $callback
+     * @psalm-param  pure-callable(TValue,int):TNewValue $callback
      * @psalm-return OrderedListInterface<TNewValue>
      */
     public function map(callable $callback): OrderedListInterface;
 
     /**
      * @psalm-param  OrderedListInterface<TValue> $other
-     * @psalm-param  (callable(TValue,TValue):int)|null $valueComparator
+     * @psalm-param  (pure-callable(TValue,TValue):int)|null $valueComparator
      * @psalm-return OrderedListInterface<TValue>
      */
     public function intersect(OrderedListInterface $other, ?callable $valueComparator = null): OrderedListInterface;
 
     /**
      * @psalm-param  OrderedListInterface<TValue> $other
-     * @psalm-param  (callable(TValue,TValue):int)|null $valueComparator
+     * @psalm-param  (pure-callable(TValue,TValue):int)|null $valueComparator
      * @psalm-return OrderedListInterface<TValue>
      */
     public function diff(OrderedListInterface $other, ?callable $valueComparator = null): OrderedListInterface;
 
     /**
      * @template TKey of non-empty-string
-     * @psalm-param  callable(TValue):TKey $keyGenerator
+     * @psalm-param  pure-callable(TValue):TKey $keyGenerator
      * @psalm-return MapInterface<TKey,TValue>
      */
     public function toMap(callable $keyGenerator): MapInterface;
@@ -81,8 +81,8 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
     public function removeElement($element): OrderedListInterface;
 
     /**
-     * @psalm-param (callable(TValue):non-empty-string)|null $unificationIdentifierGenerator
-     * @psalm-param (callable(TValue,TValue):TValue)|null  $callback
+     * @psalm-param (pure-callable(TValue):non-empty-string)|null $unificationIdentifierGenerator
+     * @psalm-param (pure-callable(TValue,TValue):TValue)|null  $callback
      * @psalm-return OrderedListInterface<TValue>
      */
     public function unify(
@@ -104,7 +104,7 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
     public function slice(int $offset, ?int $length = null): OrderedListInterface;
 
     /**
-     * @psalm-param callable(TValue):bool $callback
+     * @psalm-param pure-callable(TValue):bool $callback
      * @psalm-return TValue
      * @throws OutOfBoundsException if value could not be found with provided callback.
      */
@@ -113,7 +113,7 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
     /**
      * Partitions the current list into those items which are filtered by the callback and those which don't.
      *
-     * @param callable(TValue $value):bool $callback
+     * @param pure-callable(TValue $value):bool $callback
      *
      * @psalm-return array{0:OrderedListInterface<TValue>,1:OrderedListInterface<TValue>}
      */
@@ -121,16 +121,19 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
 
     /**
      * @template TGroup of non-empty-string
-     * @psalm-param callable(TValue):TGroup $callback
+     * @psalm-param pure-callable(TValue):TGroup $callback
      *
      * @psalm-return MapInterface<TGroup,OrderedListInterface<TValue>>
      */
     public function group(callable $callback): MapInterface;
 
+    /**
+     * @psalm-pure
+     */
     public function has(int $index): bool;
 
     /**
-     * @param callable(TValue,int):void $callback
+     * @param pure-callable(TValue,int):void $callback
      * @throws OrderedErrorCollection If an error occured during execution.
      */
     public function forAll(callable $callback): ForAllPromiseInterface;
@@ -141,7 +144,7 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
     public function reverse(): self;
 
     /**
-     * @psalm-param (callable(TValue):string)|null $callback
+     * @psalm-param (pure-callable(TValue):string)|null $callback
      * @throws Error In case, the values are not `string` or {@see Stringable}.
      */
     public function join(string $separator = ''): string;

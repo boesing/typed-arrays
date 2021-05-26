@@ -99,7 +99,7 @@ final class GenericMapTest extends TestCase
 
     /**
      * @psalm-param  array<string,mixed> $values
-     * @psalm-param  (Closure(mixed,mixed):int)|null $callback
+     * @psalm-param  (pure-callable(mixed,mixed):int)|null $callback
      * @psalm-param  array<string,mixed> $sorted
      * @dataProvider sorting
      */
@@ -114,10 +114,11 @@ final class GenericMapTest extends TestCase
     }
 
     /**
-     * @psalm-return Generator<
-     *     non-empty-string,
-     *     array{0:array<string,mixed>,1:(Closure(mixed,mixed):int)|null,2:array<string,mixed>}
-     * >
+     * @psalm-return Generator<non-empty-string,array{
+     *     0:array<string,mixed>,
+     *     1:(pure-callable(mixed,mixed):int)|null,
+     *     2:array<string,mixed>
+     * }>
      */
     public function sorting(): Generator
     {
@@ -213,7 +214,7 @@ final class GenericMapTest extends TestCase
     /**
      * @psalm-param array<string,mixed> $initial
      * @psalm-param list<mixed>         $expected
-     * @psalm-param (Closure(mixed,mixed):int)|null $sorter
+     * @psalm-param (pure-callable(mixed,mixed):int)|null $sorter
      * @dataProvider orderedLists
      */
     public function testWillConvertToOrderedList(array $initial, array $expected, ?callable $sorter): void
@@ -225,9 +226,11 @@ final class GenericMapTest extends TestCase
     }
 
     /**
-     * @psalm-return Generator<
-     *     non-empty-string,
-     *     array{0:array<string,mixed>,1:list<mixed>,2:(Closure(mixed,mixed):int)|null}>
+     * @psalm-return Generator<non-empty-string,array{
+     *     0:array<string,mixed>,
+     *     1:list<mixed>,
+     *     2:(pure-callable(mixed,mixed):int)|null
+     * }>
      */
     public function orderedLists(): Generator
     {
@@ -359,7 +362,7 @@ final class GenericMapTest extends TestCase
      * @param array<string,mixed> $initial
      * @param array<string,mixed> $other
      * @param array<string,mixed> $expected
-     * @psalm-param (Closure(mixed,mixed):int)|null $comparator
+     * @psalm-param (pure-callable(mixed,mixed):int)|null $comparator
      *
      * @dataProvider diffs
      */
@@ -374,15 +377,12 @@ final class GenericMapTest extends TestCase
     }
 
     /**
-     * @psalm-return Generator<
-     *     non-empty-string,
-     *     array{
+     * @psalm-return Generator<non-empty-string,array{
      *      0:array<string,mixed>,
      *      1:array<string,mixed>,
      *      2:array<string,mixed>,
-     *      3:(Closure(mixed,mixed):int)|null
-     *     }
-     * >
+     *      3:(pure-callable(mixed,mixed):int)|null
+     * }>
      */
     public function diffs(): Generator
     {
@@ -493,6 +493,7 @@ final class GenericMapTest extends TestCase
         /** @var MapInterface<string,string> $map */
         $map = new GenericMap([]);
         $this->expectException(OutOfBoundsException::class);
+        /** @psalm-suppress UnusedMethodCall */
         $map->get('foo');
     }
 
@@ -521,7 +522,7 @@ final class GenericMapTest extends TestCase
     /**
      * @template     TValue
      * @psalm-param array<string,TValue> $initial
-     * @psalm-param Closure(TValue $value):bool $callback
+     * @psalm-param pure-callable(TValue $value):bool $callback
      * @psalm-param array<string,TValue> $filteredExpectation
      * @psalm-param array<string,TValue> $unfilteredExpectation
      *
@@ -541,10 +542,12 @@ final class GenericMapTest extends TestCase
     }
 
     /**
-     * @return Generator<
-     *     string,
-     *     array{0:array<string,mixed>,1:Closure(mixed $value):bool,2:array<string,mixed>,3:array<string,mixed>}
-     * >
+     * @return Generator<non-empty-string,array{
+     *     0:array<string,mixed>,
+     *     1:pure-callable(mixed $value):bool,
+     *     2:array<string,mixed>,
+     *     3:array<string,mixed>
+     * }>
      */
     public function partitions(): Generator
     {
@@ -838,6 +841,12 @@ final class GenericMapTest extends TestCase
         $errorCollection = null;
 
         try {
+            /**
+             * Suppressing InvalidArgument due to the fact that we have to use an impure callable to ensure
+             * that the callable is being called.
+             *
+             * @psalm-suppress InvalidArgument
+             */
             $map->forAll($callable)->execute();
         } catch (MappedErrorCollection $errorCollection) {
         }
@@ -868,6 +877,12 @@ final class GenericMapTest extends TestCase
         $errorCollection = null;
 
         try {
+            /**
+             * Suppressing InvalidArgument due to the fact that we have to use an impure callable to ensure
+             * that the callable is being called.
+             *
+             * @psalm-suppress InvalidArgument
+             */
             $map->forAll($callable)->stopOnError()->execute();
         } catch (MappedErrorCollection $errorCollection) {
         }

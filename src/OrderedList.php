@@ -101,7 +101,6 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
             return $instance;
         }
 
-        /** @psalm-suppress ImpureFunctionCall */
         usort($data, $callback);
         $instance->data = $data;
 
@@ -220,7 +219,6 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         foreach ($instance->data as $value) {
             $identifier = $unificationIdentifierGenerator($value);
             try {
-                /** @psalm-suppress ImpureMethodCall */
                 $unique = $unified->get($identifier);
             } catch (OutOfBoundsException $exception) {
                 $unique = $value;
@@ -230,11 +228,9 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
                 $unique = $callback($unique, $value);
             }
 
-            /** @psalm-suppress ImpureMethodCall */
             $unified = $unified->put($identifier, $unique);
         }
 
-        /** @psalm-suppress ImpureMethodCall */
         $instance->data = $unified->toOrderedList()->toNativeArray();
 
         return $instance;
@@ -332,17 +328,14 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         $groups = new GenericMap([]);
         foreach ($this as $value) {
             $groupName = $callback($value);
-            /** @psalm-suppress ImpureMethodCall */
             if (! $groups->has($groupName)) {
                 $groups = $groups->put($groupName, new GenericOrderedList([$value]));
                 continue;
             }
 
-            /** @psalm-suppress ImpureMethodCall */
             $existingGroup = $groups->get($groupName);
             $existingGroup = $existingGroup->add($value);
-            /** @psalm-suppress ImpureMethodCall */
-            $groups = $groups->put($groupName, $existingGroup);
+            $groups        = $groups->put($groupName, $existingGroup);
         }
 
         return $groups;
