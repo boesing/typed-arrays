@@ -21,6 +21,7 @@ use function array_map;
 use function in_array;
 use function json_encode;
 use function ord;
+use function sprintf;
 use function strlen;
 use function strnatcmp;
 use function trim;
@@ -31,6 +32,95 @@ final class GenericMapTest extends TestCase
 {
     /** @var int */
     private $iteration;
+
+    /**
+     * @psalm-return Generator<non-empty-string,array{
+     *   0: array<non-empty-string,mixed>,
+     *   1: callable(non-empty-string):non-empty-string,
+     *   2: array<non-empty-string,mixed>
+     * }>
+     */
+    public function exchangeKeys(): Generator
+    {
+        yield 'change all keys' => [
+            [
+                'foo' => 'bar',
+                'bar' => 'baz',
+                'qoo' => 'ooq',
+            ],
+            static function (string $key): string {
+                switch ($key) {
+                    case 'foo':
+                        return 'bar';
+
+                    case 'bar':
+                        return 'baz';
+
+                    case 'qoo':
+                        return 'ooq';
+                }
+
+                self::fail(sprintf('Key "%s" is not handled here.', $key));
+            },
+            [
+                'bar' => 'bar',
+                'baz' => 'baz',
+                'ooq' => 'ooq',
+            ],
+        ];
+
+        yield 'change some keys' => [
+            [
+                'foo' => 'bar',
+                'bar' => 'baz',
+                'qoo' => 'ooq',
+            ],
+            static function (string $key): string {
+                switch ($key) {
+                    case 'foo':
+                        return 'fooo';
+
+                    case 'bar':
+                        return $key;
+
+                    case 'qoo':
+                        return 'ooq';
+                }
+
+                self::fail(sprintf('Key "%s" is not handled here.', $key));
+            },
+            [
+                'fooo' => 'bar',
+                'bar' => 'baz',
+                'ooq' => 'ooq',
+            ],
+        ];
+
+        yield 'change one key' => [
+            [
+                'foo' => 'bar',
+                'bar' => 'baz',
+                'qoo' => 'ooq',
+            ],
+            static function (string $key): string {
+                switch ($key) {
+                    case 'bar':
+                    case 'foo':
+                        return $key;
+
+                    case 'qoo':
+                        return 'ooq';
+                }
+
+                self::fail(sprintf('Key "%s" is not handled here.', $key));
+            },
+            [
+                'foo' => 'bar',
+                'bar' => 'baz',
+                'ooq' => 'ooq',
+            ],
+        ];
+    }
 
     protected function setUp(): void
     {
@@ -493,6 +583,7 @@ final class GenericMapTest extends TestCase
         /** @var MapInterface<string,string> $map */
         $map = new GenericMap([]);
         $this->expectException(OutOfBoundsException::class);
+        /** @psalm-suppress UnusedMethodCall */
         $map->get('foo');
     }
 
@@ -999,5 +1090,30 @@ final class GenericMapTest extends TestCase
         ]);
 
         self::assertSame('foo:bar:baz', $map->join(':'));
+    }
+
+    /**
+     * @psalm-param array<non-empty-string,mixed>    $initial
+     * @psalm-param callable(non-empty-string):non-empty-string $keyGenerator
+     * @psalm-param array<non-empty-string,mixed>    $expected
+     *
+     * @dataProvider exchangeKeys
+     */
+    public function testWillExchangeKeys(array $initial, callable $keyGenerator, array $expected): void
+    {
+        $map       = new GenericMap($initial);
+        $exchanged = $map->keyExchange($keyGenerator);
+        self::assertEquals($expected, $exchanged->toNativeArray());
+    }
+
+    public function testWillDetectDuplicatedKeys(): void
+    {
+        $map = new GenericMap(['foo' => 'bar', 'bar' => 'baz']);
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Provided key generator generates the same key "foo" multiple times.');
+        /** @psalm-suppress UnusedMethodCall */
+        $map->keyExchange(static function (): string {
+            return 'foo';
+        });
     }
 }
