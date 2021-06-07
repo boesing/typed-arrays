@@ -164,6 +164,20 @@ final class GenericOrderedListTest extends TestCase
                 ['baz', 'foo'],
             ],
         ];
+
+        yield 'none' => [
+            [
+                'foo',
+                'bar',
+            ],
+            [
+                'foo',
+                'bar',
+            ],
+            [
+                [],
+            ],
+        ];
     }
 
     public function testWillMapByUsingCallable(): void

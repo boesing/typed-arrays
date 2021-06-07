@@ -46,12 +46,15 @@ abstract class Map extends Array_ implements MapInterface
         parent::__construct($data);
     }
 
-    public function merge(...$stack): MapInterface
+    public function merge(MapInterface ...$stack): MapInterface
     {
         $instance = clone $this;
-        foreach ($stack as $list) {
-            $instance->data = array_merge($instance->data, $list->toNativeArray());
+        $merges   = [];
+        foreach ($stack as $map) {
+            $merges[] = $map->toNativeArray();
         }
+
+        $instance->data = array_merge($instance->data, ...$merges);
 
         return $instance;
     }

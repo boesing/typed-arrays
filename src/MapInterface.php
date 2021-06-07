@@ -32,7 +32,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * @psalm-param  list<MapInterface<TKey,TValue>> $stack
      * @psalm-return MapInterface<TKey,TValue>
      */
-    public function merge(...$stack): MapInterface;
+    public function merge(MapInterface ...$stack): MapInterface;
 
     /**
      * @psalm-param  MapInterface<TKey,TValue> $other

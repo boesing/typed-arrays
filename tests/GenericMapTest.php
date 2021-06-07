@@ -185,6 +185,14 @@ final class GenericMapTest extends TestCase
                 ['baz' => 'bar', 'qoo' => 'ooq'],
             ],
         ];
+
+        yield 'none' => [
+            ['foo' => 'bar'],
+            ['foo' => 'bar'],
+            [
+                [],
+            ],
+        ];
     }
 
     /**
