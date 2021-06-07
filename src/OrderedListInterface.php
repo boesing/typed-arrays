@@ -44,7 +44,7 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
      * @psalm-param  list<OrderedListInterface<TValue>> $stack
      * @psalm-return OrderedListInterface<TValue>
      */
-    public function merge(...$stack): OrderedListInterface;
+    public function merge(OrderedListInterface ...$stack): OrderedListInterface;
 
     /**
      * @template     TNewValue

@@ -11,7 +11,6 @@ use Webmozart\Assert\Assert;
 
 use function array_key_exists;
 use function array_keys;
-use function array_map;
 use function array_merge;
 use function array_replace;
 use function array_reverse;
@@ -46,14 +45,14 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         parent::__construct($data);
     }
 
-    public function merge(...$stack): OrderedListInterface
+    public function merge(OrderedListInterface ...$stack): OrderedListInterface
     {
         $instance = clone $this;
-        $values   = array_map(static function (OrderedListInterface $list): array {
-            return $list->toNativeArray();
-        }, $stack);
-
-        $instance->data = array_values(array_merge($instance->data, ...$values));
+        foreach ($stack as $list) {
+            foreach ($list->toNativeArray() as $value) {
+                $instance->data[] = $value;
+            }
+        }
 
         return $instance;
     }
