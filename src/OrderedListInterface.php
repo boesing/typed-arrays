@@ -145,4 +145,9 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
      * @throws Error In case, the values are not `string` or {@see Stringable}.
      */
     public function join(string $separator = ''): string;
+
+    /**
+     * @psalm-return list<TValue>
+     */
+    public function toNativeArray(): array;
 }
