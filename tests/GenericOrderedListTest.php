@@ -20,8 +20,10 @@ use Webmozart\Assert\Assert;
 use function array_fill;
 use function array_map;
 use function array_reverse;
+use function assert;
 use function chr;
 use function in_array;
+use function is_int;
 use function json_encode;
 use function md5;
 use function mt_rand;
@@ -541,6 +543,24 @@ final class GenericOrderedListTest extends TestCase
             $callbackCalled = true;
         });
         self::assertTrue($callbackCalled);
+    }
+
+    public function testCallbackOnDeduplicationIsOnlyCalledForDuplicates(): void
+    {
+        $list           = new GenericOrderedList([1, 2, 3, 1, 1, 1]);
+        $callbackCalled = 0;
+
+        /**
+         * @psalm-suppress UnusedMethodCall
+         */
+        $list->unify(null, static function (int $duplicate, int $number) use (&$callbackCalled): int {
+            self::assertEquals($duplicate, $number);
+            assert(is_int($callbackCalled));
+            $callbackCalled++;
+
+            return $number;
+        });
+        self::assertEquals(3, $callbackCalled);
     }
 
     /**

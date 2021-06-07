@@ -82,7 +82,7 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
 
     /**
      * @psalm-param (callable(TValue):non-empty-string)|null $unificationIdentifierGenerator
-     * @psalm-param (callable(TValue,TValue):TValue)|null  $callback
+     * @psalm-param (callable(TValue,TValue):TValue)|null $callback This callback is called for duplications only.
      * @psalm-return OrderedListInterface<TValue>
      */
     public function unify(
