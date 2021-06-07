@@ -221,12 +221,12 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
             $identifier = $unificationIdentifierGenerator($value);
             try {
                 $unique = $unified->get($identifier);
+
+                if ($callback) {
+                    $unique = $callback($unique, $value);
+                }
             } catch (OutOfBoundsException $exception) {
                 $unique = $value;
-            }
-
-            if ($callback) {
-                $unique = $callback($unique, $value);
             }
 
             $unified = $unified->put($identifier, $unique);
