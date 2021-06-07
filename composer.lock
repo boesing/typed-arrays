@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "10a8d6c539db877c7464e693800c37d1",
+    "content-hash": "5b4ebeed561cd051381277ecfacb13c0",
     "packages": [
         {
             "name": "symfony/polyfill-ctype",
@@ -1764,16 +1764,16 @@
         },
         {
             "name": "psalm/plugin-phpunit",
-            "version": "0.15.2",
+            "version": "0.16.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/psalm/psalm-plugin-phpunit.git",
-                "reference": "31d15bbc0169a3c454e495e03fd8a6ccb663661b"
+                "reference": "1ce1ef2c3fe8bed6ddaba1607c00b48a52145023"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/psalm/psalm-plugin-phpunit/zipball/31d15bbc0169a3c454e495e03fd8a6ccb663661b",
-                "reference": "31d15bbc0169a3c454e495e03fd8a6ccb663661b",
+                "url": "https://api.github.com/repos/psalm/psalm-plugin-phpunit/zipball/1ce1ef2c3fe8bed6ddaba1607c00b48a52145023",
+                "reference": "1ce1ef2c3fe8bed6ddaba1607c00b48a52145023",
                 "shasum": ""
             },
             "require": {
@@ -1781,7 +1781,7 @@
                 "composer/semver": "^1.4 || ^2.0 || ^3.0",
                 "ext-simplexml": "*",
                 "php": "^7.1 || ^8.0",
-                "vimeo/psalm": "dev-master || dev-4.x || ^4.0"
+                "vimeo/psalm": "dev-master || dev-4.x || ^4.5"
             },
             "conflict": {
                 "phpunit/phpunit": "<7.5"
@@ -1816,7 +1816,7 @@
                 }
             ],
             "description": "Psalm plugin for PHPUnit",
-            "time": "2021-05-29T19:11:38+00:00"
+            "time": "2021-06-06T07:53:56+00:00"
         },
         {
             "name": "psr/container",
