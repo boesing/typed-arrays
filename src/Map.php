@@ -384,7 +384,7 @@ abstract class Map extends Array_ implements MapInterface
 
     public function jsonSerialize(): ?array
     {
-        if ($this->isEmpty()) {
+        if ($this->data === []) {
             return null;
         }
 
