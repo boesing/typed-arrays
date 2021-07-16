@@ -150,4 +150,9 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
      * @psalm-return list<TValue>
      */
     public function toNativeArray(): array;
+
+    /**
+     * @psalm-return list<TValue>
+     */
+    public function jsonSerialize(): array;
 }

@@ -183,4 +183,9 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * @throws RuntimeException if a new key is being generated more than once.
      */
     public function keyExchange(callable $keyGenerator): MapInterface;
+
+    /**
+     * @psalm-return non-empty-array<TKey,TValue>|null
+     */
+    public function jsonSerialize(): ?array;
 }
