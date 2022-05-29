@@ -31,7 +31,7 @@ use const SORT_NATURAL;
 
 /**
  * @template            TValue
- * @template-extends    Array_<0|positive-int,TValue>
+ * @template-extends    Array_<int,TValue>
  * @template-implements OrderedListInterface<TValue>
  * @psalm-immutable
  */
@@ -400,6 +400,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
     public function findFirstMatchingIndex(callable $filter): ?int
     {
         foreach ($this->data as $index => $value) {
+            assert($index === 0 || $index > 0);
             if ($filter($value)) {
                 return $index;
             }
