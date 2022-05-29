@@ -6,8 +6,7 @@ namespace Boesing\TypedArrays\Asset;
 
 final class GenericObject
 {
-    /** @var int */
-    public $id;
+    public int $id;
 
     public function __construct(int $id)
     {

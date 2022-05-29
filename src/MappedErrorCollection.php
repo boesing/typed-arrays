@@ -11,7 +11,7 @@ use Webmozart\Assert\Assert;
 final class MappedErrorCollection extends RuntimeException
 {
     /** @var MapInterface<string,Throwable> */
-    private $errors;
+    private MapInterface $errors;
 
     /**
      * @param MapInterface<string,Throwable> $errors

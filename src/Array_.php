@@ -27,7 +27,7 @@ use function spl_object_id;
 abstract class Array_ implements ArrayInterface
 {
     /** @psalm-var array<TKey,TValue> */
-    protected $data;
+    protected array $data;
 
     /**
      * @psalm-param array<TKey,TValue> $data

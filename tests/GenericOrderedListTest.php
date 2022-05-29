@@ -38,8 +38,7 @@ use const PHP_INT_MIN;
 
 final class GenericOrderedListTest extends TestCase
 {
-    /** @var int */
-    private $iteration = 0;
+    private int $iteration = 0;
 
     protected function setUp(): void
     {

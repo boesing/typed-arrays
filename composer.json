@@ -4,7 +4,7 @@
     "description": "Hashmap and Collection",
     "license": "MIT",
     "require": {
-        "php": "^7.3 || ~8.0.0 || ~8.1.0",
+        "php": "~7.4.0 || ~8.0.0 || ~8.1.0",
         "webmozart/assert": "^1.9"
     },
     "require-dev": {
@@ -19,7 +19,10 @@
     },
     "config": {
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     },
     "autoload": {
         "psr-4": {
