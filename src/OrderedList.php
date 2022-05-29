@@ -396,4 +396,16 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
             throw new RuntimeException('Could not join ordered list.', 0, $throwable);
         }
     }
+
+    public function findFirstMatchingIndex(callable $filter): ?int
+    {
+        foreach ($this->data as $index => $value) {
+            assert($index === 0 || $index > 0);
+            if ($filter($value)) {
+                return $index;
+            }
+        }
+
+        return null;
+    }
 }
