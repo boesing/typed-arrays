@@ -166,4 +166,12 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
      * @return 0|positive-int|null
      */
     public function findFirstMatchingIndex(callable $filter): ?int;
+
+    /**
+     * Adds an item at the beginning of the list.
+     *
+     * @param TValue $value
+     * @return OrderedListInterface<TValue>
+     */
+    public function prepend($value): self;
 }

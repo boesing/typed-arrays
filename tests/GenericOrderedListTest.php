@@ -1445,4 +1445,16 @@ final class GenericOrderedListTest extends TestCase
 
         self::assertNull($list->findFirstMatchingIndex(static fn (int $value) => $value % 2 !== 0));
     }
+
+    public function testWillPrependValueToTheList(): void
+    {
+        /** @var OrderedListInterface<non-empty-string> $list */
+        $list = new GenericOrderedList([
+            'bar',
+            'baz',
+        ]);
+
+        $list = $list->prepend('foo');
+        self::assertSame(['foo', 'bar', 'baz'], $list->toNativeArray());
+    }
 }

@@ -17,6 +17,7 @@ use function array_reverse;
 use function array_slice;
 use function array_udiff;
 use function array_uintersect;
+use function array_unshift;
 use function array_values;
 use function assert;
 use function hash;
@@ -407,5 +408,13 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         }
 
         return null;
+    }
+
+    public function prepend($value): OrderedListInterface
+    {
+        $instance = clone $this;
+        array_unshift($instance->data, $value);
+
+        return $instance;
     }
 }
