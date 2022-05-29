@@ -1461,8 +1461,16 @@ final class GenericOrderedListTest extends TestCase
             5,
         ]);
 
-        self::assertSame(15, $list->reduce(static fn (int $carry, int $value) => $value + $carry, 0), 'A sum of all values were expected.');
-        self::assertSame(120, $list->reduce(static fn (int $carry, int $value) => $carry === 0 ? $value : $value * $carry, 0), 'Expected that all values are being multiplied with each other');
+        self::assertSame(
+            15,
+            $list->reduce(static fn (int $carry, int $value) => $value + $carry, 0),
+            'A sum of all values were expected.'
+        );
+        self::assertSame(
+            120,
+            $list->reduce(static fn (int $carry, int $value) => $carry === 0 ? $value : $value * $carry, 0),
+            'Expected that all values are being multiplied with each other'
+        );
     }
 
     public function testReduceWillReturnInitialValueOnEmptyList(): void
