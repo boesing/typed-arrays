@@ -86,7 +86,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * @psalm-return OrderedListInterface<TKey>
      */
     public function keys(): OrderedListInterface;
-    
+
     /**
      * @psalm-return OrderedListInterface<TValue>
      */
