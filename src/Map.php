@@ -151,6 +151,11 @@ abstract class Map extends Array_ implements MapInterface
         return new GenericOrderedList($keys);
     }
 
+    public function values(): OrderedListInterface
+    {
+        return $this->toOrderedList();
+    }
+
     public function put($key, $value): MapInterface
     {
         $instance             = clone $this;
