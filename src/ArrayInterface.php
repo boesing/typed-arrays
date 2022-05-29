@@ -58,4 +58,12 @@ interface ArrayInterface extends IteratorAggregate, Countable
      * @return 0|positive-int
      */
     public function count(): int;
+
+    /**
+     * @template TReducedValue
+     * @param pure-callable(TReducedValue,TValue):TReducedValue $callback
+     * @param TReducedValue                                     $initial
+     * @return TReducedValue
+     */
+    public function reduce(callable $callback, $initial);
 }
