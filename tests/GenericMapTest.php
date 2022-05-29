@@ -25,6 +25,7 @@ use function strnatcmp;
 use function trim;
 
 use const JSON_THROW_ON_ERROR;
+use const PHP_INT_MAX;
 
 final class GenericMapTest extends TestCase
 {
@@ -1119,5 +1120,25 @@ final class GenericMapTest extends TestCase
         $map->keyExchange(static function (): string {
             return 'foo';
         });
+    }
+
+    public function testWillReduceMap(): void
+    {
+        $list = new GenericMap([
+            'foo' => 1,
+            'bar' => 2,
+            'baz' => 3,
+            'qoo' => 4,
+            'ooq' => 5,
+        ]);
+
+        self::assertSame(15, $list->reduce(static fn (int $carry, int $value) => $value + $carry, 0), 'A sum of all values were expected.');
+        self::assertSame(120, $list->reduce(static fn (int $carry, int $value) => $carry === 0 ? $value : $value * $carry, 0), 'Expected that all values are being multiplied with each other');
+    }
+
+    public function testReduceWillReturnInitialValueOnEmptyList(): void
+    {
+        $list = new GenericMap([]);
+        self::assertSame(PHP_INT_MAX, $list->reduce(static fn () => 1, PHP_INT_MAX));
     }
 }

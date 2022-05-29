@@ -9,6 +9,7 @@ use DateTimeInterface;
 use OutOfBoundsException;
 use Traversable;
 
+use function array_reduce;
 use function count;
 use function end;
 use function in_array;
@@ -128,5 +129,14 @@ abstract class Array_ implements ArrayInterface
         }
 
         return false;
+    }
+
+    /** @psalm-suppress MixedInferredReturnType The return value of the callback ensures the return type. */
+    public function reduce(callable $callback, $initial)
+    {
+        $instance = clone $this;
+
+        /** @psalm-suppress MixedReturnStatement The return value of the callback ensures the return type. */
+        return array_reduce($instance->data, $callback, $initial);
     }
 }
