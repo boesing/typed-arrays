@@ -31,7 +31,7 @@ use const SORT_NATURAL;
 
 /**
  * @template            TValue
- * @template-extends    Array_<int,TValue>
+ * @template-extends    Array_<0|positive-int,TValue>
  * @template-implements OrderedListInterface<TValue>
  * @psalm-immutable
  */
@@ -395,5 +395,16 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         } catch (Throwable $throwable) {
             throw new RuntimeException('Could not join ordered list.', 0, $throwable);
         }
+    }
+
+    public function findFirstMatchingIndex(callable $filter): ?int
+    {
+        foreach ($this->data as $index => $value) {
+            if ($filter($value)) {
+                return $index;
+            }
+        }
+
+        return null;
     }
 }

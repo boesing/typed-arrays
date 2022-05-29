@@ -155,4 +155,15 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
      * @psalm-return list<TValue>
      */
     public function jsonSerialize(): array;
+
+    /**
+     * Iterates over all items while passing them to the provided filter. If the filter matches, the index is
+     * being returned and the iteration stops.
+     * If no item matches the filter, `null` is being returned.
+     *
+     * @param callable(TValue):bool $filter
+     *
+     * @return 0|positive-int|null
+     */
+    public function findFirstMatchingIndex(callable $filter): ?int;
 }

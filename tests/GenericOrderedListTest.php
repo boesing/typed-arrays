@@ -1422,4 +1422,27 @@ final class GenericOrderedListTest extends TestCase
 
         self::assertSame('foo:bar:baz', $list->join(':'));
     }
+
+    public function testWillFindIndexOfFirstMatchingItem(): void
+    {
+        $list = new GenericOrderedList([
+            8,
+            100,
+            1000,
+        ]);
+
+        self::assertSame(1, $list->findFirstMatchingIndex(static fn (int $value) => $value % 10 === 0));
+    }
+
+    public function testWillReturnNullWhenNoItemMatchesFilter(): void
+    {
+        $list = new GenericOrderedList([
+            2,
+            4,
+            6,
+            8,
+        ]);
+
+        self::assertNull($list->findFirstMatchingIndex(static fn (int $value) => $value % 2 !== 0));
+    }
 }
