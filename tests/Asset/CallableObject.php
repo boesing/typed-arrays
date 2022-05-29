@@ -12,10 +12,9 @@ use function func_get_args;
 final class CallableObject
 {
     /** @var list<list<mixed>> */
-    private $argumentAssertions;
+    private array $argumentAssertions;
 
-    /** @var int */
-    private $called = 0;
+    private int $called = 0;
 
     /**
      * @param list<list<mixed>> $argumentAssertions

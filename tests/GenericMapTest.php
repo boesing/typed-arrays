@@ -30,8 +30,7 @@ use const JSON_THROW_ON_ERROR;
 
 final class GenericMapTest extends TestCase
 {
-    /** @var int */
-    private $iteration;
+    private int $iteration;
 
     /**
      * @psalm-return Generator<non-empty-string,array{

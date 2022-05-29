@@ -8,8 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 final class TypedArrayFactoryTest extends TestCase
 {
-    /** @var TypedArrayFactory */
-    private $factory;
+    private TypedArrayFactory $factory;
 
     protected function setUp(): void
     {

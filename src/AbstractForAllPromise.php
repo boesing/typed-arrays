@@ -19,17 +19,14 @@ abstract class AbstractForAllPromise implements ForAllPromiseInterface
     /** @var callable():void|null */
     private $finally;
 
-    /** @var bool */
-    private $suppressErrors = false;
+    private bool $suppressErrors = false;
 
-    /** @var bool */
-    private $stopOnError = false;
+    private bool $stopOnError = false;
 
-    /** @var bool */
-    private $executed = false;
+    private bool $executed = false;
 
     /** @var iterable<TKey,TValue> */
-    private $iterable;
+    private iterable $iterable;
 
     /** @var callable(TValue,TKey):void */
     private $callback;

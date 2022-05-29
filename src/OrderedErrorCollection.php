@@ -11,7 +11,7 @@ use Webmozart\Assert\Assert;
 final class OrderedErrorCollection extends RuntimeException
 {
     /** @var OrderedListInterface<Throwable|null> */
-    private $errors;
+    private OrderedListInterface $errors;
 
     /**
      * @param OrderedListInterface<Throwable|null> $errors
