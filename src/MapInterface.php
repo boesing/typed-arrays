@@ -13,17 +13,18 @@ use RuntimeException;
  * @template         TKey of string
  * @template         TValue
  * @template-extends ArrayInterface<TKey,TValue>
+ * @psalm-immutable
  */
 interface MapInterface extends ArrayInterface, JsonSerializable
 {
     /**
-     * @psalm-param  callable(TValue,TKey):bool $callback
+     * @psalm-param  pure-callable(TValue,TKey):bool $callback
      * @psalm-return MapInterface<TKey,TValue>
      */
     public function filter(callable $callback): MapInterface;
 
     /**
-     * @psalm-param  (callable(TValue,TValue):int)|null $callback
+     * @psalm-param  (pure-callable(TValue,TValue):int)|null $callback
      * @psalm-return MapInterface<TKey,TValue>
      */
     public function sort(?callable $callback = null): MapInterface;
@@ -36,34 +37,34 @@ interface MapInterface extends ArrayInterface, JsonSerializable
 
     /**
      * @psalm-param  MapInterface<TKey,TValue> $other
-     * @psalm-param  (callable(TKey,TKey):int)|null $keyComparator
+     * @psalm-param  (pure-callable(TKey,TKey):int)|null $keyComparator
      * @psalm-return MapInterface<TKey,TValue>
      */
     public function diffKeys(MapInterface $other, ?callable $keyComparator = null): MapInterface;
 
     /**
      * @template     TNewValue
-     * @psalm-param  callable(TValue,TKey):TNewValue $callback
+     * @psalm-param  pure-callable(TValue,TKey):TNewValue $callback
      * @psalm-return MapInterface<TKey,TNewValue>
      */
     public function map(callable $callback): MapInterface;
 
     /**
      * @psalm-param  MapInterface<TKey,TValue> $other
-     * @psalm-param  (callable(TValue,TValue):int)|null $valueComparator
+     * @psalm-param  (pure-callable(TValue,TValue):int)|null $valueComparator
      * @psalm-return MapInterface<TKey,TValue>
      */
     public function intersect(MapInterface $other, ?callable $valueComparator = null): MapInterface;
 
     /**
      * @psalm-param  MapInterface<TKey,TValue> $other
-     * @psalm-param  (callable(TValue,TValue):int)|null $valueComparator
+     * @psalm-param  (pure-callable(TValue,TValue):int)|null $valueComparator
      * @psalm-return MapInterface<TKey,TValue>
      */
     public function diff(MapInterface $other, ?callable $valueComparator = null): MapInterface;
 
     /**
-     * @psalm-param (callable(TValue,TValue):int)|null $sorter
+     * @psalm-param (pure-callable(TValue,TValue):int)|null $sorter
      * @psalm-return OrderedListInterface<TValue>
      */
     public function toOrderedList(?callable $sorter = null): OrderedListInterface;
@@ -111,21 +112,21 @@ interface MapInterface extends ArrayInterface, JsonSerializable
     /**
      * @psalm-param MapInterface<TKey,TValue> $other
      * @psalm-return MapInterface<TKey,TValue>
-     * @psalm-param  (callable(TValue,TValue):int)|null $valueComparator
+     * @psalm-param  (pure-callable(TValue,TValue):int)|null $valueComparator
      */
     public function intersectAssoc(MapInterface $other, ?callable $valueComparator = null): MapInterface;
 
     /**
      * @psalm-param MapInterface<TKey,TValue> $other
      * @psalm-return MapInterface<TKey,TValue>
-     * @psalm-param  (callable(TKey,TKey):int)|null $keyComparator
+     * @psalm-param  (pure-callable(TKey,TKey):int)|null $keyComparator
      */
     public function intersectUsingKeys(MapInterface $other, ?callable $keyComparator = null): MapInterface;
 
     /**
      * @psalm-param MapInterface<TKey,TValue> $other
-     * @psalm-param  (callable(TValue,TValue):int)|null $valueComparator
-     * @psalm-param  (callable(TKey,TKey):int)|null $keyComparator
+     * @psalm-param  (pure-callable(TValue,TValue):int)|null $valueComparator
+     * @psalm-param  (pure-callable(TKey,TKey):int)|null $keyComparator
      * @psalm-return MapInterface<TKey,TValue>
      */
     public function intersectUserAssoc(
@@ -143,14 +144,14 @@ interface MapInterface extends ArrayInterface, JsonSerializable
     /**
      * Partitions the current map into those items which are filtered by the callback and those which don't.
      *
-     * @psalm-param callable(TValue):bool $callback
+     * @psalm-param pure-callable(TValue):bool $callback
      * @psalm-return array{0:MapInterface<TKey,TValue>,1:MapInterface<TKey,TValue>}
      */
     public function partition(callable $callback): array;
 
     /**
      * @template TGroup of non-empty-string
-     * @psalm-param callable(TValue):TGroup $callback
+     * @psalm-param pure-callable(TValue):TGroup $callback
      *
      * @psalm-return MapInterface<TGroup,MapInterface<TKey,TValue>>
      */
@@ -162,27 +163,27 @@ interface MapInterface extends ArrayInterface, JsonSerializable
     public function slice(int $length): MapInterface;
 
     /**
-     * @param callable(TValue,TKey):void $callback
+     * @param pure-callable(TValue,TKey):void $callback
      * @throws MappedErrorCollection If an error occured during execution.
      */
     public function forAll(callable $callback): ForAllPromiseInterface;
 
     /**
-     * @param (callable(TKey,TKey):int)|null $sorter
+     * @param (pure-callable(TKey,TKey):int)|null $sorter
      *
      * @psalm-return MapInterface<TKey,TValue>
      */
     public function sortByKey(?callable $sorter = null): MapInterface;
 
     /**
-     * @psalm-param (callable(TValue):string)|null $callback
+     * @psalm-param (pure-callable(TValue):string)|null $callback
      * @throws Error In case, the values are not `string` or {@see Stringable}.
      */
     public function join(string $separator = ''): string;
 
     /**
      * @template TNewKey of string
-     * @param callable(TKey,TValue):TNewKey $keyGenerator
+     * @param pure-callable(TKey,TValue):TNewKey $keyGenerator
      *
      * @return MapInterface<TNewKey,TValue>
      * @throws RuntimeException if a new key is being generated more than once.

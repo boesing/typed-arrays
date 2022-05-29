@@ -70,7 +70,6 @@ abstract class Map extends Array_ implements MapInterface
             return $instance;
         }
 
-        /** @psalm-suppress ImpureFunctionCall */
         uasort($data, $callback);
         $instance->data = $data;
 
@@ -85,12 +84,10 @@ abstract class Map extends Array_ implements MapInterface
 
         /**
          * @psalm-var array<TKey,TValue> $diff1
-         * @psalm-suppress ImpureFunctionCall
          */
         $diff1 = array_diff_ukey($instance->data, $otherData, $keyComparator);
         /**
          * @psalm-var array<TKey,TValue> $diff2
-         * @psalm-suppress ImpureFunctionCall
          */
         $diff2  = array_diff_ukey($otherData, $instance->data, $keyComparator);
         $merged = array_merge(
@@ -104,7 +101,7 @@ abstract class Map extends Array_ implements MapInterface
     }
 
     /**
-     * @psalm-return callable(TKey,TKey):int
+     * @psalm-return pure-callable(TKey,TKey):int
      */
     private function keyComparator(): callable
     {
@@ -121,7 +118,6 @@ abstract class Map extends Array_ implements MapInterface
 
         $data = $this->data;
 
-        /** @psalm-suppress ImpureFunctionCall */
         usort($data, $sorter);
 
         return new GenericOrderedList($data);
@@ -183,8 +179,8 @@ abstract class Map extends Array_ implements MapInterface
 
     /**
      * @psalm-param MapInterface<TKey,TValue> $other
-     * @psalm-param (callable(TValue,TValue):int)|null $valueComparator
-     * @psalm-param (callable(TKey,TKey):int)|null $keyComparator
+     * @psalm-param (pure-callable(TValue,TValue):int)|null $valueComparator
+     * @psalm-param (pure-callable(TKey,TKey):int)|null $keyComparator
      * @psalm-return array<TKey,TValue>
      * @phpcsSuppress SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedMethod
      */
@@ -193,7 +189,6 @@ abstract class Map extends Array_ implements MapInterface
         if ($valueComparator && $keyComparator) {
             /**
              * @psalm-var array<TKey,TValue> $intersection
-             * @psalm-suppress ImpureFunctionCall
              */
             $intersection = array_uintersect_uassoc(
                 $this->data,
@@ -208,7 +203,6 @@ abstract class Map extends Array_ implements MapInterface
         if ($keyComparator) {
             /**
              * @psalm-var array<TKey,TValue> $intersection
-             * @psalm-suppress ImpureFunctionCall
              */
             $intersection = array_intersect_ukey($this->data, $other->toNativeArray(), $keyComparator);
 
@@ -221,7 +215,6 @@ abstract class Map extends Array_ implements MapInterface
 
         /**
          * @psalm-var array<TKey,TValue> $intersection
-         * @psalm-suppress ImpureFunctionCall
          */
         $intersection = array_uintersect($this->data, $other->toNativeArray(), $valueComparator);
 
@@ -259,7 +252,6 @@ abstract class Map extends Array_ implements MapInterface
     {
         /**
          * @psalm-var array<TKey,TValue> $diff1
-         * @psalm-suppress ImpureFunctionCall
          */
         $diff1 = array_udiff(
             $this->toNativeArray(),
@@ -269,7 +261,6 @@ abstract class Map extends Array_ implements MapInterface
 
         /**
          * @psalm-var array<TKey,TValue> $diff2
-         * @psalm-suppress ImpureFunctionCall
          */
         $diff2 = array_udiff(
             $other->toNativeArray(),
@@ -312,7 +303,7 @@ abstract class Map extends Array_ implements MapInterface
 
     /**
      * @template     TNewValue
-     * @psalm-param  callable(TValue,TKey):TNewValue $callback
+     * @psalm-param  pure-callable(TValue,TKey):TNewValue $callback
      * @psalm-return MapInterface<TKey,TNewValue>
      */
     public function map(callable $callback): MapInterface
@@ -353,7 +344,7 @@ abstract class Map extends Array_ implements MapInterface
 
     /**
      * @template TGroup of non-empty-string
-     * @psalm-param callable(TValue):TGroup $callback
+     * @psalm-param pure-callable(TValue):TGroup $callback
      *
      * @psalm-return MapInterface<TGroup,MapInterface<TKey,TValue>>
      */
@@ -420,7 +411,6 @@ abstract class Map extends Array_ implements MapInterface
         $sorter   = $sorter ?? $this->keyComparator();
         $data     = $this->data;
         $instance = clone $this;
-        /** @psalm-suppress ImpureFunctionCall */
         uksort($data, $sorter);
         $instance->data = $data;
 
@@ -430,6 +420,7 @@ abstract class Map extends Array_ implements MapInterface
     public function join(string $separator = ''): string
     {
         try {
+            /** @psalm-suppress MixedArgumentTypeCoercion Ignore invalid arguments here as we are catching the `Throwable` anyways. */
             return implode($separator, $this->data);
         } catch (Throwable $throwable) {
             throw new RuntimeException('Could not join map.', 0, $throwable);
@@ -438,7 +429,7 @@ abstract class Map extends Array_ implements MapInterface
 
     /**
      * @template TNewKey of string
-     * @param callable(TKey,TValue):TNewKey $keyGenerator
+     * @param pure-callable(TKey,TValue):TNewKey $keyGenerator
      *
      * @return MapInterface<TNewKey,TValue>
      * @throws RuntimeException if a new key is being generated more than once.

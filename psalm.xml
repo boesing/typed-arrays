@@ -18,4 +18,11 @@
     <plugins>
         <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
     </plugins>
+    <issueHandlers>
+        <InaccessibleProperty>
+            <errorLevel type="suppress">
+                <directory name="tests/Asset"/>
+            </errorLevel>
+        </InaccessibleProperty>
+    </issueHandlers>
 </psalm>
