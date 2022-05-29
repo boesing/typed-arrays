@@ -104,6 +104,12 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
     public function slice(int $offset, ?int $length = null): OrderedListInterface;
 
     /**
+     * @param positive-int $length
+     * @psalm-return OrderedListInterface<TValue>
+     */
+    public function limit(int $length): OrderedListInterface;
+
+    /**
      * @psalm-param pure-callable(TValue):bool $callback
      * @psalm-return TValue
      * @throws OutOfBoundsException if value could not be found with provided callback.
