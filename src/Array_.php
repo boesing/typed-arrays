@@ -84,7 +84,7 @@ abstract class Array_ implements ArrayInterface
     }
 
     /**
-     * @psalm-return callable(TValue $a,TValue $b):int
+     * @psalm-return pure-callable(TValue $a,TValue $b):int
      */
     protected function valueComparator(): callable
     {

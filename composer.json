@@ -10,9 +10,9 @@
     "require-dev": {
         "doctrine/coding-standard": "^9.0",
         "phpunit/phpunit": "^9.2",
-        "psalm/plugin-phpunit": "^0.16.0",
+        "psalm/plugin-phpunit": "^0.16.1",
         "symfony/polyfill-php80": "^1.22",
-        "vimeo/psalm": "^4.7"
+        "vimeo/psalm": "^4.23"
     },
     "conflict": {
         "vimeo/psalm": "4.6.2"

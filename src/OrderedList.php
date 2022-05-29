@@ -58,15 +58,11 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         return $instance;
     }
 
-    /**
-     * @template     TNewValue
-     * @psalm-param  callable(TValue,int):TNewValue $callback
-     * @psalm-return OrderedListInterface<TNewValue>
-     */
     public function map(callable $callback): OrderedListInterface
     {
         $data = [];
         foreach ($this->data as $index => $value) {
+            assert($index >= 0);
             $data[] = $callback($value, $index);
         }
 
@@ -101,7 +97,6 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
             return $instance;
         }
 
-        /** @psalm-suppress ImpureFunctionCall */
         usort($data, $callback);
         $instance->data = $data;
 
@@ -114,14 +109,12 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
         $valueComparator = $valueComparator ?? $this->valueComparator();
 
-        /** @psalm-suppress ImpureFunctionCall */
         $diff1 = array_udiff(
             $instance->toNativeArray(),
             $other->toNativeArray(),
             $valueComparator
         );
 
-        /** @psalm-suppress ImpureFunctionCall */
         $diff2 = array_udiff(
             $other->toNativeArray(),
             $instance->toNativeArray(),
@@ -138,8 +131,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
     public function intersect(OrderedListInterface $other, ?callable $valueComparator = null): OrderedListInterface
     {
-        $instance = clone $this;
-        /** @psalm-suppress ImpureFunctionCall */
+        $instance       = clone $this;
         $instance->data = array_values(array_uintersect(
             $instance->data,
             $other->toNativeArray(),
@@ -149,16 +141,12 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         return $instance;
     }
 
-    /**
-     * @template TKey of non-empty-string
-     * @psalm-param  callable(TValue,int):TKey $keyGenerator
-     * @psalm-return MapInterface<TKey,TValue>
-     */
     public function toMap(callable $keyGenerator): MapInterface
     {
         $instance = clone $this;
         $mapped   = [];
         foreach ($instance->data as $index => $value) {
+            assert($index >= 0);
             $key          = $keyGenerator($value, $index);
             $mapped[$key] = $value;
         }
@@ -232,7 +220,6 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
             $unified = $unified->put($identifier, $unique);
         }
 
-        /** @psalm-suppress ImpureMethodCall */
         $instance->data = $unified->toOrderedList()->toNativeArray();
 
         return $instance;
@@ -261,18 +248,25 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
     }
 
     /**
-     * @psalm-param TValue|callable(int):TValue $value
+     * @psalm-param TValue|pure-callable(int):TValue $value
      * @psalm-return array<int,TValue>
      */
     private function createListFilledWithValues(int $start, int $amount, $value): array
     {
         $filled = [];
-        for ($index = $start; $index < $amount; $index++) {
+
+        /** @var pure-callable(int):TValue $callable */
+        $callable = $value;
+        if (! is_callable($callable)) {
             /**
-             * @psalm-suppress ImpureFunctionCall
-             * @psalm-suppress MixedAssignment https://github.com/vimeo/psalm/issues/5384
+             * @var pure-callable(int):TValue $callable
+             * @psalm-suppress MissingClosureReturnType We have to assume that the value contains the fill value.
              */
-            $filled[$index] = is_callable($value) ? $value($index) : $value;
+            $callable = static fn () => $value;
+        }
+
+        for ($index = $start; $index < $amount; $index++) {
+            $filled[$index] = $callable($index);
         }
 
         return $filled;
@@ -320,7 +314,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
     /**
      * @template TGroup of non-empty-string
-     * @psalm-param callable(TValue):TGroup $callback
+     * @psalm-param pure-callable(TValue):TGroup $callback
      *
      * @psalm-return MapInterface<TGroup,OrderedListInterface<TValue>>
      */
@@ -392,6 +386,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
     public function join(string $separator = ''): string
     {
         try {
+            /** @psalm-suppress MixedArgumentTypeCoercion Ignore the fact that garbage might being passed. */
             return implode($separator, $this->data);
         } catch (Throwable $throwable) {
             throw new RuntimeException('Could not join ordered list.', 0, $throwable);
@@ -401,7 +396,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
     public function findFirstMatchingIndex(callable $filter): ?int
     {
         foreach ($this->data as $index => $value) {
-            assert($index === 0 || $index > 0);
+            assert($index >= 0);
             if ($filter($value)) {
                 return $index;
             }

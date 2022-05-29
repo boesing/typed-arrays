@@ -6,6 +6,9 @@ namespace Boesing\TypedArrays\Asset;
 
 use Boesing\TypedArrays\ComparatorInterface;
 
+/**
+ * @psalm-immutable
+ */
 final class ComparableObject implements ComparatorInterface
 {
     private int $id;

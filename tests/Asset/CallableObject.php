@@ -9,6 +9,9 @@ use PHPUnit\Framework\Assert;
 
 use function func_get_args;
 
+/**
+ * @psalm-immutable
+ */
 final class CallableObject
 {
     /** @var list<list<mixed>> */
@@ -34,6 +37,7 @@ final class CallableObject
         }
 
         $this->called++;
+        /** @psalm-suppress ImpureMethodCall We do want to verify this here */
         Assert::assertEquals($expected, $argument);
     }
 }

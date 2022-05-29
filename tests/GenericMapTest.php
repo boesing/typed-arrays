@@ -7,7 +7,6 @@ namespace Boesing\TypedArrays;
 use Boesing\TypedArrays\Asset\CallableObject;
 use Boesing\TypedArrays\Asset\ComparableObject;
 use Boesing\TypedArrays\Asset\GenericObject;
-use Closure;
 use DateTimeImmutable;
 use Generator;
 use OutOfBoundsException;
@@ -21,7 +20,6 @@ use function array_map;
 use function in_array;
 use function json_encode;
 use function ord;
-use function sprintf;
 use function strlen;
 use function strnatcmp;
 use function trim;
@@ -35,7 +33,7 @@ final class GenericMapTest extends TestCase
     /**
      * @psalm-return Generator<non-empty-string,array{
      *   0: array<non-empty-string,mixed>,
-     *   1: callable(non-empty-string):non-empty-string,
+     *   1: pure-callable(non-empty-string):non-empty-string,
      *   2: array<non-empty-string,mixed>
      * }>
      */
@@ -59,7 +57,7 @@ final class GenericMapTest extends TestCase
                         return 'ooq';
                 }
 
-                self::fail(sprintf('Key "%s" is not handled here.', $key));
+                return 'nope';
             },
             [
                 'bar' => 'bar',
@@ -86,7 +84,7 @@ final class GenericMapTest extends TestCase
                         return 'ooq';
                 }
 
-                self::fail(sprintf('Key "%s" is not handled here.', $key));
+                return 'nope';
             },
             [
                 'fooo' => 'bar',
@@ -111,7 +109,7 @@ final class GenericMapTest extends TestCase
                         return 'ooq';
                 }
 
-                self::fail(sprintf('Key "%s" is not handled here.', $key));
+                return 'nope';
             },
             [
                 'foo' => 'bar',
@@ -196,7 +194,7 @@ final class GenericMapTest extends TestCase
 
     /**
      * @psalm-param  array<string,mixed> $values
-     * @psalm-param  (Closure(mixed,mixed):int)|null $callback
+     * @psalm-param  (pure-callable(mixed,mixed):int)|null $callback
      * @psalm-param  array<string,mixed> $sorted
      * @dataProvider sorting
      */
@@ -213,7 +211,7 @@ final class GenericMapTest extends TestCase
     /**
      * @psalm-return Generator<
      *     non-empty-string,
-     *     array{0:array<string,mixed>,1:(Closure(mixed,mixed):int)|null,2:array<string,mixed>}
+     *     array{0:array<string,mixed>,1:(pure-callable(mixed,mixed):int)|null,2:array<string,mixed>}
      * >
      */
     public function sorting(): Generator
@@ -310,7 +308,7 @@ final class GenericMapTest extends TestCase
     /**
      * @psalm-param array<string,mixed> $initial
      * @psalm-param list<mixed>         $expected
-     * @psalm-param (Closure(mixed,mixed):int)|null $sorter
+     * @psalm-param (pure-callable(mixed,mixed):int)|null $sorter
      * @dataProvider orderedLists
      */
     public function testWillConvertToOrderedList(array $initial, array $expected, ?callable $sorter): void
@@ -324,7 +322,7 @@ final class GenericMapTest extends TestCase
     /**
      * @psalm-return Generator<
      *     non-empty-string,
-     *     array{0:array<string,mixed>,1:list<mixed>,2:(Closure(mixed,mixed):int)|null}>
+     *     array{0:array<string,mixed>,1:list<mixed>,2:(pure-callable(mixed,mixed):int)|null}>
      */
     public function orderedLists(): Generator
     {
@@ -456,7 +454,7 @@ final class GenericMapTest extends TestCase
      * @param array<string,mixed> $initial
      * @param array<string,mixed> $other
      * @param array<string,mixed> $expected
-     * @psalm-param (Closure(mixed,mixed):int)|null $comparator
+     * @psalm-param (pure-callable(mixed,mixed):int)|null $comparator
      *
      * @dataProvider diffs
      */
@@ -477,7 +475,7 @@ final class GenericMapTest extends TestCase
      *      0:array<string,mixed>,
      *      1:array<string,mixed>,
      *      2:array<string,mixed>,
-     *      3:(Closure(mixed,mixed):int)|null
+     *      3:(pure-callable(mixed,mixed):int)|null
      *     }
      * >
      */
@@ -590,7 +588,6 @@ final class GenericMapTest extends TestCase
         /** @var MapInterface<string,string> $map */
         $map = new GenericMap([]);
         $this->expectException(OutOfBoundsException::class);
-        /** @psalm-suppress UnusedMethodCall */
         $map->get('foo');
     }
 
@@ -619,7 +616,7 @@ final class GenericMapTest extends TestCase
     /**
      * @template     TValue
      * @psalm-param array<string,TValue> $initial
-     * @psalm-param Closure(TValue $value):bool $callback
+     * @psalm-param pure-callable(TValue $value):bool $callback
      * @psalm-param array<string,TValue> $filteredExpectation
      * @psalm-param array<string,TValue> $unfilteredExpectation
      *
@@ -641,7 +638,7 @@ final class GenericMapTest extends TestCase
     /**
      * @return Generator<
      *     string,
-     *     array{0:array<string,mixed>,1:Closure(mixed $value):bool,2:array<string,mixed>,3:array<string,mixed>}
+     *     array{0:array<string,mixed>,1:pure-callable(mixed $value):bool,2:array<string,mixed>,3:array<string,mixed>}
      * >
      */
     public function partitions(): Generator
@@ -741,7 +738,7 @@ final class GenericMapTest extends TestCase
     /**
      * @template     T
      * @psalm-param array<string,T> $elements
-     * @psalm-param Closure(T):bool $callback
+     * @psalm-param pure-callable(T):bool $callback
      * @dataProvider satisfactions
      */
     public function testAllElementsWillSatisfyCallback(array $elements, callable $callback): void
@@ -768,7 +765,7 @@ final class GenericMapTest extends TestCase
     }
 
     /**
-     * @psalm-return Generator<non-empty-string,array{0:array<non-empty-string,mixed>,1:Closure(mixed):bool}>
+     * @psalm-return Generator<non-empty-string,array{0:array<non-empty-string,mixed>,1:pure-callable(mixed):bool}>
      */
     public function satisfactions(): Generator
     {
@@ -796,7 +793,7 @@ final class GenericMapTest extends TestCase
     /**
      * @template     T
      * @psalm-param array<non-empty-string,T> $data
-     * @psalm-param Closure(T):bool           $callback
+     * @psalm-param pure-callable(T):bool           $callback
      * @dataProvider existenceTests
      */
     public function testWillFindExistenceOfEntry(array $data, callable $callback, bool $exists): void
@@ -815,7 +812,7 @@ final class GenericMapTest extends TestCase
     }
 
     /**
-     * @psalm-return Generator<non-empty-string,array{0:array<non-empty-string,mixed>,1:Closure(mixed):bool,2:bool}>
+     * @psalm-return Generator<non-empty-string,array{0:array<non-empty-string,mixed>,1:pure-callable(mixed):bool,2:bool}>
      */
     public function existenceTests(): Generator
     {
@@ -913,7 +910,7 @@ final class GenericMapTest extends TestCase
         ]);
 
         $callable = new CallableObject(['bar', 'foo'], ['baz', 'bar'], ['ooq', 'qoo']);
-        $map->forAll($callable)->execute();
+        $map->forAll(static fn ($value, $key) => $callable($value, $key))->execute();
     }
 
     public function testWillGenerateErrorCollectionWhileExecutingForAll(): void
@@ -936,6 +933,7 @@ final class GenericMapTest extends TestCase
         $errorCollection = null;
 
         try {
+            /** @psalm-suppress InvalidArgument We do want to pass an impure method here for testing purposes */
             $map->forAll($callable)->execute();
         } catch (MappedErrorCollection $errorCollection) {
         }
@@ -966,6 +964,7 @@ final class GenericMapTest extends TestCase
         $errorCollection = null;
 
         try {
+            /** @psalm-suppress InvalidArgument We do want to pass an impure method here for testing purposes */
             $map->forAll($callable)->stopOnError()->execute();
         } catch (MappedErrorCollection $errorCollection) {
         }
@@ -1084,7 +1083,6 @@ final class GenericMapTest extends TestCase
         ]);
 
         $this->expectException(RuntimeException::class);
-        /** @psalm-suppress UnusedMethodCall */
         $map->join();
     }
 
@@ -1101,7 +1099,7 @@ final class GenericMapTest extends TestCase
 
     /**
      * @psalm-param array<non-empty-string,mixed>    $initial
-     * @psalm-param callable(non-empty-string):non-empty-string $keyGenerator
+     * @psalm-param pure-callable(non-empty-string):non-empty-string $keyGenerator
      * @psalm-param array<non-empty-string,mixed>    $expected
      *
      * @dataProvider exchangeKeys
@@ -1118,7 +1116,6 @@ final class GenericMapTest extends TestCase
         $map = new GenericMap(['foo' => 'bar', 'bar' => 'baz']);
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Provided key generator generates the same key "foo" multiple times.');
-        /** @psalm-suppress UnusedMethodCall */
         $map->keyExchange(static function (): string {
             return 'foo';
         });
