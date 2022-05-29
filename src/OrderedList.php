@@ -280,6 +280,11 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         return $instance;
     }
 
+    public function limit(int $length): OrderedListInterface
+    {
+        return $this->slice(0, $length);
+    }
+
     public function find(callable $callback)
     {
         foreach ($this->data as $value) {
