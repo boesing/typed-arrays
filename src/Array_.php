@@ -78,11 +78,6 @@ abstract class Array_ implements ArrayInterface
         return count($this->data);
     }
 
-    public function toNativeArray(): array
-    {
-        return $this->data;
-    }
-
     /**
      * @psalm-return pure-callable(TValue $a,TValue $b):int
      */

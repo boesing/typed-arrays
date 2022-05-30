@@ -1083,6 +1083,7 @@ final class GenericMapTest extends TestCase
         ]);
 
         $this->expectException(RuntimeException::class);
+        /** @psalm-suppress UnusedMethodCall */
         $map->join();
     }
 
