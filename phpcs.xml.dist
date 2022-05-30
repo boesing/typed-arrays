@@ -27,6 +27,7 @@
         <exclude name="SlevomatCodingStandard.Classes.SuperfluousAbstractClassNaming.SuperfluousPrefix"/>
         <exclude name="Generic.NamingConventions.ConstructorName.OldStyle"/>
         <exclude name="Generic.CodeAnalysis.UselessOverridingMethod.Found"/>
+        <exclude name="Generic.Files.LineLength.TooLong"/>
         <!-- Can be removed with dropping support for PHP 7.3 -->
         <exclude name="SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint"/>
         <!-- Can be removed with dropping support for PHP 7.4 -->
