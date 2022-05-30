@@ -417,4 +417,9 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
         return $instance;
     }
+
+    public function removeAt(int $index): OrderedListInterface
+    {
+        return $this->filter(static fn ($_, int $i) => $i !== $index);
+    }
 }
