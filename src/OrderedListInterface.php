@@ -256,4 +256,12 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
      * @return OrderedListInterface<TValue>
      */
     public function prepend($value): self;
+
+    /**
+     * Removes an element at the given index.
+     *
+     * @param 0|positive-int $index
+     * @return OrderedListInterface<TValue>
+     */
+    public function removeAt(int $index): self;
 }

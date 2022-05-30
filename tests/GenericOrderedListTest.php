@@ -1478,4 +1478,16 @@ final class GenericOrderedListTest extends TestCase
         $list = new GenericOrderedList([]);
         self::assertSame(PHP_INT_MAX, $list->reduce(static fn () => 1, PHP_INT_MAX));
     }
+
+    public function testWillRemoveItemAtSpecificPosition(): void
+    {
+        $list = new GenericOrderedList([
+            1,
+            2,
+            3,
+        ]);
+
+        $list = $list->removeAt(1);
+        self::assertSame([1, 3], $list->toNativeArray());
+    }
 }
