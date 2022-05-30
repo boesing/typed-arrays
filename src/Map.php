@@ -453,4 +453,9 @@ abstract class Map extends Array_ implements MapInterface
 
         return $exchanged;
     }
+
+    public function toNativeArray(): array
+    {
+        return $this->data;
+    }
 }
