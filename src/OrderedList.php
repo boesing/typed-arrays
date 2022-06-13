@@ -63,6 +63,10 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         $data = [];
         foreach ($this->data as $index => $value) {
             assert($index >= 0);
+            /**
+             * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+             *                                    value here.
+             */
             $data[] = $callback($value, $index);
         }
 
@@ -97,6 +101,10 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
             return $instance;
         }
 
+        /**
+         * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+         *                                    value here.
+         */
         usort($data, $callback);
         $instance->data = $data;
 
@@ -109,12 +117,20 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
         $valueComparator = $valueComparator ?? $this->valueComparator();
 
+        /**
+         * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+         *                                    value here.
+         */
         $diff1 = array_udiff(
             $instance->toNativeArray(),
             $other->toNativeArray(),
             $valueComparator
         );
 
+        /**
+         * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+         *                                    value here.
+         */
         $diff2 = array_udiff(
             $other->toNativeArray(),
             $instance->toNativeArray(),
@@ -131,7 +147,11 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
     public function intersect(OrderedListInterface $other, ?callable $valueComparator = null): OrderedListInterface
     {
-        $instance       = clone $this;
+        $instance = clone $this;
+        /**
+         * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+         *                                    value here.
+         */
         $instance->data = array_values(array_uintersect(
             $instance->data,
             $other->toNativeArray(),
@@ -147,6 +167,10 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         $mapped   = [];
         foreach ($instance->data as $index => $value) {
             assert($index >= 0);
+            /**
+             * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+             *                                    value here.
+             */
             $key          = $keyGenerator($value, $index);
             $mapped[$key] = $value;
         }
@@ -175,6 +199,10 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         $instance = clone $this;
         $filtered = [];
         foreach ($instance->data as $index => $value) {
+            /**
+             * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+             *                                    value here.
+             */
             if (! $callback($value, $index)) {
                 continue;
             }
@@ -206,11 +234,19 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         $unified = new GenericMap([]);
 
         foreach ($instance->data as $value) {
+            /**
+             * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+             *                                    value here.
+             */
             $identifier = $unificationIdentifierGenerator($value);
             try {
                 $unique = $unified->get($identifier);
 
                 if ($callback) {
+                    /**
+                     * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+                     *                                    value here.
+                     */
                     $unique = $callback($unique, $value);
                 }
             } catch (OutOfBoundsException $exception) {
@@ -248,24 +284,32 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
     }
 
     /**
-     * @psalm-param TValue|pure-callable(int):TValue $value
+     * @psalm-param TValue|callable(int):TValue $value
      * @psalm-return array<int,TValue>
      */
     private function createListFilledWithValues(int $start, int $amount, $value): array
     {
         $filled = [];
 
-        /** @var pure-callable(int):TValue $callable */
+        /** @var callable(int):TValue $callable */
         $callable = $value;
+        /**
+         * @psalm-suppress ImpureFunctionCall I was not aware that `is_callable` is impure...
+         */
         if (! is_callable($callable)) {
             /**
-             * @var pure-callable(int):TValue $callable
+             * @var callable(int):TValue $callable
              * @psalm-suppress MissingClosureReturnType We have to assume that the value contains the fill value.
+             * @return TValue
              */
             $callable = static fn () => $value;
         }
 
         for ($index = $start; $index < $amount; $index++) {
+            /**
+             * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+             *                                    value here.
+             */
             $filled[$index] = $callable($index);
         }
 
@@ -288,6 +332,10 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
     public function find(callable $callback)
     {
         foreach ($this->data as $value) {
+            /**
+             * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+             *                                    value here.
+             */
             if ($callback($value)) {
                 return $value;
             }
@@ -301,6 +349,10 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         $filtered = $unfiltered = [];
 
         foreach ($this->data as $element) {
+            /**
+             * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+             *                                    value here.
+             */
             if ($callback($element)) {
                 $filtered[] = $element;
                 continue;
@@ -319,7 +371,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
     /**
      * @template TGroup of non-empty-string
-     * @psalm-param pure-callable(TValue):TGroup $callback
+     * @psalm-param callable(TValue):TGroup $callback
      *
      * @psalm-return MapInterface<TGroup,OrderedListInterface<TValue>>
      */
@@ -328,6 +380,10 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         /** @var MapInterface<TGroup,OrderedListInterface<TValue>> $groups */
         $groups = new GenericMap([]);
         foreach ($this as $value) {
+            /**
+             * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+             *                                    value here.
+             */
             $groupName = $callback($value);
             if (! $groups->has($groupName)) {
                 $groups = $groups->put($groupName, new GenericOrderedList([$value]));
@@ -402,6 +458,10 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
     {
         foreach ($this->data as $index => $value) {
             assert($index >= 0);
+            /**
+             * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+             *                                    value here.
+             */
             if ($filter($value)) {
                 return $index;
             }

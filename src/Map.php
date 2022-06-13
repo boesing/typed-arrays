@@ -70,6 +70,10 @@ abstract class Map extends Array_ implements MapInterface
             return $instance;
         }
 
+        /**
+         * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+         *                                    value here.
+         */
         uasort($data, $callback);
         $instance->data = $data;
 
@@ -84,10 +88,14 @@ abstract class Map extends Array_ implements MapInterface
 
         /**
          * @psalm-var array<TKey,TValue> $diff1
+         * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+         *                                    value here.
          */
         $diff1 = array_diff_ukey($instance->data, $otherData, $keyComparator);
         /**
          * @psalm-var array<TKey,TValue> $diff2
+         * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+         *                                    value here.
          */
         $diff2  = array_diff_ukey($otherData, $instance->data, $keyComparator);
         $merged = array_merge(
@@ -101,7 +109,7 @@ abstract class Map extends Array_ implements MapInterface
     }
 
     /**
-     * @psalm-return pure-callable(TKey,TKey):int
+     * @psalm-return callable(TKey,TKey):int
      */
     private function keyComparator(): callable
     {
@@ -118,6 +126,10 @@ abstract class Map extends Array_ implements MapInterface
 
         $data = $this->data;
 
+        /**
+         * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+         *                                    value here.
+         */
         usort($data, $sorter);
 
         return new GenericOrderedList($data);
@@ -128,6 +140,10 @@ abstract class Map extends Array_ implements MapInterface
         $instance = clone $this;
         $filtered = [];
         foreach ($instance->data as $key => $value) {
+            /**
+             * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+             *                                    value here.
+             */
             if (! $callback($value, $key)) {
                 continue;
             }
@@ -179,8 +195,8 @@ abstract class Map extends Array_ implements MapInterface
 
     /**
      * @psalm-param MapInterface<TKey,TValue> $other
-     * @psalm-param (pure-callable(TValue,TValue):int)|null $valueComparator
-     * @psalm-param (pure-callable(TKey,TKey):int)|null $keyComparator
+     * @psalm-param (callable(TValue,TValue):int)|null $valueComparator
+     * @psalm-param (callable(TKey,TKey):int)|null $keyComparator
      * @psalm-return array<TKey,TValue>
      * @phpcsSuppress SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedMethod
      */
@@ -189,6 +205,8 @@ abstract class Map extends Array_ implements MapInterface
         if ($valueComparator && $keyComparator) {
             /**
              * @psalm-var array<TKey,TValue> $intersection
+             * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+             *                                    value here.
              */
             $intersection = array_uintersect_uassoc(
                 $this->data,
@@ -203,6 +221,8 @@ abstract class Map extends Array_ implements MapInterface
         if ($keyComparator) {
             /**
              * @psalm-var array<TKey,TValue> $intersection
+             * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+             *                                    value here.
              */
             $intersection = array_intersect_ukey($this->data, $other->toNativeArray(), $keyComparator);
 
@@ -215,6 +235,8 @@ abstract class Map extends Array_ implements MapInterface
 
         /**
          * @psalm-var array<TKey,TValue> $intersection
+         * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+         *                                    value here.
          */
         $intersection = array_uintersect($this->data, $other->toNativeArray(), $valueComparator);
 
@@ -252,6 +274,8 @@ abstract class Map extends Array_ implements MapInterface
     {
         /**
          * @psalm-var array<TKey,TValue> $diff1
+         * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+         *                                    value here.
          */
         $diff1 = array_udiff(
             $this->toNativeArray(),
@@ -261,6 +285,8 @@ abstract class Map extends Array_ implements MapInterface
 
         /**
          * @psalm-var array<TKey,TValue> $diff2
+         * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+         *                                    value here.
          */
         $diff2 = array_udiff(
             $other->toNativeArray(),
@@ -303,13 +329,17 @@ abstract class Map extends Array_ implements MapInterface
 
     /**
      * @template     TNewValue
-     * @psalm-param  pure-callable(TValue,TKey):TNewValue $callback
+     * @psalm-param  callable(TValue,TKey):TNewValue $callback
      * @psalm-return MapInterface<TKey,TNewValue>
      */
     public function map(callable $callback): MapInterface
     {
         $data = [];
         foreach ($this->data as $key => $value) {
+            /**
+             * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+             *                                    value here.
+             */
             $data[$key] = $callback($value, $key);
         }
 
@@ -326,6 +356,10 @@ abstract class Map extends Array_ implements MapInterface
         $filtered = $unfiltered = [];
 
         foreach ($this->data as $key => $element) {
+            /**
+             * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+             *                                    value here.
+             */
             if ($callback($element)) {
                 $filtered[$key] = $element;
                 continue;
@@ -344,7 +378,7 @@ abstract class Map extends Array_ implements MapInterface
 
     /**
      * @template TGroup of non-empty-string
-     * @psalm-param pure-callable(TValue):TGroup $callback
+     * @psalm-param callable(TValue):TGroup $callback
      *
      * @psalm-return MapInterface<TGroup,MapInterface<TKey,TValue>>
      */
@@ -356,6 +390,10 @@ abstract class Map extends Array_ implements MapInterface
         $groups = new GenericMap([]);
 
         foreach ($this->data as $key => $value) {
+            /**
+             * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+             *                                    value here.
+             */
             $groupIdentifier = $callback($value);
             try {
                 $group = $groups->get($groupIdentifier);
@@ -411,6 +449,10 @@ abstract class Map extends Array_ implements MapInterface
         $sorter   = $sorter ?? $this->keyComparator();
         $data     = $this->data;
         $instance = clone $this;
+        /**
+         * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+         *                                    value here.
+         */
         uksort($data, $sorter);
         $instance->data = $data;
 
@@ -429,7 +471,7 @@ abstract class Map extends Array_ implements MapInterface
 
     /**
      * @template TNewKey of string
-     * @param pure-callable(TKey,TValue):TNewKey $keyGenerator
+     * @param callable(TKey,TValue):TNewKey $keyGenerator
      *
      * @return MapInterface<TNewKey,TValue>
      * @throws RuntimeException if a new key is being generated more than once.
@@ -440,6 +482,10 @@ abstract class Map extends Array_ implements MapInterface
         $exchanged = new GenericMap();
 
         foreach ($this->data as $key => $value) {
+            /**
+             * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+             *                                    value here.
+             */
             $newKey = $keyGenerator($key, $value);
             if ($exchanged->has($newKey)) {
                 throw new RuntimeException(sprintf(

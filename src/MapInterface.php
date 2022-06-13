@@ -20,7 +20,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * Filters out all values not matched by the callback.
      * This method is the equivalent of `array_filter`.
      *
-     * @psalm-param  pure-callable(TValue,TKey):bool $callback
+     * @psalm-param  callable(TValue,TKey):bool $callback
      * @psalm-return MapInterface<TKey,TValue>
      */
     public function filter(callable $callback): MapInterface;
@@ -29,7 +29,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * Sorts the items by using either the given callback or the native `SORT_NATURAL` logic of PHP.
      * This method is the equivalent of `sort`/`usort`.
      *
-     * @psalm-param  (pure-callable(TValue,TValue):int)|null $callback
+     * @psalm-param  (callable(TValue,TValue):int)|null $callback
      * @psalm-return MapInterface<TKey,TValue>
      */
     public function sort(?callable $callback = null): MapInterface;
@@ -51,7 +51,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * This method is the equivalent of `array_diff`.
      *
      * @psalm-param  MapInterface<TKey,TValue> $other
-     * @psalm-param  (pure-callable(TKey,TKey):int)|null $keyComparator
+     * @psalm-param  (callable(TKey,TKey):int)|null $keyComparator
      * @psalm-return MapInterface<TKey,TValue>
      */
     public function diffKeys(MapInterface $other, ?callable $keyComparator = null): MapInterface;
@@ -61,7 +61,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * This method is the equivalent of `array_map`.
      *
      * @template     TNewValue
-     * @psalm-param  pure-callable(TValue,TKey):TNewValue $callback
+     * @psalm-param  callable(TValue,TKey):TNewValue $callback
      * @psalm-return MapInterface<TKey,TNewValue>
      */
     public function map(callable $callback): MapInterface;
@@ -74,7 +74,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * This method is the equivalent of `array_intersect`.
      *
      * @psalm-param  MapInterface<TKey,TValue> $other
-     * @psalm-param  (pure-callable(TValue,TValue):int)|null $valueComparator
+     * @psalm-param  (callable(TValue,TValue):int)|null $valueComparator
      * @psalm-return MapInterface<TKey,TValue>
      */
     public function intersect(MapInterface $other, ?callable $valueComparator = null): MapInterface;
@@ -87,7 +87,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * This method is the equivalent of `array_diff`.
      *
      * @psalm-param  MapInterface<TKey,TValue> $other
-     * @psalm-param  (pure-callable(TValue,TValue):int)|null $valueComparator
+     * @psalm-param  (callable(TValue,TValue):int)|null $valueComparator
      * @psalm-return MapInterface<TKey,TValue>
      */
     public function diff(MapInterface $other, ?callable $valueComparator = null): MapInterface;
@@ -97,7 +97,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * The items are being sorted by using the provided sorter. In case there is no sorter provided, the values
      * are just passed in the order they werestored in this map.
      *
-     * @psalm-param (pure-callable(TValue,TValue):int)|null $sorter
+     * @psalm-param (callable(TValue,TValue):int)|null $sorter
      * @psalm-return OrderedListInterface<TValue>
      */
     public function toOrderedList(?callable $sorter = null): OrderedListInterface;
@@ -163,7 +163,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      *
      * @psalm-param MapInterface<TKey,TValue> $other
      * @psalm-return MapInterface<TKey,TValue>
-     * @psalm-param  (pure-callable(TValue,TValue):int)|null $valueComparator
+     * @psalm-param  (callable(TValue,TValue):int)|null $valueComparator
      */
     public function intersectAssoc(MapInterface $other, ?callable $valueComparator = null): MapInterface;
 
@@ -174,7 +174,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      *
      * @psalm-param MapInterface<TKey,TValue> $other
      * @psalm-return MapInterface<TKey,TValue>
-     * @psalm-param  (pure-callable(TKey,TKey):int)|null $keyComparator
+     * @psalm-param  (callable(TKey,TKey):int)|null $keyComparator
      */
     public function intersectUsingKeys(MapInterface $other, ?callable $keyComparator = null): MapInterface;
 
@@ -186,8 +186,8 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * This method is the equivalent of `array_intersect_assoc`/`array_intersect_uassoc`/`array_intersect_key`/`array_intersect_ukey`.
      *
      * @psalm-param MapInterface<TKey,TValue> $other
-     * @psalm-param  (pure-callable(TValue,TValue):int)|null $valueComparator
-     * @psalm-param  (pure-callable(TKey,TKey):int)|null $keyComparator
+     * @psalm-param  (callable(TValue,TValue):int)|null $valueComparator
+     * @psalm-param  (callable(TKey,TKey):int)|null $keyComparator
      * @psalm-return MapInterface<TKey,TValue>
      */
     public function intersectUserAssoc(
@@ -207,7 +207,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
     /**
      * Partitions the current map into those items which are filtered by the callback and those which don't.
      *
-     * @psalm-param pure-callable(TValue):bool $callback
+     * @psalm-param callable(TValue):bool $callback
      * @psalm-return array{0:MapInterface<TKey,TValue>,1:MapInterface<TKey,TValue>}
      */
     public function partition(callable $callback): array;
@@ -216,7 +216,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * Groups the items of this object by using the callback.
      *
      * @template TGroup of non-empty-string
-     * @psalm-param pure-callable(TValue):TGroup $callback
+     * @psalm-param callable(TValue):TGroup $callback
      *
      * @psalm-return MapInterface<TGroup,MapInterface<TKey,TValue>>
      */
@@ -235,7 +235,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * After the method has been executed properly, an `MappedErrorCollection` is being thrown so one can
      * see what item key actually failed executing the callback.
      *
-     * @param pure-callable(TValue,TKey):void $callback
+     * @param callable(TValue,TKey):void $callback
      * @throws MappedErrorCollection If an error occured during execution.
      */
     public function forAll(callable $callback): ForAllPromiseInterface;
@@ -243,7 +243,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
     /**
      * Sorts the map by sorting its keys.
      *
-     * @param (pure-callable(TKey,TKey):int)|null $sorter
+     * @param (callable(TKey,TKey):int)|null $sorter
      *
      * @psalm-return MapInterface<TKey,TValue>
      */
@@ -261,7 +261,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * Creates a new map where the keys of items might have been exchanged with another key.
      *
      * @template TNewKey of string
-     * @param pure-callable(TKey,TValue):TNewKey $keyGenerator
+     * @param callable(TKey,TValue):TNewKey $keyGenerator
      *
      * @return MapInterface<TNewKey,TValue>
      * @throws RuntimeException if a new key is being generated more than once.
