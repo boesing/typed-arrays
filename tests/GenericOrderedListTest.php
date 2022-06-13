@@ -564,7 +564,6 @@ final class GenericOrderedListTest extends TestCase
 
         /**
          * @psalm-suppress UnusedMethodCall
-         * @psalm-suppress InvalidArgument We do explicitly pass impure callable here to track usages
          */
         $list->unify(null, static function (int $duplicate, int $number) use (&$callbackCalled): int {
             self::assertEquals($duplicate, $number);

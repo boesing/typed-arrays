@@ -51,14 +51,14 @@ interface ArrayInterface extends IteratorAggregate, Countable
     /**
      * Tests if all elements satisfy the given predicate.
      *
-     * @psalm-param pure-callable(TValue):bool $callback
+     * @psalm-param callable(TValue):bool $callback
      */
     public function allSatisfy(callable $callback): bool;
 
     /**
      * Tests for the existence of an element that satisfies the given predicate.
      *
-     * @psalm-param pure-callable(TValue):bool $callback
+     * @psalm-param callable(TValue):bool $callback
      */
     public function exists(callable $callback): bool;
 
@@ -71,8 +71,8 @@ interface ArrayInterface extends IteratorAggregate, Countable
 
     /**
      * @template TReducedValue
-     * @param pure-callable(TReducedValue,TValue):TReducedValue $callback
-     * @param TReducedValue                                     $initial
+     * @param callable(TReducedValue,TValue):TReducedValue $callback
+     * @param TReducedValue                                $initial
      * @return TReducedValue
      */
     public function reduce(callable $callback, $initial);
