@@ -934,7 +934,6 @@ final class GenericMapTest extends TestCase
         $errorCollection = null;
 
         try {
-            /** @psalm-suppress InvalidArgument We do want to pass an impure method here for testing purposes */
             $map->forAll($callable)->execute();
         } catch (MappedErrorCollection $errorCollection) {
         }
@@ -965,7 +964,6 @@ final class GenericMapTest extends TestCase
         $errorCollection = null;
 
         try {
-            /** @psalm-suppress InvalidArgument We do want to pass an impure method here for testing purposes */
             $map->forAll($callable)->stopOnError()->execute();
         } catch (MappedErrorCollection $errorCollection) {
         }

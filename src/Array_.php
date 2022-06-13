@@ -107,6 +107,10 @@ abstract class Array_ implements ArrayInterface
     public function allSatisfy(callable $callback): bool
     {
         foreach ($this->data as $value) {
+            /**
+             * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+             *                                    value here.
+             */
             if (! $callback($value)) {
                 return false;
             }
@@ -118,6 +122,10 @@ abstract class Array_ implements ArrayInterface
     public function exists(callable $callback): bool
     {
         foreach ($this->data as $value) {
+            /**
+             * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+             *                                    value here.
+             */
             if ($callback($value)) {
                 return true;
             }
@@ -131,7 +139,11 @@ abstract class Array_ implements ArrayInterface
     {
         $instance = clone $this;
 
-        /** @psalm-suppress MixedReturnStatement The return value of the callback ensures the return type. */
+        /**
+         * @psalm-suppress MixedReturnStatement The return value of the callback ensures the return type.
+         * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
+         *                                    value here.
+         */
         return array_reduce($instance->data, $callback, $initial);
     }
 }
