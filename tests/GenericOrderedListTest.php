@@ -58,7 +58,7 @@ final class GenericOrderedListTest extends TestCase
         self::assertEquals(
             $list->sort($callback)
                 ->toNativeArray(),
-            $sorted
+            $sorted,
         );
     }
 
@@ -80,8 +80,8 @@ final class GenericOrderedListTest extends TestCase
                 static function (array $list): OrderedListInterface {
                     return new GenericOrderedList($list);
                 },
-                $stack
-            )
+                $stack,
+            ),
         );
         self::assertEquals($expected, $merged->toNativeArray());
     }
@@ -193,7 +193,7 @@ final class GenericOrderedListTest extends TestCase
 
         self::assertNotEquals(
             $mapped,
-            $list
+            $list,
         );
 
         self::assertEquals([
@@ -229,7 +229,7 @@ final class GenericOrderedListTest extends TestCase
 
         self::assertEquals(
             'foo',
-            $list->at(0)
+            $list->at(0),
         );
     }
 
@@ -1463,12 +1463,12 @@ final class GenericOrderedListTest extends TestCase
         self::assertSame(
             15,
             $list->reduce(static fn (int $carry, int $value) => $value + $carry, 0),
-            'A sum of all values were expected.'
+            'A sum of all values were expected.',
         );
         self::assertSame(
             120,
             $list->reduce(static fn (int $carry, int $value) => $carry === 0 ? $value : $value * $carry, 0),
-            'Expected that all values are being multiplied with each other'
+            'Expected that all values are being multiplied with each other',
         );
     }
 

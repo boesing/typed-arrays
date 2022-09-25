@@ -124,7 +124,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         $diff1 = array_udiff(
             $instance->toNativeArray(),
             $other->toNativeArray(),
-            $valueComparator
+            $valueComparator,
         );
 
         /**
@@ -134,12 +134,12 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         $diff2 = array_udiff(
             $other->toNativeArray(),
             $instance->toNativeArray(),
-            $valueComparator
+            $valueComparator,
         );
 
         $instance->data = array_values(array_merge(
             $diff1,
-            $diff2
+            $diff2,
         ));
 
         return $instance;
@@ -155,7 +155,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         $instance->data = array_values(array_uintersect(
             $instance->data,
             $other->toNativeArray(),
-            $valueComparator ?? $this->valueComparator()
+            $valueComparator ?? $this->valueComparator(),
         ));
 
         return $instance;
@@ -190,7 +190,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         return $this->filter(
             static function ($value) use ($element): bool {
                 return $value !== $element;
-            }
+            },
         );
     }
 
@@ -268,14 +268,14 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         Assert::lessThanEq(
             $startIndex,
             $this->count(),
-            'Give $startIndex must be less than or equal to %2$s to keep the list a continious list. Got: %s.'
+            'Give $startIndex must be less than or equal to %2$s to keep the list a continious list. Got: %s.',
         );
 
         $instance = clone $this;
 
         $combined = array_replace(
             $this->data,
-            $this->createListFilledWithValues($startIndex, $amount, $value)
+            $this->createListFilledWithValues($startIndex, $amount, $value),
         );
 
         $instance->data = $combined;
