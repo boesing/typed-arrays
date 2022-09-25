@@ -100,7 +100,7 @@ abstract class Map extends Array_ implements MapInterface
         $diff2  = array_diff_ukey($otherData, $instance->data, $keyComparator);
         $merged = array_merge(
             $diff1,
-            $diff2
+            $diff2,
         );
 
         $instance->data = $merged;
@@ -212,7 +212,7 @@ abstract class Map extends Array_ implements MapInterface
                 $this->data,
                 $other->toNativeArray(),
                 $valueComparator,
-                $keyComparator
+                $keyComparator,
             );
 
             return $intersection;
@@ -280,7 +280,7 @@ abstract class Map extends Array_ implements MapInterface
         $diff1 = array_udiff(
             $this->toNativeArray(),
             $other->toNativeArray(),
-            $valueComparator ?? $this->valueComparator()
+            $valueComparator ?? $this->valueComparator(),
         );
 
         /**
@@ -291,13 +291,13 @@ abstract class Map extends Array_ implements MapInterface
         $diff2 = array_udiff(
             $other->toNativeArray(),
             $this->toNativeArray(),
-            $valueComparator ?? $this->valueComparator()
+            $valueComparator ?? $this->valueComparator(),
         );
 
         $instance = clone $this;
         $merged   = array_merge(
             $diff1,
-            $diff2
+            $diff2,
         );
 
         $instance->data = $merged;
@@ -490,7 +490,7 @@ abstract class Map extends Array_ implements MapInterface
             if ($exchanged->has($newKey)) {
                 throw new RuntimeException(sprintf(
                     'Provided key generator generates the same key "%s" multiple times.',
-                    $newKey
+                    $newKey,
                 ));
             }
 

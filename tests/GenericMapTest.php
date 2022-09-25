@@ -145,11 +145,11 @@ final class GenericMapTest extends TestCase
             static function (array $map): MapInterface {
                 return new GenericMap($map);
             },
-            $stack
+            $stack,
         );
 
         $merged = $map->merge(
-            ...$stackOfMaps
+            ...$stackOfMaps,
         );
 
         self::assertEquals($expected, $merged->toNativeArray());
@@ -205,7 +205,7 @@ final class GenericMapTest extends TestCase
         self::assertEquals(
             $list->sort($callback)
                 ->toNativeArray(),
-            $sorted
+            $sorted,
         );
     }
 
@@ -580,7 +580,7 @@ final class GenericMapTest extends TestCase
         self::assertEquals(
             ['qoo' => 'ooq'],
             $map1->intersectUserAssoc($map2, $valueComparator, $keyComparator)
-                ->toNativeArray()
+                ->toNativeArray(),
         );
     }
 
@@ -705,7 +705,7 @@ final class GenericMapTest extends TestCase
         $filtered = $map->filter(
             static function (string $value): bool {
                 return $value === 'bar';
-            }
+            },
         );
 
         self::assertNotSame($map, $filtered);
@@ -1134,12 +1134,12 @@ final class GenericMapTest extends TestCase
         self::assertSame(
             15,
             $list->reduce(static fn (int $carry, int $value) => $value + $carry, 0),
-            'A sum of all values were expected.'
+            'A sum of all values were expected.',
         );
         self::assertSame(
             120,
             $list->reduce(static fn (int $carry, int $value) => $carry === 0 ? $value : $value * $carry, 0),
-            'Expected that all values are being multiplied with each other'
+            'Expected that all values are being multiplied with each other',
         );
     }
 
