@@ -13,6 +13,7 @@ final class TypedArrayFactoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
         $this->factory = new TypedArrayFactory();
     }
 

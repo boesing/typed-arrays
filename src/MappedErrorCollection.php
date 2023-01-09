@@ -20,6 +20,7 @@ final class MappedErrorCollection extends RuntimeException
     {
         Assert::false($errors->isEmpty(), 'Provided errors must not be empty!');
         $this->errors = $errors;
+
         parent::__construct('There were runtime errors while executing multiple tasks.');
     }
 
