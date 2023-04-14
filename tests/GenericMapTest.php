@@ -1105,7 +1105,6 @@ final class GenericMapTest extends TestCase
     public function testWillExchangeKeys(array $initial, callable $keyGenerator, array $expected): void
     {
         $map = new GenericMap($initial);
-        /** @psalm-suppress PossiblyInvalidArgument Might be a psalm bug */
         $exchanged = $map->keyExchange($keyGenerator);
         self::assertEquals($expected, $exchanged->toNativeArray());
     }

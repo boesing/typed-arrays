@@ -479,7 +479,7 @@ final class GenericOrderedListTest extends TestCase
             $object2,
         ]);
 
-        $mapped = $list->toMap(static function (GenericObject $object): string {
+        $mapped = $list->toMap(function (GenericObject $object): string {
             $hash = spl_object_hash($object);
             Assert::stringNotEmpty($hash);
 
@@ -719,7 +719,7 @@ final class GenericOrderedListTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $list = new GenericOrderedList([1, 2, 3]);
-        $list->toMap(static function (int $value): string {
+        $list->toMap(function (int $value): string {
             return (string) $value;
         });
     }
