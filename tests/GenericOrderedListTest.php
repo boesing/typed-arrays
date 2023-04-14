@@ -1322,7 +1322,7 @@ final class GenericOrderedListTest extends TestCase
     {
         $map = new GenericOrderedList(['bar']);
 
-        $callback = static function (): void {
+        $callback = function (): void {
             throw new RuntimeException();
         };
         $map->forAll($callback)->suppressErrors();
@@ -1334,7 +1334,7 @@ final class GenericOrderedListTest extends TestCase
     public function testForAllPromiseWillExecuteFinallyMethodBeforeThrowingException(): void
     {
         $callbackInvoked = false;
-        $callback        = static function () use (&$callbackInvoked): void {
+        $callback        = function () use (&$callbackInvoked): void {
             $callbackInvoked = true;
         };
 
@@ -1342,7 +1342,7 @@ final class GenericOrderedListTest extends TestCase
 
         $runtimeExceptionCaught = false;
         try {
-            $map->forAll(static function (): void {
+            $map->forAll(function (): void {
                 throw new RuntimeException();
             })->finally($callback);
         } catch (RuntimeException $exception) {
@@ -1419,7 +1419,7 @@ final class GenericOrderedListTest extends TestCase
         ]);
 
         /** @psalm-suppress TypeDoesNotContainType Might be a psalm bug */
-        self::assertSame(1, $list->findFirstMatchingIndex(static fn (int $value) => $value % 10 === 0));
+        self::assertSame(1, $list->findFirstMatchingIndex(fn (int $value) => $value % 10 === 0));
     }
 
     public function testWillReturnNullWhenNoItemMatchesFilter(): void
@@ -1431,7 +1431,7 @@ final class GenericOrderedListTest extends TestCase
             8,
         ]);
 
-        self::assertNull($list->findFirstMatchingIndex(static fn (int $value) => $value % 2 !== 0));
+        self::assertNull($list->findFirstMatchingIndex(fn (int $value) => $value % 2 !== 0));
     }
 
     public function testWillPrependValueToTheList(): void
@@ -1458,12 +1458,12 @@ final class GenericOrderedListTest extends TestCase
 
         self::assertSame(
             15,
-            $list->reduce(static fn (int $carry, int $value) => $value + $carry, 0),
+            $list->reduce(fn (int $carry, int $value) => $value + $carry, 0),
             'A sum of all values were expected.',
         );
         self::assertSame(
             120,
-            $list->reduce(static fn (int $carry, int $value) => $carry === 0 ? $value : $value * $carry, 0),
+            $list->reduce(fn (int $carry, int $value) => $carry === 0 ? $value : $value * $carry, 0),
             'Expected that all values are being multiplied with each other',
         );
     }

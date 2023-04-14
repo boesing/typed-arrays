@@ -32,5 +32,7 @@
         <exclude name="SlevomatCodingStandard.Commenting.RequireOneLineDocComment.MultiLineDocComment"/>
         <!-- Can be removed with dropping support for PHP 7.4 -->
         <exclude name="SlevomatCodingStandard.ControlStructures.RequireNullCoalesceEqualOperator.RequiredNullCoalesceEqualOperator"/>
+        <!-- Static callables are deprecated as of PHP 8.2 -->
+        <exclude name="SlevomatCodingStandard.Functions.StaticClosure.ClosureNotStatic"/>
     </rule>
 </ruleset>

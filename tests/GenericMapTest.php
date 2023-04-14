@@ -1104,7 +1104,7 @@ final class GenericMapTest extends TestCase
      */
     public function testWillExchangeKeys(array $initial, callable $keyGenerator, array $expected): void
     {
-        $map = new GenericMap($initial);
+        $map       = new GenericMap($initial);
         $exchanged = $map->keyExchange($keyGenerator);
         self::assertEquals($expected, $exchanged->toNativeArray());
     }
