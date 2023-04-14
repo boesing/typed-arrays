@@ -33,7 +33,6 @@ interface ForAllPromiseInterface
      * Should trigger execute if it wasnt triggered before.
      *
      * @throws OrderedErrorCollection|MappedErrorCollection If an error occurred during execution.
-     * @psalm-suppress MissingReturnType
      */
     public function __destruct();
 }

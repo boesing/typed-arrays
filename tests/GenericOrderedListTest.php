@@ -549,7 +549,6 @@ final class GenericOrderedListTest extends TestCase
 
         /**
          * @psalm-suppress InvalidArgument
-         * @psalm-suppress UnusedMethodCall
          */
         $list->unify(null, static function () use (&$callbackCalled): void {
             $callbackCalled = true;
@@ -562,9 +561,6 @@ final class GenericOrderedListTest extends TestCase
         $list           = new GenericOrderedList([1, 2, 3, 1, 1, 1]);
         $callbackCalled = 0;
 
-        /**
-         * @psalm-suppress UnusedMethodCall
-         */
         $list->unify(null, static function (int $duplicate, int $number) use (&$callbackCalled): int {
             self::assertEquals($duplicate, $number);
             assert(is_int($callbackCalled));
@@ -722,7 +718,6 @@ final class GenericOrderedListTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $list = new GenericOrderedList([1, 2, 3]);
-        /** @psalm-suppress UnusedMethodCall */
         $list->toMap(static function (int $value): string {
             return (string) $value;
         });
@@ -1206,6 +1201,7 @@ final class GenericOrderedListTest extends TestCase
             3,
         ]);
 
+        /** @psalm-suppress InvalidArgument Might be a psalm bug */
         $list = $list->removeElement(2);
 
         self::assertEquals('[1,"foo",3]', json_encode($list, JSON_THROW_ON_ERROR));
@@ -1268,7 +1264,6 @@ final class GenericOrderedListTest extends TestCase
             'ooq',
         ]);
 
-        /** @psalm-suppress UnusedClosureParam */
         $callable = function (string $value, int $index): void {
             $this->iteration++;
 
@@ -1299,7 +1294,6 @@ final class GenericOrderedListTest extends TestCase
             'ooq',
         ]);
 
-        /** @psalm-suppress UnusedClosureParam */
         $callable = function (string $value, int $index): void {
             $this->iteration++;
             if ($index === 1) {
@@ -1423,6 +1417,7 @@ final class GenericOrderedListTest extends TestCase
             1000,
         ]);
 
+        /** @psalm-suppress TypeDoesNotContainType Might be a psalm bug */
         self::assertSame(1, $list->findFirstMatchingIndex(static fn (int $value) => $value % 10 === 0));
     }
 

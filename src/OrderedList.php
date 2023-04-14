@@ -424,16 +424,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
     public function forAll(callable $callback): ForAllPromiseInterface
     {
-        /** @psalm-suppress InternalClass */
-        return new class ($this->getIterator(), $callback) extends AbstractForAllPromise
-        {
-            protected function createThrowableErrorCollection(array $errors): OrderedErrorCollection
-            {
-                assert(array_values($errors) === $errors);
-
-                return OrderedErrorCollection::create(new GenericOrderedList($errors));
-            }
-        };
+        return new OrderedListForAllPromise($this->getIterator(), $callback);
     }
 
     public function reverse(): OrderedListInterface
