@@ -219,14 +219,12 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         ?callable $unificationIdentifierGenerator = null,
         ?callable $callback = null
     ): OrderedListInterface {
-        /** @psalm-suppress MissingClosureParamType */
+        /**
+         * @psalm-suppress MissingClosureParamType
+         * @psalm-var callable(mixed):non-empty-string $unificationIdentifierGenerator
+         */
         $unificationIdentifierGenerator = $unificationIdentifierGenerator
-            ?? static function ($value): string {
-                $hash = hash('sha256', serialize($value));
-                Assert::stringNotEmpty($hash);
-
-                return $hash;
-            };
+            ?? static fn ($value): string => hash('sha256', serialize($value));
 
         $instance = clone $this;
 
