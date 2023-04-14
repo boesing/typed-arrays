@@ -84,7 +84,7 @@ abstract class Array_ implements ArrayInterface
      */
     protected function valueComparator(): callable
     {
-        return static function ($a, $b): int {
+        return function ($a, $b): int {
             if (! is_object($a) || ! is_object($b)) {
                 return $a <=> $b;
             }

@@ -188,7 +188,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
     public function removeElement($element): OrderedListInterface
     {
         return $this->filter(
-            static function ($value) use ($element): bool {
+            function ($value) use ($element): bool {
                 return $value !== $element;
             },
         );
@@ -219,14 +219,12 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         ?callable $unificationIdentifierGenerator = null,
         ?callable $callback = null
     ): OrderedListInterface {
-        /** @psalm-suppress MissingClosureParamType */
+        /**
+         * @psalm-suppress MissingClosureParamType
+         * @psalm-var callable(mixed):non-empty-string $unificationIdentifierGenerator
+         */
         $unificationIdentifierGenerator = $unificationIdentifierGenerator
-            ?? static function ($value): string {
-                $hash = hash('sha256', serialize($value));
-                Assert::stringNotEmpty($hash);
-
-                return $hash;
-            };
+            ?? fn ($value): string => hash('sha256', serialize($value));
 
         $instance = clone $this;
 
@@ -302,7 +300,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
              * @psalm-suppress MissingClosureReturnType We have to assume that the value contains the fill value.
              * @return TValue
              */
-            $callable = static fn () => $value;
+            $callable = fn () => $value;
         }
 
         for ($index = $start; $index < $amount; $index++) {
@@ -471,6 +469,6 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
     public function removeAt(int $index): OrderedListInterface
     {
-        return $this->filter(static fn ($_, int $i) => $i !== $index);
+        return $this->filter(fn ($_, int $i) => $i !== $index);
     }
 }

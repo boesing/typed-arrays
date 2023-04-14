@@ -112,7 +112,7 @@ abstract class Map extends Array_ implements MapInterface
      */
     private function keyComparator(): callable
     {
-        return static function (string $a, string $b): int {
+        return function (string $a, string $b): int {
             return strcmp($a, $b);
         };
     }

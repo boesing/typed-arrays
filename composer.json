@@ -4,12 +4,12 @@
     "description": "Hashmap and Collection",
     "license": "MIT",
     "require": {
-        "php": "~7.4.0 || ~8.0.0 || ~8.1.0",
+        "php": "~7.4.0 || ~8.0.0 || ~8.1.0 || ~8.2.0",
         "webmozart/assert": "^1.9"
     },
     "require-dev": {
         "doctrine/coding-standard": "^11.1",
-        "phpunit/phpunit": "^9.5",
+        "phpunit/phpunit": "^9.6",
         "psalm/plugin-phpunit": "^0.18.4",
         "symfony/polyfill-php80": "^1.22",
         "vimeo/psalm": "^5.9"
