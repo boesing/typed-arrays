@@ -46,7 +46,7 @@ final class GenericMapTest extends TestCase
                 'bar' => 'baz',
                 'qoo' => 'ooq',
             ],
-            static function (string $key): string {
+            function (string $key): string {
                 switch ($key) {
                     case 'foo':
                         return 'bar';
@@ -73,7 +73,7 @@ final class GenericMapTest extends TestCase
                 'bar' => 'baz',
                 'qoo' => 'ooq',
             ],
-            static function (string $key): string {
+            function (string $key): string {
                 switch ($key) {
                     case 'foo':
                         return 'fooo';
@@ -100,7 +100,7 @@ final class GenericMapTest extends TestCase
                 'bar' => 'baz',
                 'qoo' => 'ooq',
             ],
-            static function (string $key): string {
+            function (string $key): string {
                 switch ($key) {
                     case 'bar':
                     case 'foo':
@@ -143,7 +143,7 @@ final class GenericMapTest extends TestCase
 
         /** @psalm-var list<MapInterface<string,mixed>> $stackOfMaps */
         $stackOfMaps = array_map(
-            static function (array $map): MapInterface {
+            function (array $map): MapInterface {
                 return new GenericMap($map);
             },
             $stack,
@@ -224,7 +224,7 @@ final class GenericMapTest extends TestCase
                 'bar' => 'baz',
                 'baz' => 'qoo',
             ],
-            static function (string $a, string $b): int {
+            function (string $a, string $b): int {
                 return strnatcmp($b, $a);
             },
             [
@@ -300,7 +300,7 @@ final class GenericMapTest extends TestCase
             'second' => $object2,
         ]);
 
-        $mapped = $map->map(static function (GenericObject $object): int {
+        $mapped = $map->map(function (GenericObject $object): int {
             return $object->id;
         });
 
@@ -349,7 +349,7 @@ final class GenericMapTest extends TestCase
                 1,
                 2,
             ],
-            static function (int $a, int $b): int {
+            function (int $a, int $b): int {
                 return $a <=> $b;
             },
         ];
@@ -406,7 +406,7 @@ final class GenericMapTest extends TestCase
             'ooq' => 'qoo',
         ]);
 
-        self::assertEquals(['foo' => 'bar'], $map1->intersectAssoc($map2, static function (string $a, string $b): int {
+        self::assertEquals(['foo' => 'bar'], $map1->intersectAssoc($map2, function (string $a, string $b): int {
             return trim($a) <=> trim($b);
         })->toNativeArray());
     }
@@ -447,7 +447,7 @@ final class GenericMapTest extends TestCase
         self::assertEquals([
             'foo' => 'bar',
             'bar' => 'baz',
-        ], $map1->intersectUsingKeys($map2, static function (string $a, string $b): int {
+        ], $map1->intersectUsingKeys($map2, function (string $a, string $b): int {
             return strlen($a) <=> strlen($b);
         })->toNativeArray());
     }
@@ -553,7 +553,7 @@ final class GenericMapTest extends TestCase
             ],
             ['object2' => $object2],
             ['object1' => $object1],
-            static function (object $a, object $b): int {
+            function (object $a, object $b): int {
                 return $a->id <=> $b->id;
             },
         ];
@@ -561,11 +561,11 @@ final class GenericMapTest extends TestCase
 
     public function testCanIntersectWithUserFunctions(): void
     {
-        $keyComparator = static function (string $a, string $b): int {
+        $keyComparator = function (string $a, string $b): int {
             return $a <=> $b;
         };
 
-        $valueComparator = static function (string $a, string $b): int {
+        $valueComparator = function (string $a, string $b): int {
             return $a <=> $b;
         };
 
@@ -651,7 +651,7 @@ final class GenericMapTest extends TestCase
                 'bar' => 'baz',
                 'qoo' => 'ooq',
             ],
-            static function (): bool {
+            function (): bool {
                 return true;
             },
             [
@@ -668,7 +668,7 @@ final class GenericMapTest extends TestCase
                 'bar' => 'baz',
                 'qoo' => 'ooq',
             ],
-            static function (): bool {
+            function (): bool {
                 return false;
             },
             [],
@@ -685,7 +685,7 @@ final class GenericMapTest extends TestCase
                 'bar' => 'baz',
                 'qoo' => 'ooq',
             ],
-            static function (string $value): bool {
+            function (string $value): bool {
                 return in_array($value, ['baz', 'ooq'], true);
             },
             [
@@ -704,7 +704,7 @@ final class GenericMapTest extends TestCase
         ]);
 
         $filtered = $map->filter(
-            static function (string $value): bool {
+            function (string $value): bool {
                 return $value === 'bar';
             },
         );
@@ -722,7 +722,7 @@ final class GenericMapTest extends TestCase
             'bar' => $object2 = new GenericObject(2),
         ]);
 
-        $grouped = $map->group(static function (GenericObject $object): string {
+        $grouped = $map->group(function (GenericObject $object): string {
             return $object->id % 2 ? 'a' : 'b';
         });
 
@@ -753,7 +753,7 @@ final class GenericMapTest extends TestCase
     {
         $map = new GenericMap(['foo' => 'bar']);
 
-        self::assertFalse($map->allSatisfy(static function (): bool {
+        self::assertFalse($map->allSatisfy(function (): bool {
             return false;
         }));
     }
@@ -761,7 +761,7 @@ final class GenericMapTest extends TestCase
     public function testEmptyMapWillSatisfyCallback(): void
     {
         $map = new GenericMap([]);
-        self::assertTrue($map->allSatisfy(static function (): bool {
+        self::assertTrue($map->allSatisfy(function (): bool {
             return false;
         }));
     }
@@ -776,7 +776,7 @@ final class GenericMapTest extends TestCase
                 'one' => 1,
                 'another one' => 1,
             ],
-            static function (int $value): bool {
+            function (int $value): bool {
                 return $value === 1;
             },
         ];
@@ -786,7 +786,7 @@ final class GenericMapTest extends TestCase
                 'foo' => 'foo',
                 'bar' => 'foo',
             ],
-            static function (string $value): bool {
+            function (string $value): bool {
                 return strlen($value) === 3;
             },
         ];
@@ -808,7 +808,7 @@ final class GenericMapTest extends TestCase
     public function testEmptyMapWontFindExistence(): void
     {
         $map = new GenericMap();
-        self::assertFalse($map->exists(static function (): bool {
+        self::assertFalse($map->exists(function (): bool {
             return true;
         }));
     }
@@ -824,7 +824,7 @@ final class GenericMapTest extends TestCase
                 'two' => 2,
                 'another one' => 1,
             ],
-            static function (int $value): bool {
+            function (int $value): bool {
                 return $value === 2;
             },
             true,
@@ -836,7 +836,7 @@ final class GenericMapTest extends TestCase
                 'two' => 2,
                 'three' => 3,
             ],
-            static function (int $value): bool {
+            function (int $value): bool {
                 // @codingStandardsIgnoreStart
                 return $value == '2';
                 // @codingStandardsIgnoreEnd
@@ -850,7 +850,7 @@ final class GenericMapTest extends TestCase
                 'bar' => 'bar',
                 'baz' => 'baz',
             ],
-            static function (string $value): bool {
+            function (string $value): bool {
                 return $value === 'qoo';
             },
             false,
@@ -912,7 +912,7 @@ final class GenericMapTest extends TestCase
         ]);
 
         $callable = new CallableObject(['bar', 'foo'], ['baz', 'bar'], ['ooq', 'qoo']);
-        $map->forAll(static fn ($value, $key) => $callable($value, $key))->execute();
+        $map->forAll(fn ($value, $key) => $callable($value, $key))->execute();
     }
 
     public function testWillGenerateErrorCollectionWhileExecutingForAll(): void
@@ -979,7 +979,7 @@ final class GenericMapTest extends TestCase
     {
         $map = new GenericMap(['foo' => 'bar']);
 
-        $callback = static function (): void {
+        $callback = function (): void {
             throw new RuntimeException();
         };
         $map->forAll($callback)->suppressErrors();
@@ -991,7 +991,7 @@ final class GenericMapTest extends TestCase
     public function testForAllPromiseWillExecuteFinallyMethodBeforeThrowingException(): void
     {
         $callbackInvoked = false;
-        $callback        = static function () use (&$callbackInvoked): void {
+        $callback        = function () use (&$callbackInvoked): void {
             $callbackInvoked = true;
         };
 
@@ -999,7 +999,7 @@ final class GenericMapTest extends TestCase
 
         $runtimeExceptionCaught = false;
         try {
-            $map->forAll(static function (): void {
+            $map->forAll(function (): void {
                 throw new RuntimeException();
             })->finally($callback);
         } catch (RuntimeException $exception) {
@@ -1036,7 +1036,7 @@ final class GenericMapTest extends TestCase
 
         $map = new GenericMap($data);
 
-        $sorter = static function (string $a, string $b): int {
+        $sorter = function (string $a, string $b): int {
             return ord($b) <=> ord($a);
         };
 
@@ -1114,7 +1114,7 @@ final class GenericMapTest extends TestCase
         $map = new GenericMap(['foo' => 'bar', 'bar' => 'baz']);
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Provided key generator generates the same key "foo" multiple times.');
-        $map->keyExchange(static function (): string {
+        $map->keyExchange(function (): string {
             return 'foo';
         });
     }
@@ -1131,12 +1131,12 @@ final class GenericMapTest extends TestCase
 
         self::assertSame(
             15,
-            $list->reduce(static fn (int $carry, int $value) => $value + $carry, 0),
+            $list->reduce(fn (int $carry, int $value) => $value + $carry, 0),
             'A sum of all values were expected.',
         );
         self::assertSame(
             120,
-            $list->reduce(static fn (int $carry, int $value) => $carry === 0 ? $value : $value * $carry, 0),
+            $list->reduce(fn (int $carry, int $value) => $carry === 0 ? $value : $value * $carry, 0),
             'Expected that all values are being multiplied with each other',
         );
     }
@@ -1144,6 +1144,6 @@ final class GenericMapTest extends TestCase
     public function testReduceWillReturnInitialValueOnEmptyList(): void
     {
         $list = new GenericMap([]);
-        self::assertSame(PHP_INT_MAX, $list->reduce(static fn () => 1, PHP_INT_MAX));
+        self::assertSame(PHP_INT_MAX, $list->reduce(fn () => 1, PHP_INT_MAX));
     }
 }

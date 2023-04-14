@@ -12,7 +12,7 @@ final class ForAllPromiseTest extends TestCase
     public function testWillNotExecuteTwiceDueToDestructionOfObject(): void
     {
         $executed = false;
-        $task     = static function () use (&$executed): void {
+        $task     = function () use (&$executed): void {
             self::assertFalse($executed, 'Task was executed more than once!');
             $executed = true;
         };

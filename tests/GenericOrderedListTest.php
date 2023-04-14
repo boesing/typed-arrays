@@ -78,7 +78,7 @@ final class GenericOrderedListTest extends TestCase
 
         $merged = $list->merge(
             ...array_map(
-                static function (array $list): OrderedListInterface {
+                function (array $list): OrderedListInterface {
                     return new GenericOrderedList($list);
                 },
                 $stack,
@@ -100,7 +100,7 @@ final class GenericOrderedListTest extends TestCase
                 'bar',
                 'baz',
             ],
-            static function (string $a, string $b): int {
+            function (string $a, string $b): int {
                 return strnatcmp($b, $a);
             },
             [
@@ -188,7 +188,7 @@ final class GenericOrderedListTest extends TestCase
             99,
         ]);
 
-        $mapped = $list->map(static function (int $value): string {
+        $mapped = $list->map(function (int $value): string {
             return chr($value);
         });
 
@@ -340,7 +340,7 @@ final class GenericOrderedListTest extends TestCase
             ],
             [$object2],
             [$object1],
-            static function (object $a, object $b): int {
+            function (object $a, object $b): int {
                 return $a->id <=> $b->id;
             },
         ];
@@ -443,7 +443,7 @@ final class GenericOrderedListTest extends TestCase
             ],
             [$object2],
             [$object2],
-            static function (object $a, object $b): int {
+            function (object $a, object $b): int {
                 return $a->id <=> $b->id;
             },
         ];
@@ -459,7 +459,7 @@ final class GenericOrderedListTest extends TestCase
             $object2,
         ]);
 
-        $mapped = $list->map(static function (GenericObject $object): string {
+        $mapped = $list->map(function (GenericObject $object): string {
             return spl_object_hash($object);
         });
 
@@ -502,7 +502,7 @@ final class GenericOrderedListTest extends TestCase
             $object2,
         ]);
 
-        $filtered = $list->filter(static function (GenericObject $object) use ($object2): bool {
+        $filtered = $list->filter(function (GenericObject $object) use ($object2): bool {
             return $object !== $object2;
         });
 
@@ -551,7 +551,7 @@ final class GenericOrderedListTest extends TestCase
         /**
          * @psalm-suppress InvalidArgument
          */
-        $list->unify(null, static function () use (&$callbackCalled): void {
+        $list->unify(null, function () use (&$callbackCalled): void {
             $callbackCalled = true;
         });
         self::assertTrue($callbackCalled);
@@ -562,7 +562,7 @@ final class GenericOrderedListTest extends TestCase
         $list           = new GenericOrderedList([1, 2, 3, 1, 1, 1]);
         $callbackCalled = 0;
 
-        $list->unify(null, static function (int $duplicate, int $number) use (&$callbackCalled): int {
+        $list->unify(null, function (int $duplicate, int $number) use (&$callbackCalled): int {
             self::assertEquals($duplicate, $number);
             assert(is_int($callbackCalled));
             $callbackCalled++;
@@ -640,7 +640,7 @@ final class GenericOrderedListTest extends TestCase
                 $object1,
                 $object2,
             ],
-            static function (GenericObject $object): string {
+            function (GenericObject $object): string {
                 $hash = md5((string) $object->id);
                 Assert::stringNotEmpty($hash);
 
@@ -817,7 +817,7 @@ final class GenericOrderedListTest extends TestCase
 
     public function testFillUsesCallbackToGenerateValue(): void
     {
-        $callback = static function (int $index): string {
+        $callback = function (int $index): string {
             return chr($index + 65);
         };
 
@@ -924,14 +924,14 @@ final class GenericOrderedListTest extends TestCase
     {
         yield 'empty list' => [
             [],
-            static function (): bool {
+            function (): bool {
                 return true;
             },
         ];
 
         yield 'non-empty list but finding impossible' => [
             [1, 2, 3],
-            static function (): bool {
+            function (): bool {
                 return false;
             },
         ];
@@ -944,7 +944,7 @@ final class GenericOrderedListTest extends TestCase
             ['id' => 1, 'position' => 2],
         ]);
 
-        $value = $list->find(static function (array $value) {
+        $value = $list->find(function (array $value) {
             return $value['id'] === 1;
         });
 
@@ -987,7 +987,7 @@ final class GenericOrderedListTest extends TestCase
                 'baz',
                 'ooq',
             ],
-            static function (): bool {
+            function (): bool {
                 return true;
             },
             [
@@ -1004,7 +1004,7 @@ final class GenericOrderedListTest extends TestCase
                 'baz',
                 'ooq',
             ],
-            static function (): bool {
+            function (): bool {
                 return false;
             },
             [],
@@ -1021,7 +1021,7 @@ final class GenericOrderedListTest extends TestCase
                 'baz',
                 'ooq',
             ],
-            static function (string $value): bool {
+            function (string $value): bool {
                 return in_array($value, ['baz', 'ooq'], true);
             },
             [
@@ -1040,7 +1040,7 @@ final class GenericOrderedListTest extends TestCase
             $object3 = new GenericObject(3),
         ]);
 
-        $grouped = $list->group(static fn (GenericObject $object): string => $object->id % 2 ? 'a' : 'b');
+        $grouped = $list->group(fn (GenericObject $object): string => $object->id % 2 ? 'a' : 'b');
 
         self::assertTrue($grouped->has('a'));
         self::assertTrue($grouped->has('b'));
@@ -1069,7 +1069,7 @@ final class GenericOrderedListTest extends TestCase
     public function testEmptyListWillSatisfyAnyCallback(): void
     {
         $list = new GenericOrderedList();
-        self::assertTrue($list->allSatisfy(static function (): bool {
+        self::assertTrue($list->allSatisfy(function (): bool {
             return false;
         }));
     }
@@ -1077,7 +1077,7 @@ final class GenericOrderedListTest extends TestCase
     public function testWontSatisfyCallback(): void
     {
         $list = new GenericOrderedList(['foo']);
-        self::assertFalse($list->allSatisfy(static function (): bool {
+        self::assertFalse($list->allSatisfy(function (): bool {
             return false;
         }));
     }
@@ -1093,7 +1093,7 @@ final class GenericOrderedListTest extends TestCase
                 1,
                 1,
             ],
-            static function (int $value): bool {
+            function (int $value): bool {
                 return $value === 1;
             },
         ];
@@ -1104,7 +1104,7 @@ final class GenericOrderedListTest extends TestCase
                 'bar',
                 'baz',
             ],
-            static function (string $value): bool {
+            function (string $value): bool {
                 return strlen($value) === 3;
             },
         ];
@@ -1126,7 +1126,7 @@ final class GenericOrderedListTest extends TestCase
     public function testEmptyListWontFindExistence(): void
     {
         $list = new GenericOrderedList();
-        self::assertFalse($list->exists(static function (): bool {
+        self::assertFalse($list->exists(function (): bool {
             return true;
         }));
     }
@@ -1142,7 +1142,7 @@ final class GenericOrderedListTest extends TestCase
                 2,
                 1,
             ],
-            static function (int $value): bool {
+            function (int $value): bool {
                 return $value === 2;
             },
             true,
@@ -1154,7 +1154,7 @@ final class GenericOrderedListTest extends TestCase
                 2,
                 3,
             ],
-            static function (int $value): bool {
+            function (int $value): bool {
                 // @codingStandardsIgnoreStart
                 return $value == '2';
                 // @codingStandardsIgnoreEnd
@@ -1168,7 +1168,7 @@ final class GenericOrderedListTest extends TestCase
                 'bar',
                 'baz',
             ],
-            static function (string $value): bool {
+            function (string $value): bool {
                 return $value === 'qoo';
             },
             false,
@@ -1471,7 +1471,7 @@ final class GenericOrderedListTest extends TestCase
     public function testReduceWillReturnInitialValueOnEmptyList(): void
     {
         $list = new GenericOrderedList([]);
-        self::assertSame(PHP_INT_MAX, $list->reduce(static fn () => 1, PHP_INT_MAX));
+        self::assertSame(PHP_INT_MAX, $list->reduce(fn () => 1, PHP_INT_MAX));
     }
 
     public function testWillRemoveItemAtSpecificPosition(): void
