@@ -34,7 +34,7 @@ final class GenericMapTest extends TestCase
     /**
      * @psalm-return Generator<non-empty-string,array{
      *   0: array<non-empty-string,mixed>,
-     *   1: pure-callable(non-empty-string):non-empty-string,
+     *   1: pure-callable(non-empty-string, non-empty-string):non-empty-string,
      *   2: array<non-empty-string,mixed>
      * }>
      */
@@ -1097,7 +1097,7 @@ final class GenericMapTest extends TestCase
 
     /**
      * @psalm-param array<non-empty-string,mixed>    $initial
-     * @psalm-param pure-callable(non-empty-string):non-empty-string $keyGenerator
+     * @psalm-param pure-callable(non-empty-string, mixed):non-empty-string $keyGenerator
      * @psalm-param array<non-empty-string,mixed>    $expected
      *
      * @dataProvider exchangeKeys
