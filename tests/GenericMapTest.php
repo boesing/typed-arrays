@@ -922,7 +922,6 @@ final class GenericMapTest extends TestCase
             'qoo' => 'ooq',
         ]);
 
-        /** @psalm-suppress UnusedClosureParam */
         $callable = function (string $value, string $key): void {
             $this->iteration++;
 
@@ -953,7 +952,6 @@ final class GenericMapTest extends TestCase
             'qoo' => 'ooq',
         ]);
 
-        /** @psalm-suppress UnusedClosureParam */
         $callable = function (string $value, string $key): void {
             $this->iteration++;
             if ($key === 'bar') {
@@ -1082,7 +1080,6 @@ final class GenericMapTest extends TestCase
         ]);
 
         $this->expectException(RuntimeException::class);
-        /** @psalm-suppress UnusedMethodCall */
         $map->join();
     }
 
@@ -1106,7 +1103,8 @@ final class GenericMapTest extends TestCase
      */
     public function testWillExchangeKeys(array $initial, callable $keyGenerator, array $expected): void
     {
-        $map       = new GenericMap($initial);
+        $map = new GenericMap($initial);
+        /** @psalm-suppress PossiblyInvalidArgument Might be a psalm bug */
         $exchanged = $map->keyExchange($keyGenerator);
         self::assertEquals($expected, $exchanged->toNativeArray());
     }

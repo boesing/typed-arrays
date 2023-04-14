@@ -9,7 +9,6 @@ use RuntimeException;
 use Throwable;
 
 use function array_diff_ukey;
-use function array_filter;
 use function array_intersect_ukey;
 use function array_key_exists;
 use function array_keys;
@@ -427,21 +426,7 @@ abstract class Map extends Array_ implements MapInterface
 
     public function forAll(callable $callback): ForAllPromiseInterface
     {
-        /** @psalm-suppress InternalClass */
-        return new class ($this->getIterator(), $callback) extends AbstractForAllPromise
-        {
-            protected function createThrowableErrorCollection(array $errors): MappedErrorCollection
-            {
-                /**
-                 * Filter out all keys which do not have errors.
-                 *
-                 * @var array<string,Throwable> $filtered
-                 */
-                $filtered = array_filter($errors);
-
-                return MappedErrorCollection::create(new GenericMap($filtered));
-            }
-        };
+        return new MapForAllPromise($this->getIterator(), $callback);
     }
 
     public function sortByKey(?callable $sorter = null): MapInterface

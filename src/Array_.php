@@ -134,13 +134,11 @@ abstract class Array_ implements ArrayInterface
         return false;
     }
 
-    /** @psalm-suppress MixedInferredReturnType The return value of the callback ensures the return type. */
     public function reduce(callable $callback, $initial)
     {
         $instance = clone $this;
 
         /**
-         * @psalm-suppress MixedReturnStatement The return value of the callback ensures the return type.
          * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
          *                                    value here.
          */
