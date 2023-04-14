@@ -43,6 +43,7 @@ final class GenericOrderedListTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
         $this->iteration = 0;
     }
 
