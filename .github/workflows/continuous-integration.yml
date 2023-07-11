@@ -29,4 +29,4 @@ jobs:
       - name: ${{ matrix.name }}
         uses: laminas/laminas-continuous-integration-action@v1
         with:
-          job: ${{ matrix.job }}
+          job: "${{ matrix.job }}"
