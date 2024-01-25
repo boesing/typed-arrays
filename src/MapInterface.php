@@ -32,7 +32,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * @psalm-param  (callable(TValue,TValue):int)|null $callback
      * @psalm-return MapInterface<TKey,TValue>
      */
-    public function sort(?callable $callback = null): MapInterface;
+    public function sort(callable|null $callback = null): MapInterface;
 
     /**
      * Merges all maps together. Duplications are being overridden in the order they are being passed to this method.
@@ -54,7 +54,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * @psalm-param  (callable(TKey,TKey):int)|null $keyComparator
      * @psalm-return MapInterface<TKey,TValue>
      */
-    public function diffKeys(MapInterface $other, ?callable $keyComparator = null): MapInterface;
+    public function diffKeys(MapInterface $other, callable|null $keyComparator = null): MapInterface;
 
     /**
      * Converts the items of this map to a new map of items with the return value of the provided callback.
@@ -77,7 +77,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * @psalm-param  (callable(TValue,TValue):int)|null $valueComparator
      * @psalm-return MapInterface<TKey,TValue>
      */
-    public function intersect(MapInterface $other, ?callable $valueComparator = null): MapInterface;
+    public function intersect(MapInterface $other, callable|null $valueComparator = null): MapInterface;
 
     /**
      * Creates a diff of this map and the provided map while using the provided value comparator.
@@ -90,7 +90,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * @psalm-param  (callable(TValue,TValue):int)|null $valueComparator
      * @psalm-return MapInterface<TKey,TValue>
      */
-    public function diff(MapInterface $other, ?callable $valueComparator = null): MapInterface;
+    public function diff(MapInterface $other, callable|null $valueComparator = null): MapInterface;
 
     /**
      * Creates an ordered list of the values contained in this map.
@@ -100,7 +100,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * @psalm-param (callable(TValue,TValue):int)|null $sorter
      * @psalm-return OrderedListInterface<TValue>
      */
-    public function toOrderedList(?callable $sorter = null): OrderedListInterface;
+    public function toOrderedList(callable|null $sorter = null): OrderedListInterface;
 
     /**
      * Removes a specific element from the list. In case the element was stored multiple times, all occurrences are being
@@ -165,7 +165,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * @psalm-return MapInterface<TKey,TValue>
      * @psalm-param  (callable(TValue,TValue):int)|null $valueComparator
      */
-    public function intersectAssoc(MapInterface $other, ?callable $valueComparator = null): MapInterface;
+    public function intersectAssoc(MapInterface $other, callable|null $valueComparator = null): MapInterface;
 
     /**
      * Creates an associative intersection of this map and the provided map using the provided key comparator.
@@ -176,7 +176,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      * @psalm-return MapInterface<TKey,TValue>
      * @psalm-param  (callable(TKey,TKey):int)|null $keyComparator
      */
-    public function intersectUsingKeys(MapInterface $other, ?callable $keyComparator = null): MapInterface;
+    public function intersectUsingKeys(MapInterface $other, callable|null $keyComparator = null): MapInterface;
 
     /**
      * Creates an associative intersection of this map and the provided map using the provided value comparator.
@@ -192,8 +192,8 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      */
     public function intersectUserAssoc(
         MapInterface $other,
-        ?callable $valueComparator = null,
-        ?callable $keyComparator = null
+        callable|null $valueComparator = null,
+        callable|null $keyComparator = null,
     ): MapInterface;
 
     /**
@@ -247,7 +247,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      *
      * @psalm-return MapInterface<TKey,TValue>
      */
-    public function sortByKey(?callable $sorter = null): MapInterface;
+    public function sortByKey(callable|null $sorter = null): MapInterface;
 
     /**
      * Joins all the items together.
@@ -274,7 +274,7 @@ interface MapInterface extends ArrayInterface, JsonSerializable
      *
      * @psalm-return non-empty-array<TKey,TValue>|null
      */
-    public function jsonSerialize(): ?array;
+    public function jsonSerialize(): array|null;
 
     /**
      * Returns a native array equivalent of the {@see OrderedListInterface} or the {@see MapInterface}.

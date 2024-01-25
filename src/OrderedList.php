@@ -90,7 +90,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         return $this->data[$position];
     }
 
-    public function sort(?callable $callback = null): OrderedListInterface
+    public function sort(callable|null $callback = null): OrderedListInterface
     {
         $instance = clone $this;
         $data     = $instance->data;
@@ -111,7 +111,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         return $instance;
     }
 
-    public function diff(OrderedListInterface $other, ?callable $valueComparator = null): OrderedListInterface
+    public function diff(OrderedListInterface $other, callable|null $valueComparator = null): OrderedListInterface
     {
         $instance = clone $this;
 
@@ -145,7 +145,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         return $instance;
     }
 
-    public function intersect(OrderedListInterface $other, ?callable $valueComparator = null): OrderedListInterface
+    public function intersect(OrderedListInterface $other, callable|null $valueComparator = null): OrderedListInterface
     {
         $instance = clone $this;
         /**
@@ -216,8 +216,8 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
     }
 
     public function unify(
-        ?callable $unificationIdentifierGenerator = null,
-        ?callable $callback = null
+        callable|null $unificationIdentifierGenerator = null,
+        callable|null $callback = null,
     ): OrderedListInterface {
         /**
          * @psalm-suppress MissingClosureParamType
@@ -247,7 +247,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
                      */
                     $unique = $callback($unique, $value);
                 }
-            } catch (OutOfBoundsException $exception) {
+            } catch (OutOfBoundsException) {
                 $unique = $value;
             }
 
@@ -314,7 +314,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         return $filled;
     }
 
-    public function slice(int $offset, ?int $length = null): OrderedListInterface
+    public function slice(int $offset, int|null $length = null): OrderedListInterface
     {
         $instance       = clone $this;
         $instance->data = array_slice($this->data, $offset, $length, false);
@@ -443,7 +443,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         }
     }
 
-    public function findFirstMatchingIndex(callable $filter): ?int
+    public function findFirstMatchingIndex(callable $filter): int|null
     {
         foreach ($this->data as $index => $value) {
             assert($index >= 0);
