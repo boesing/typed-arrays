@@ -25,9 +25,6 @@ abstract class AbstractForAllPromise implements ForAllPromiseInterface
 
     private bool $executed = false;
 
-    /** @var iterable<TKey,TValue> */
-    private iterable $iterable;
-
     /** @var callable(TValue,TKey):void */
     private $callback;
 
@@ -35,9 +32,8 @@ abstract class AbstractForAllPromise implements ForAllPromiseInterface
      * @param iterable<TKey,TValue>      $iterable
      * @param callable(TValue,TKey):void $callback
      */
-    final public function __construct(iterable $iterable, callable $callback)
+    final public function __construct(private iterable $iterable, callable $callback)
     {
-        $this->iterable = $iterable;
         $this->callback = $callback;
     }
 

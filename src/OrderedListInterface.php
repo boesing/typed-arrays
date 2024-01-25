@@ -48,7 +48,7 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
      * @psalm-param  (callable(TValue,TValue):int)|null $callback
      * @psalm-return OrderedListInterface<TValue>
      */
-    public function sort(?callable $callback = null): OrderedListInterface;
+    public function sort(callable|null $callback = null): OrderedListInterface;
 
     /**
      * Merges all lists together. All provided lists are being appended to the end of this list in the order
@@ -81,7 +81,7 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
      * @psalm-param  (callable(TValue,TValue):int)|null $valueComparator
      * @psalm-return OrderedListInterface<TValue>
      */
-    public function intersect(OrderedListInterface $other, ?callable $valueComparator = null): OrderedListInterface;
+    public function intersect(OrderedListInterface $other, callable|null $valueComparator = null): OrderedListInterface;
 
     /**
      * Creates a diff of this list and the provided list while using the provided value comparator.
@@ -94,7 +94,7 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
      * @psalm-param  (callable(TValue,TValue):int)|null $valueComparator
      * @psalm-return OrderedListInterface<TValue>
      */
-    public function diff(OrderedListInterface $other, ?callable $valueComparator = null): OrderedListInterface;
+    public function diff(OrderedListInterface $other, callable|null $valueComparator = null): OrderedListInterface;
 
     /**
      * Creates a map of this ordered list by using the provided key generator to generate dedicated keys for each item.
@@ -125,8 +125,8 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
      * @psalm-return OrderedListInterface<TValue>
      */
     public function unify(
-        ?callable $unificationIdentifierGenerator = null,
-        ?callable $callback = null
+        callable|null $unificationIdentifierGenerator = null,
+        callable|null $callback = null,
     ): OrderedListInterface;
 
     /**
@@ -148,7 +148,7 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
      *
      * @psalm-return OrderedListInterface<TValue>
      */
-    public function slice(int $offset, ?int $length = null): OrderedListInterface;
+    public function slice(int $offset, int|null $length = null): OrderedListInterface;
 
     /**
      * This method will limit the list to a maximum amount of items provided as length.
@@ -247,7 +247,7 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
      *
      * @return 0|positive-int|null
      */
-    public function findFirstMatchingIndex(callable $filter): ?int;
+    public function findFirstMatchingIndex(callable $filter): int|null;
 
     /**
      * Adds an item at the beginning of the list.

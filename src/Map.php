@@ -58,7 +58,7 @@ abstract class Map extends Array_ implements MapInterface
         return $instance;
     }
 
-    public function sort(?callable $callback = null): MapInterface
+    public function sort(callable|null $callback = null): MapInterface
     {
         $instance = clone $this;
         $data     = $instance->data;
@@ -79,7 +79,7 @@ abstract class Map extends Array_ implements MapInterface
         return $instance;
     }
 
-    public function diffKeys(MapInterface $other, ?callable $keyComparator = null): MapInterface
+    public function diffKeys(MapInterface $other, callable|null $keyComparator = null): MapInterface
     {
         $instance      = clone $this;
         $otherData     = $other->toNativeArray();
@@ -117,7 +117,7 @@ abstract class Map extends Array_ implements MapInterface
         };
     }
 
-    public function toOrderedList(?callable $sorter = null): OrderedListInterface
+    public function toOrderedList(callable|null $sorter = null): OrderedListInterface
     {
         if ($sorter === null) {
             return new GenericOrderedList(array_values($this->data));
@@ -184,7 +184,7 @@ abstract class Map extends Array_ implements MapInterface
         return $this->data[$key];
     }
 
-    public function intersect(MapInterface $other, ?callable $valueComparator = null): MapInterface
+    public function intersect(MapInterface $other, callable|null $valueComparator = null): MapInterface
     {
         $instance       = clone $this;
         $instance->data = $instance->intersection($other, $valueComparator, null);
@@ -199,7 +199,7 @@ abstract class Map extends Array_ implements MapInterface
      * @psalm-return array<TKey,TValue>
      * @phpcsSuppress SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedMethod
      */
-    private function intersection(MapInterface $other, ?callable $valueComparator, ?callable $keyComparator): array
+    private function intersection(MapInterface $other, callable|null $valueComparator, callable|null $keyComparator): array
     {
         if ($valueComparator && $keyComparator) {
             /**
@@ -242,7 +242,7 @@ abstract class Map extends Array_ implements MapInterface
         return $intersection;
     }
 
-    public function intersectAssoc(MapInterface $other, ?callable $valueComparator = null): MapInterface
+    public function intersectAssoc(MapInterface $other, callable|null $valueComparator = null): MapInterface
     {
         $instance       = clone $this;
         $instance->data = $instance->intersection($other, $valueComparator, null);
@@ -250,7 +250,7 @@ abstract class Map extends Array_ implements MapInterface
         return $instance;
     }
 
-    public function intersectUsingKeys(MapInterface $other, ?callable $keyComparator = null): MapInterface
+    public function intersectUsingKeys(MapInterface $other, callable|null $keyComparator = null): MapInterface
     {
         $instance       = clone $this;
         $instance->data = $instance->intersection($other, null, $keyComparator);
@@ -260,8 +260,8 @@ abstract class Map extends Array_ implements MapInterface
 
     public function intersectUserAssoc(
         MapInterface $other,
-        ?callable $valueComparator = null,
-        ?callable $keyComparator = null
+        callable|null $valueComparator = null,
+        callable|null $keyComparator = null,
     ): MapInterface {
         $instance       = clone $this;
         $instance->data = $instance->intersection($other, $valueComparator, $keyComparator);
@@ -269,7 +269,7 @@ abstract class Map extends Array_ implements MapInterface
         return $instance;
     }
 
-    public function diff(MapInterface $other, ?callable $valueComparator = null): MapInterface
+    public function diff(MapInterface $other, callable|null $valueComparator = null): MapInterface
     {
         /**
          * @psalm-var array<TKey,TValue> $diff1
@@ -396,7 +396,7 @@ abstract class Map extends Array_ implements MapInterface
             $groupIdentifier = $callback($value);
             try {
                 $group = $groups->get($groupIdentifier);
-            } catch (OutOfBoundsException $exception) {
+            } catch (OutOfBoundsException) {
                 $group       = clone $this;
                 $group->data = [];
             }
@@ -415,7 +415,7 @@ abstract class Map extends Array_ implements MapInterface
         return $instance;
     }
 
-    public function jsonSerialize(): ?array
+    public function jsonSerialize(): array|null
     {
         if ($this->data === []) {
             return null;
@@ -429,7 +429,7 @@ abstract class Map extends Array_ implements MapInterface
         return new MapForAllPromise($this->getIterator(), $callback);
     }
 
-    public function sortByKey(?callable $sorter = null): MapInterface
+    public function sortByKey(callable|null $sorter = null): MapInterface
     {
         $sorter   = $sorter ?? $this->keyComparator();
         $data     = $this->data;

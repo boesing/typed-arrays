@@ -136,7 +136,7 @@ final class GenericMapTest extends TestCase
     public function testWillMerge(
         array $initial,
         array $expected,
-        array $stack
+        array $stack,
     ): void {
         /** @var MapInterface<string,mixed> $map */
         $map = new GenericMap($initial);
@@ -200,7 +200,7 @@ final class GenericMapTest extends TestCase
      * @psalm-param  array<string,mixed> $sorted
      * @dataProvider sorting
      */
-    public function testSortUsesCallback(array $values, ?callable $callback, array $sorted): void
+    public function testSortUsesCallback(array $values, callable|null $callback, array $sorted): void
     {
         $list = new GenericMap($values);
         self::assertEquals(
@@ -313,7 +313,7 @@ final class GenericMapTest extends TestCase
      * @psalm-param (pure-callable(mixed,mixed):int)|null $sorter
      * @dataProvider orderedLists
      */
-    public function testWillConvertToOrderedList(array $initial, array $expected, ?callable $sorter): void
+    public function testWillConvertToOrderedList(array $initial, array $expected, callable|null $sorter): void
     {
         $map  = new GenericMap($initial);
         $list = $map->toOrderedList($sorter);
@@ -460,7 +460,7 @@ final class GenericMapTest extends TestCase
      *
      * @dataProvider diffs
      */
-    public function testCanDiff(array $initial, array $other, array $expected, ?callable $comparator): void
+    public function testCanDiff(array $initial, array $other, array $expected, callable|null $comparator): void
     {
         /** @var MapInterface<string,mixed> $map */
         $map = new GenericMap($initial);
@@ -628,7 +628,7 @@ final class GenericMapTest extends TestCase
         array $initial,
         callable $callback,
         array $filteredExpectation,
-        array $unfilteredExpectation
+        array $unfilteredExpectation,
     ): void {
         $map = new GenericMap($initial);
 
@@ -1002,7 +1002,7 @@ final class GenericMapTest extends TestCase
             $map->forAll(function (): void {
                 throw new RuntimeException();
             })->finally($callback);
-        } catch (RuntimeException $exception) {
+        } catch (RuntimeException) {
             $runtimeExceptionCaught = true;
         }
 
@@ -1046,11 +1046,9 @@ final class GenericMapTest extends TestCase
     }
 
     /**
-     * @param string|Stringable $joinableValue
-     *
      * @dataProvider joinableValues
      */
-    public function testCanJoin($joinableValue): void
+    public function testCanJoin(string|Stringable $joinableValue): void
     {
         $map = new GenericMap(['foo' => $joinableValue]);
 

@@ -27,15 +27,11 @@ use function spl_object_id;
  */
 abstract class Array_ implements ArrayInterface
 {
-    /** @psalm-var array<TKey,TValue> */
-    protected array $data;
-
     /**
      * @psalm-param array<TKey,TValue> $data
      */
-    protected function __construct(array $data)
+    protected function __construct(protected array $data)
     {
-        $this->data = $data;
     }
 
     /**

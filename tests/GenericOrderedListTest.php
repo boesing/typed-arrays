@@ -53,7 +53,7 @@ final class GenericOrderedListTest extends TestCase
      * @psalm-param  list<mixed> $sorted
      * @dataProvider sorting
      */
-    public function testSortUsesCallback(array $values, ?callable $callback, array $sorted): void
+    public function testSortUsesCallback(array $values, callable|null $callback, array $sorted): void
     {
         $list = new GenericOrderedList($values);
         self::assertEquals(
@@ -72,7 +72,7 @@ final class GenericOrderedListTest extends TestCase
     public function testWillMerge(
         array $initial,
         array $expected,
-        array $stack
+        array $stack,
     ): void {
         $list = new GenericOrderedList($initial);
 
@@ -254,7 +254,7 @@ final class GenericOrderedListTest extends TestCase
         array $initial,
         array $other,
         array $expected,
-        ?callable $comparator
+        callable|null $comparator,
     ): void {
         $list = new GenericOrderedList($initial);
         $diff = $list->diff(new GenericOrderedList($other), $comparator);
@@ -358,7 +358,7 @@ final class GenericOrderedListTest extends TestCase
         array $initial,
         array $other,
         array $expected,
-        ?callable $comparator
+        callable|null $comparator,
     ): void {
         $collection   = new GenericOrderedList($initial);
         $intersection = $collection->intersect(new GenericOrderedList($other), $comparator);
@@ -534,7 +534,7 @@ final class GenericOrderedListTest extends TestCase
     public function testCanRemoveDuplicates(
         array $initial,
         array $expected,
-        ?callable $unificationIdentifierGenerator
+        callable|null $unificationIdentifierGenerator,
     ): void {
         $list = new GenericOrderedList($initial);
 
@@ -734,7 +734,7 @@ final class GenericOrderedListTest extends TestCase
         int $startIndex,
         array $initial,
         $fillUp,
-        string $expectedExceptionMessage
+        string $expectedExceptionMessage,
     ): void {
         $list = new GenericOrderedList($initial);
         $this->expectException(InvalidArgumentException::class);
@@ -967,7 +967,7 @@ final class GenericOrderedListTest extends TestCase
         array $initial,
         callable $callback,
         array $filteredExpectation,
-        array $unfilteredExpectation
+        array $unfilteredExpectation,
     ): void {
         $map = new GenericOrderedList($initial);
 
@@ -1209,10 +1209,9 @@ final class GenericOrderedListTest extends TestCase
     }
 
     /**
-     * @param mixed $value
      * @dataProvider listValues
      */
-    public function testCanDetectExistingIndices($value): void
+    public function testCanDetectExistingIndices(mixed $value): void
     {
         $list = new GenericOrderedList([$value]);
 
@@ -1345,7 +1344,7 @@ final class GenericOrderedListTest extends TestCase
             $map->forAll(function (): void {
                 throw new RuntimeException();
             })->finally($callback);
-        } catch (RuntimeException $exception) {
+        } catch (RuntimeException) {
             $runtimeExceptionCaught = true;
         }
 
@@ -1363,11 +1362,9 @@ final class GenericOrderedListTest extends TestCase
     }
 
     /**
-     * @param string|Stringable $joinableValue
-     *
      * @dataProvider joinableValues
      */
-    public function testCanJoin($joinableValue): void
+    public function testCanJoin(string|Stringable $joinableValue): void
     {
         $list = new GenericOrderedList([$joinableValue]);
 

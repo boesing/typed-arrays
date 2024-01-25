@@ -10,16 +10,12 @@ use Webmozart\Assert\Assert;
 
 final class MappedErrorCollection extends RuntimeException
 {
-    /** @var MapInterface<string,Throwable> */
-    private MapInterface $errors;
-
     /**
      * @param MapInterface<string,Throwable> $errors
      */
-    private function __construct(MapInterface $errors)
+    private function __construct(private MapInterface $errors)
     {
         Assert::false($errors->isEmpty(), 'Provided errors must not be empty!');
-        $this->errors = $errors;
 
         parent::__construct('There were runtime errors while executing multiple tasks.');
     }
