@@ -275,10 +275,9 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
     /**
      * Combines multiple lists into one.
      *
-     * @template TValueFromOther of TValue
-     * @param OrderedListInterface<TValueFromOther> $other
-     * @param OrderedListInterface<TValueFromOther> ...$others
-     * @return OrderedListInterface<TValue|TValueFromOther>
+     * @param OrderedListInterface<TValue> $other
+     * @param OrderedListInterface<TValue> ...$others
+     * @return OrderedListInterface<TValue>
      */
     public function combine(OrderedListInterface $other, OrderedListInterface ...$others): self;
 }
