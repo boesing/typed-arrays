@@ -201,7 +201,7 @@ abstract class Map extends Array_ implements MapInterface
      */
     private function intersection(MapInterface $other, callable|null $valueComparator, callable|null $keyComparator): array
     {
-        if ($valueComparator && $keyComparator) {
+        if ($valueComparator !== null && $keyComparator !== null) {
             /**
              * @psalm-var array<TKey,TValue> $intersection
              * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
@@ -217,7 +217,7 @@ abstract class Map extends Array_ implements MapInterface
             return $intersection;
         }
 
-        if ($keyComparator) {
+        if ($keyComparator !== null) {
             /**
              * @psalm-var array<TKey,TValue> $intersection
              * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
@@ -228,7 +228,7 @@ abstract class Map extends Array_ implements MapInterface
             return $intersection;
         }
 
-        if (! $valueComparator) {
+        if ($valueComparator === null) {
             $valueComparator = $this->valueComparator();
         }
 
