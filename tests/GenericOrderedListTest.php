@@ -1196,7 +1196,6 @@ final class GenericOrderedListTest extends TestCase
             3,
         ]);
 
-        /** @psalm-suppress InvalidArgument Might be a psalm bug */
         $list = $list->removeElement(2);
 
         self::assertEquals('[1,"foo",3]', json_encode($list, JSON_THROW_ON_ERROR));
