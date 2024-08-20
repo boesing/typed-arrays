@@ -1487,4 +1487,49 @@ final class GenericOrderedListTest extends TestCase
         self::assertNotSame($list, $list2);
         self::assertNotSame([1, 2, 3], $list2->toNativeArray());
     }
+
+    public function testWillCombineWithAnohterList(): void
+    {
+        /**
+         * @var OrderedListInterface<non-empty-string> $list
+         */
+        $list = new GenericOrderedList([
+            'foo',
+            'bar',
+            'baz',
+        ]);
+
+        $list2 = new GenericOrderedList([
+            'qoo',
+            'ooq',
+        ]);
+
+        $list3 = $list->combine($list2);
+
+        self::assertNotSame($list, $list3);
+        self::assertSame(['foo', 'bar', 'baz', 'qoo', 'ooq'], $list3->toNativeArray());
+    }
+
+    public function testWillCombineWithMultipleLists(): void
+    {
+        /**
+         * @var OrderedListInterface<non-empty-string> $list
+         */
+        $list = new GenericOrderedList(['foo']);
+
+        $list2 = new GenericOrderedList(['bar']);
+
+        $list3 = new GenericOrderedList([
+            'baz',
+            'qoo',
+            'ooq',
+        ]);
+
+        $list4 = $list->combine($list2, $list3);
+
+        self::assertNotSame($list, $list2);
+        self::assertNotSame($list, $list3);
+        self::assertNotSame($list, $list4);
+        self::assertSame(['foo', 'bar', 'baz', 'qoo', 'ooq'], $list4->toNativeArray());
+    }
 }

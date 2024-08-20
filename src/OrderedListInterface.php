@@ -271,4 +271,14 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
      * @return OrderedListInterface<TValue>
      */
     public function shuffle(): self;
+
+    /**
+     * Combines multiple lists into one.
+     *
+     * @template TValueFromOther of TValue
+     * @param OrderedListInterface<TValueFromOther> $other
+     * @param OrderedListInterface<TValueFromOther> ...$others
+     * @return OrderedListInterface<TValue|TValueFromOther>
+     */
+    public function combine(OrderedListInterface $other, OrderedListInterface ...$others): self;
 }
