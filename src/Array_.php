@@ -53,7 +53,9 @@ abstract class Array_ implements ArrayInterface
             throw new OutOfBoundsException('There are no values available.');
         }
 
-        return reset($this->data);
+        $data = $this->data;
+
+        return reset($data);
     }
 
     public function last()
@@ -62,7 +64,9 @@ abstract class Array_ implements ArrayInterface
             throw new OutOfBoundsException('There are no values available.');
         }
 
-        return end($this->data);
+        $data = $this->data;
+
+        return end($data);
     }
 
     public function isEmpty(): bool

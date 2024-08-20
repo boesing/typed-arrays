@@ -240,7 +240,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
             try {
                 $unique = $unified->get($identifier);
 
-                if ($callback) {
+                if ($callback !== null) {
                     /**
                      * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
                      *                                    value here.

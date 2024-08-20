@@ -21,10 +21,8 @@ use Webmozart\Assert\Assert;
 use function array_fill;
 use function array_map;
 use function array_reverse;
-use function assert;
 use function chr;
 use function in_array;
-use function is_int;
 use function json_encode;
 use function md5;
 use function mt_rand;
@@ -562,7 +560,6 @@ final class GenericOrderedListTest extends TestCase
 
         $list->unify(null, function (int $duplicate, int $number) use (&$callbackCalled): int {
             self::assertEquals($duplicate, $number);
-            assert(is_int($callbackCalled));
             $callbackCalled++;
 
             return $number;
@@ -1250,6 +1247,7 @@ final class GenericOrderedListTest extends TestCase
         ]);
 
         $callable = new CallableObject(['bar', 0], ['baz', 1], ['ooq', 2]);
+        /** @psalm-suppress PossiblyInvalidArgument */
         $list->forAll($callable)->execute();
     }
 
@@ -1410,7 +1408,6 @@ final class GenericOrderedListTest extends TestCase
             1000,
         ]);
 
-        /** @psalm-suppress TypeDoesNotContainType Might be a psalm bug */
         self::assertSame(1, $list->findFirstMatchingIndex(fn (int $value) => $value % 10 === 0));
     }
 
