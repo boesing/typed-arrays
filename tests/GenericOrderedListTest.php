@@ -11,6 +11,7 @@ use DateTimeImmutable;
 use Generator;
 use InvalidArgumentException;
 use OutOfBoundsException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;
@@ -51,8 +52,8 @@ final class GenericOrderedListTest extends TestCase
      * @psalm-param  list<mixed> $values
      * @psalm-param  (pure-callable(mixed,mixed):int)|null $callback
      * @psalm-param  list<mixed> $sorted
-     * @dataProvider sorting
      */
+    #[DataProvider('sorting')]
     public function testSortUsesCallback(array $values, callable|null $callback, array $sorted): void
     {
         $list = new GenericOrderedList($values);
@@ -67,8 +68,8 @@ final class GenericOrderedListTest extends TestCase
      * @psalm-param  list<mixed>       $initial
      * @psalm-param  list<mixed>       $expected
      * @psalm-param  list<list<mixed>> $stack
-     * @dataProvider mergeStacks
      */
+    #[DataProvider('mergeStacks')]
     public function testWillMerge(
         array $initial,
         array $expected,
@@ -92,7 +93,7 @@ final class GenericOrderedListTest extends TestCase
      *     non-empty-string,
      *     array{0:list<mixed>,1:(pure-callable(mixed,mixed):int)|null,2:list<mixed>}>
      */
-    public function sorting(): Generator
+    public static function sorting(): Generator
     {
         yield 'descending' => [
             [
@@ -128,7 +129,7 @@ final class GenericOrderedListTest extends TestCase
     /**
      * @psalm-return Generator<non-empty-string,array{0:list<mixed>,1:list<mixed>,2:list<list<mixed>>}>
      */
-    public function mergeStacks(): Generator
+    public static function mergeStacks(): Generator
     {
         yield 'single' => [
             [
@@ -247,9 +248,8 @@ final class GenericOrderedListTest extends TestCase
      * @psalm-param  list<mixed> $other
      * @psalm-param  list<mixed> $expected
      * @psalm-param (pure-callable(mixed,mixed):int)|null $comparator
-     *
-     * @dataProvider diffs
      */
+    #[DataProvider('diffs')]
     public function testDiffWillDetectExpectedDifferences(
         array $initial,
         array $other,
@@ -268,7 +268,7 @@ final class GenericOrderedListTest extends TestCase
      *     array{0:list<mixed>,1:list<mixed>,2:list<mixed>,3:(pure-callable(mixed, mixed):int)|null}
      * >
      */
-    public function diffs(): Generator
+    public static function diffs(): Generator
     {
         yield 'simple' => [
             [
@@ -351,9 +351,8 @@ final class GenericOrderedListTest extends TestCase
      * @psalm-param  list<mixed> $other
      * @psalm-param  list<mixed> $expected
      * @psalm-param (pure-callable(mixed,mixed):int)|null $comparator
-     *
-     * @dataProvider intersections
      */
+    #[DataProvider('intersections')]
     public function testCanDetectIntersections(
         array $initial,
         array $other,
@@ -370,7 +369,7 @@ final class GenericOrderedListTest extends TestCase
      * @psalm-return Generator<string,array{0:list<mixed>,1:list<mixed>,2:list<mixed>,3:(pure-callable(mixed $a,mixed
      *               $b):int)|null}>
      */
-    public function intersections(): Generator
+    public static function intersections(): Generator
     {
         $now = new DateTimeImmutable();
 
@@ -528,9 +527,8 @@ final class GenericOrderedListTest extends TestCase
      * @psalm-param  list<mixed> $initial
      * @psalm-param  list<mixed> $expected
      * @psalm-param (pure-callable(mixed):non-empty-string)|null $unificationIdentifierGenerator
-     *
-     * @dataProvider deduplications
      */
+    #[DataProvider('deduplications')]
     public function testCanRemoveDuplicates(
         array $initial,
         array $expected,
@@ -575,7 +573,7 @@ final class GenericOrderedListTest extends TestCase
     /**
      * @psalm-return Generator<string,array{0:list<mixed>,1:list<mixed>,2:(pure-callable(mixed):non-empty-string)|null}>
      */
-    public function deduplications(): Generator
+    public static function deduplications(): Generator
     {
         yield 'integers' => [
             [
@@ -728,8 +726,8 @@ final class GenericOrderedListTest extends TestCase
      * @template     TValue
      * @psalm-param  list<TValue> $initial
      * @psalm-param  TValue       $fillUp
-     * @dataProvider invalidStartIndices
      */
+    #[DataProvider('invalidStartIndices')]
     public function testFillWillThrowExceptionWhenStartIndexIsInvalid(
         int $startIndex,
         array $initial,
@@ -745,8 +743,8 @@ final class GenericOrderedListTest extends TestCase
     /**
      * @template     TValue
      * @psalm-param  TValue $value
-     * @dataProvider scalarFillValues
      */
+    #[DataProvider('scalarFillValues')]
     public function testFillAppendsScalarValues(int $amount, $value): void
     {
         self::assertIsScalar($value);
@@ -760,7 +758,7 @@ final class GenericOrderedListTest extends TestCase
      * @template     mixed
      * @psalm-return Generator<string,array{0:int,1:list<mixed>,2:mixed,3:non-empty-string}>
      */
-    public function invalidStartIndices(): Generator
+    public static function invalidStartIndices(): Generator
     {
         yield 'negative' => [
             -1,
@@ -787,7 +785,7 @@ final class GenericOrderedListTest extends TestCase
     /**
      * @psalm-return Generator<string,array{0:int,1:mixed}>
      */
-    public function scalarFillValues(): Generator
+    public static function scalarFillValues(): Generator
     {
         yield 'int' => [
             1,
@@ -908,8 +906,8 @@ final class GenericOrderedListTest extends TestCase
      * @template     TValue
      * @psalm-param  list<TValue>    $initial
      * @psalm-param  pure-callable(TValue $value):bool $callback
-     * @dataProvider findOutOfBoundExceptions
      */
+    #[DataProvider('findOutOfBoundExceptions')]
     public function testFindThrowsOutOfBoundsExceptionWhenValueNotFound(array $initial, callable $callback): void
     {
         $instance = new GenericOrderedList($initial);
@@ -920,7 +918,7 @@ final class GenericOrderedListTest extends TestCase
     /**
      * @psalm-return Generator<string,array{0:list<mixed>,1:(pure-callable(mixed $value):bool)}>
      */
-    public function findOutOfBoundExceptions(): Generator
+    public static function findOutOfBoundExceptions(): Generator
     {
         yield 'empty list' => [
             [],
@@ -960,9 +958,8 @@ final class GenericOrderedListTest extends TestCase
      * @psalm-param  pure-callable(TValue $value):bool $callback
      * @psalm-param  list<TValue> $filteredExpectation
      * @psalm-param  list<TValue> $unfilteredExpectation
-     *
-     * @dataProvider partitions
      */
+    #[DataProvider('partitions')]
     public function testPartitioningReturnsTwoMapsWithExpectedValues(
         array $initial,
         callable $callback,
@@ -979,7 +976,7 @@ final class GenericOrderedListTest extends TestCase
     /**
      * @return Generator<string,array{0:list<mixed>,1:pure-callable(mixed $value):bool,2:list<mixed>,3:list<mixed>}>
      */
-    public function partitions(): Generator
+    public static function partitions(): Generator
     {
         yield 'all filtered' => [
             [
@@ -1058,8 +1055,8 @@ final class GenericOrderedListTest extends TestCase
      * @template     T
      * @psalm-param  list<T> $data
      * @psalm-param  pure-callable(T):bool $callback
-     * @dataProvider satisfactions
      */
+    #[DataProvider('satisfactions')]
     public function testAllWillSatisfyCallback(array $data, callable $callback): void
     {
         $list = new GenericOrderedList($data);
@@ -1085,7 +1082,7 @@ final class GenericOrderedListTest extends TestCase
     /**
      * @psalm-return Generator<non-empty-string,array{0:list<mixed>,1:pure-callable(mixed):bool}>
      */
-    public function satisfactions(): Generator
+    public static function satisfactions(): Generator
     {
         yield 'only 1' => [
             [
@@ -1114,8 +1111,8 @@ final class GenericOrderedListTest extends TestCase
      * @template T
      * @psalm-param list<T> $list
      * @psalm-param pure-callable(T):bool $callback
-     * @dataProvider existenceTests
      */
+    #[DataProvider('existenceTests')]
     public function testWillFindExistenceOfEntry(array $list, callable $callback, bool $exists): void
     {
         $list = new GenericOrderedList($list);
@@ -1134,7 +1131,7 @@ final class GenericOrderedListTest extends TestCase
     /**
      * @psalm-return Generator<non-empty-string,array{0:list<mixed>,1:pure-callable(mixed):bool,2:bool}>
      */
-    public function existenceTests(): Generator
+    public static function existenceTests(): Generator
     {
         yield 'simple' => [
             [
@@ -1228,7 +1225,7 @@ final class GenericOrderedListTest extends TestCase
     /**
      * @return Generator<string,array{0:mixed}>
      */
-    public function listValues(): Generator
+    public static function listValues(): Generator
     {
         yield 'string' => ['foo'];
         yield 'empty string' => [''];
@@ -1361,9 +1358,7 @@ final class GenericOrderedListTest extends TestCase
         self::assertSame($expected, $list->reverse()->toNativeArray());
     }
 
-    /**
-     * @dataProvider joinableValues
-     */
+    #[DataProvider('joinableValues')]
     public function testCanJoin(string|Stringable $joinableValue): void
     {
         $list = new GenericOrderedList([$joinableValue]);
@@ -1374,7 +1369,7 @@ final class GenericOrderedListTest extends TestCase
     /**
      * @psalm-return Generator<non-empty-string,array{0:string|Stringable}>
      */
-    public function joinableValues(): Generator
+    public static function joinableValues(): Generator
     {
         yield 'simple string' => ['fooo bar'];
 

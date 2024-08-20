@@ -10,6 +10,7 @@ use Boesing\TypedArrays\Asset\GenericObject;
 use DateTimeImmutable;
 use Generator;
 use OutOfBoundsException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;
@@ -38,7 +39,7 @@ final class GenericMapTest extends TestCase
      *   2: array<non-empty-string,mixed>
      * }>
      */
-    public function exchangeKeys(): Generator
+    public static function exchangeKeys(): Generator
     {
         yield 'change all keys' => [
             [
@@ -131,8 +132,8 @@ final class GenericMapTest extends TestCase
      * @psalm-param  array<string,mixed>       $initial
      * @psalm-param  array<string,mixed>       $expected
      * @psalm-param  list<array<string,mixed>> $stack
-     * @dataProvider mergeStacks
      */
+    #[DataProvider('mergeStacks')]
     public function testWillMerge(
         array $initial,
         array $expected,
@@ -159,7 +160,7 @@ final class GenericMapTest extends TestCase
     /**
      * @psalm-return Generator<non-empty-string,array{0:array<string,mixed>,1:array<string,mixed>,2:list<array<string,mixed>>}>
      */
-    public function mergeStacks(): Generator
+    public static function mergeStacks(): Generator
     {
         yield 'single' => [
             ['foo' => 'bar'],
@@ -198,8 +199,8 @@ final class GenericMapTest extends TestCase
      * @psalm-param  array<string,mixed> $values
      * @psalm-param  (pure-callable(mixed,mixed):int)|null $callback
      * @psalm-param  array<string,mixed> $sorted
-     * @dataProvider sorting
      */
+    #[DataProvider('sorting')]
     public function testSortUsesCallback(array $values, callable|null $callback, array $sorted): void
     {
         $list = new GenericMap($values);
@@ -216,7 +217,7 @@ final class GenericMapTest extends TestCase
      *     array{0:array<string,mixed>,1:(pure-callable(mixed,mixed):int)|null,2:array<string,mixed>}
      * >
      */
-    public function sorting(): Generator
+    public static function sorting(): Generator
     {
         yield 'descending' => [
             [
@@ -311,8 +312,8 @@ final class GenericMapTest extends TestCase
      * @psalm-param array<string,mixed> $initial
      * @psalm-param list<mixed>         $expected
      * @psalm-param (pure-callable(mixed,mixed):int)|null $sorter
-     * @dataProvider orderedLists
      */
+    #[DataProvider('orderedLists')]
     public function testWillConvertToOrderedList(array $initial, array $expected, callable|null $sorter): void
     {
         $map  = new GenericMap($initial);
@@ -326,7 +327,7 @@ final class GenericMapTest extends TestCase
      *     non-empty-string,
      *     array{0:array<string,mixed>,1:list<mixed>,2:(pure-callable(mixed,mixed):int)|null}>
      */
-    public function orderedLists(): Generator
+    public static function orderedLists(): Generator
     {
         yield 'integer' => [
             [
@@ -457,9 +458,8 @@ final class GenericMapTest extends TestCase
      * @param array<string,mixed> $other
      * @param array<string,mixed> $expected
      * @psalm-param (pure-callable(mixed,mixed):int)|null $comparator
-     *
-     * @dataProvider diffs
      */
+    #[DataProvider('diffs')]
     public function testCanDiff(array $initial, array $other, array $expected, callable|null $comparator): void
     {
         /** @var MapInterface<string,mixed> $map */
@@ -481,7 +481,7 @@ final class GenericMapTest extends TestCase
      *     }
      * >
      */
-    public function diffs(): Generator
+    public static function diffs(): Generator
     {
         yield 'simple' => [
             [
@@ -621,9 +621,8 @@ final class GenericMapTest extends TestCase
      * @psalm-param pure-callable(TValue $value):bool $callback
      * @psalm-param array<string,TValue> $filteredExpectation
      * @psalm-param array<string,TValue> $unfilteredExpectation
-     *
-     * @dataProvider partitions
      */
+    #[DataProvider('partitions')]
     public function testPartitioningReturnsTwoMapsWithExpectedValues(
         array $initial,
         callable $callback,
@@ -643,7 +642,7 @@ final class GenericMapTest extends TestCase
      *     array{0:array<string,mixed>,1:pure-callable(mixed $value):bool,2:array<string,mixed>,3:array<string,mixed>}
      * >
      */
-    public function partitions(): Generator
+    public static function partitions(): Generator
     {
         yield 'all filtered' => [
             [
@@ -741,8 +740,8 @@ final class GenericMapTest extends TestCase
      * @template     T
      * @psalm-param array<string,T> $elements
      * @psalm-param pure-callable(T):bool $callback
-     * @dataProvider satisfactions
      */
+    #[DataProvider('satisfactions')]
     public function testAllElementsWillSatisfyCallback(array $elements, callable $callback): void
     {
         $map = new GenericMap($elements);
@@ -769,7 +768,7 @@ final class GenericMapTest extends TestCase
     /**
      * @psalm-return Generator<non-empty-string,array{0:array<non-empty-string,mixed>,1:pure-callable(mixed):bool}>
      */
-    public function satisfactions(): Generator
+    public static function satisfactions(): Generator
     {
         yield 'only 1' => [
             [
@@ -796,8 +795,8 @@ final class GenericMapTest extends TestCase
      * @template     T
      * @psalm-param array<non-empty-string,T> $data
      * @psalm-param pure-callable(T):bool           $callback
-     * @dataProvider existenceTests
      */
+    #[DataProvider('existenceTests')]
     public function testWillFindExistenceOfEntry(array $data, callable $callback, bool $exists): void
     {
         $map = new GenericMap($data);
@@ -816,7 +815,7 @@ final class GenericMapTest extends TestCase
     /**
      * @psalm-return Generator<non-empty-string,array{0:array<non-empty-string,mixed>,1:pure-callable(mixed):bool,2:bool}>
      */
-    public function existenceTests(): Generator
+    public static function existenceTests(): Generator
     {
         yield 'simple' => [
             [
@@ -1045,9 +1044,7 @@ final class GenericMapTest extends TestCase
         self::assertEquals(['e', 'd', 'c', 'b', 'a'], array_keys($keysSorted->toNativeArray()));
     }
 
-    /**
-     * @dataProvider joinableValues
-     */
+    #[DataProvider('joinableValues')]
     public function testCanJoin(string|Stringable $joinableValue): void
     {
         $map = new GenericMap(['foo' => $joinableValue]);
@@ -1058,7 +1055,7 @@ final class GenericMapTest extends TestCase
     /**
      * @psalm-return Generator<non-empty-string,array{0:string|Stringable}>
      */
-    public function joinableValues(): Generator
+    public static function joinableValues(): Generator
     {
         yield 'simple string' => ['fooo bar'];
 
@@ -1097,9 +1094,8 @@ final class GenericMapTest extends TestCase
      * @psalm-param array<non-empty-string,mixed>    $initial
      * @psalm-param pure-callable(non-empty-string, mixed):non-empty-string $keyGenerator
      * @psalm-param array<non-empty-string,mixed>    $expected
-     *
-     * @dataProvider exchangeKeys
      */
+    #[DataProvider('exchangeKeys')]
     public function testWillExchangeKeys(array $initial, callable $keyGenerator, array $expected): void
     {
         $map       = new GenericMap($initial);
