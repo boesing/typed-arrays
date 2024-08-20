@@ -1473,4 +1473,18 @@ final class GenericOrderedListTest extends TestCase
         $list = $list->removeAt(1);
         self::assertSame([1, 3], $list->toNativeArray());
     }
+
+    public function testWillShuffleValuesInList(): void
+    {
+        $list = new GenericOrderedList([
+            1,
+            2,
+            3,
+        ]);
+
+        $list2 = $list->shuffle();
+        self::assertSame([1, 2, 3], $list->toNativeArray());
+        self::assertNotSame($list, $list2);
+        self::assertNotSame([1, 2, 3], $list2->toNativeArray());
+    }
 }

@@ -20,10 +20,12 @@ use function array_uintersect;
 use function array_unshift;
 use function array_values;
 use function assert;
+use function count;
 use function hash;
 use function implode;
 use function is_callable;
 use function serialize;
+use function shuffle;
 use function sort;
 use function sprintf;
 use function usort;
@@ -470,5 +472,23 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
     public function removeAt(int $index): OrderedListInterface
     {
         return $this->filter(fn ($_, int $i) => $i !== $index);
+    }
+
+    public function shuffle(): OrderedListInterface
+    {
+        if (count($this->data) <= 1) {
+            return $this;
+        }
+
+        $data = $this->data;
+
+        do {
+            shuffle($data);
+        } while ($this->data === $data);
+
+        $instance       = clone $this;
+        $instance->data = $data;
+
+        return $instance;
     }
 }

@@ -264,4 +264,11 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
      * @return OrderedListInterface<TValue>
      */
     public function removeAt(int $index): self;
+
+    /**
+     * Shuffles all the values within the list.
+     *
+     * @return OrderedListInterface<TValue>
+     */
+    public function shuffle(): self;
 }
