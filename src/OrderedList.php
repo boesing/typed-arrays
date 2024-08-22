@@ -482,10 +482,7 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
         $data = $this->data;
 
-        do {
-            shuffle($data);
-        } while ($this->data === $data);
-
+        shuffle($data);
         $instance       = clone $this;
         $instance->data = $data;
 

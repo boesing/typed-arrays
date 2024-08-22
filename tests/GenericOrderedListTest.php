@@ -28,6 +28,7 @@ use function md5;
 use function mt_rand;
 use function range;
 use function spl_object_hash;
+use function sprintf;
 use function strlen;
 use function strnatcmp;
 
@@ -1476,15 +1477,29 @@ final class GenericOrderedListTest extends TestCase
 
     public function testWillShuffleValuesInList(): void
     {
-        $list = new GenericOrderedList([
-            1,
-            2,
-            3,
-        ]);
+        $values = [1, 2, 3];
+        $list   = new GenericOrderedList($values);
 
-        $list2 = $list->shuffle();
-        self::assertSame([1, 2, 3], $list->toNativeArray());
+        $maximumShuffleAttempts = 10;
+        $shuffledSameCount      = 0;
+
+        do {
+            $list2 = $list->shuffle();
+            if ($list2->toNativeArray() === $values) {
+                $shuffledSameCount++;
+                self::assertLessThan(
+                    $maximumShuffleAttempts,
+                    $shuffledSameCount,
+                    sprintf('The shuffle did not change the order after "%d" attempts.', $maximumShuffleAttempts),
+                );
+                continue;
+            }
+
+            break;
+        } while ($shuffledSameCount < $maximumShuffleAttempts);
+
         self::assertNotSame($list, $list2);
-        self::assertNotSame([1, 2, 3], $list2->toNativeArray());
+        self::assertEqualsCanonicalizing($values, $list2->toNativeArray());
+        self::assertNotSame($values, $list2->toNativeArray());
     }
 }
