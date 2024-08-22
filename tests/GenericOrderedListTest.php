@@ -1485,6 +1485,7 @@ final class GenericOrderedListTest extends TestCase
 
         do {
             $list2 = $list->shuffle();
+            /** @psalm-suppress TypeDoesNotContainType No clue why this is happening but for now we are suppressing */
             if ($list2->toNativeArray() === $values) {
                 $shuffledSameCount++;
                 self::assertLessThan(
