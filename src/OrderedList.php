@@ -491,4 +491,14 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
 
         return $instance;
     }
+
+    public function combine(OrderedListInterface $other, OrderedListInterface ...$others): OrderedListInterface
+    {
+        $instance = clone $this;
+        foreach ([$other, ...$others] as $other) {
+            $instance->data = [...$instance->data, ...$other->toNativeArray()];
+        }
+
+        return $instance;
+    }
 }
