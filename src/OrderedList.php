@@ -23,6 +23,7 @@ use function assert;
 use function count;
 use function hash;
 use function implode;
+use function is_array;
 use function is_callable;
 use function serialize;
 use function shuffle;
@@ -369,30 +370,30 @@ abstract class OrderedList extends Array_ implements OrderedListInterface
         return [$instance1, $instance2];
     }
 
-    /**
-     * @template TGroup of non-empty-string
-     * @psalm-param callable(TValue):TGroup $callback
-     *
-     * @psalm-return MapInterface<TGroup,OrderedListInterface<TValue>>
-     */
     public function group(callable $callback): MapInterface
     {
-        /** @var MapInterface<TGroup,OrderedListInterface<TValue>> $groups */
+        /** @var MapInterface<non-empty-string,OrderedListInterface<TValue>> $groups */
         $groups = new GenericMap([]);
         foreach ($this as $value) {
             /**
              * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
              *                                    value here.
              */
-            $groupName = $callback($value);
-            if (! $groups->has($groupName)) {
-                $groups = $groups->put($groupName, new GenericOrderedList([$value]));
-                continue;
+            $groupNames = $callback($value);
+            if (! is_array($groupNames)) {
+                $groupNames = [$groupNames];
             }
 
-            $existingGroup = $groups->get($groupName);
-            $existingGroup = $existingGroup->add($value);
-            $groups        = $groups->put($groupName, $existingGroup);
+            foreach ($groupNames as $groupName) {
+                if (! $groups->has($groupName)) {
+                    $groups = $groups->put($groupName, new GenericOrderedList([$value]));
+                    continue;
+                }
+
+                $existingGroup = $groups->get($groupName);
+                $existingGroup = $existingGroup->add($value);
+                $groups        = $groups->put($groupName, $existingGroup);
+            }
         }
 
         return $groups;

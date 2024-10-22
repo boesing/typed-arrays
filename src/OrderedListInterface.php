@@ -182,10 +182,10 @@ interface OrderedListInterface extends ArrayInterface, JsonSerializable
     /**
      * Groups the items by using the callback.
      *
-     * @template TGroup of non-empty-string
+     * @template TGroup of non-empty-string|non-empty-list<non-empty-string>
      * @psalm-param callable(TValue):TGroup $callback
      *
-     * @psalm-return MapInterface<TGroup,OrderedListInterface<TValue>>
+     * @psalm-return MapInterface<non-empty-string,OrderedListInterface<TValue>>
      */
     public function group(callable $callback): MapInterface;
 

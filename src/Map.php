@@ -20,6 +20,7 @@ use function array_uintersect_uassoc;
 use function array_values;
 use function asort;
 use function implode;
+use function is_array;
 use function sprintf;
 use function strcmp;
 use function uasort;
@@ -375,16 +376,10 @@ abstract class Map extends Array_ implements MapInterface
         return [$instance1, $instance2];
     }
 
-    /**
-     * @template TGroup of non-empty-string
-     * @psalm-param callable(TValue):TGroup $callback
-     *
-     * @psalm-return MapInterface<TGroup,MapInterface<TKey,TValue>>
-     */
     public function group(callable $callback): MapInterface
     {
         /**
-         * @psalm-var MapInterface<TGroup,MapInterface<TKey,TValue>> $groups
+         * @psalm-var MapInterface<non-empty-string,MapInterface<TKey,TValue>> $groups
          */
         $groups = new GenericMap([]);
 
@@ -393,15 +388,21 @@ abstract class Map extends Array_ implements MapInterface
              * @psalm-suppress ImpureFunctionCall Upstream projects have to ensure that they do not manipulate the
              *                                    value here.
              */
-            $groupIdentifier = $callback($value);
-            try {
-                $group = $groups->get($groupIdentifier);
-            } catch (OutOfBoundsException) {
-                $group       = clone $this;
-                $group->data = [];
+            $groupIdentifiers = $callback($value);
+            if (! is_array($groupIdentifiers)) {
+                $groupIdentifiers = [$groupIdentifiers];
             }
 
-            $groups = $groups->put($groupIdentifier, $group->put($key, $value));
+            foreach ($groupIdentifiers as $groupIdentifier) {
+                try {
+                    $group = $groups->get($groupIdentifier);
+                } catch (OutOfBoundsException) {
+                    $group       = clone $this;
+                    $group->data = [];
+                }
+
+                $groups = $groups->put($groupIdentifier, $group->put($key, $value));
+            }
         }
 
         return $groups;
