@@ -1048,6 +1048,19 @@ final class GenericOrderedListTest extends TestCase
         self::assertEquals($object2, $b->at(0));
     }
 
+    public function testWillGroupValueIntoMultipleGroups(): void
+    {
+        $list = new GenericOrderedList([
+            $object1 = new GenericObject(1),
+        ]);
+
+        $grouped = $list->group(fn () => ['a', 'b']);
+        self::assertTrue($grouped->has('a'));
+        self::assertTrue($grouped->has('b'));
+        self::assertTrue($grouped->get('a')->contains($object1));
+        self::assertTrue($grouped->get('b')->contains($object1));
+    }
+
     /**
      * @template     T
      * @psalm-param  list<T> $data
